@@ -1,12 +1,12 @@
 modLoader="javafml" #mandatory
 loaderVersion="[28,)" #mandatory (26 is current forge version)
-issueTrackerURL="http://my.issue.tracker/" #optional
+issueTrackerURL="https://github.com/Alex-the-666/Citadel/issues" #optional
 [[mods]] #mandatory
 modId="citadel" #mandatory
-version="${file.jarVersion}" #mandatory
+version="1.0.0" #mandatory
 displayName="Citadel" #mandatory
 updateJSONURL="http://myurl.me/" #optional
-displayURL="http://example.com/" #optional
+displayURL="https://github.com/Alex-the-666/Citadel" #optional
 logoFile="citadel.png" #optional
 credits="Gegy1000" #optional
 authors="Alexthe666" #optional

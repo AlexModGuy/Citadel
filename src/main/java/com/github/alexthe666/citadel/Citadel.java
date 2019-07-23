@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
+import com.github.alexthe666.citadel.web.WebHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,6 +18,11 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 @Mod("citadel")
 public class Citadel {
 
@@ -31,6 +37,7 @@ public class Citadel {
             .serverAcceptedVersions(PROTOCOL_VERSION::equals)
             .networkProtocolVersion(() -> PROTOCOL_VERSION)
             .simpleChannel();
+    public static List<String> PATREONS = new ArrayList<>();
 
     public Citadel() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -44,7 +51,17 @@ public class Citadel {
     private void setup(final FMLCommonSetupEvent event) {
         PROXY.onPreInit();
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, PropertiesMessage.class, PropertiesMessage::write, PropertiesMessage::read, PropertiesMessage.Handler::handle);
-
+        BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
+        if (urlContents != null) {
+            String line = null;
+            try {
+                while ((line = urlContents.readLine()) != null) {
+                    PATREONS.add(line);
+                }
+            } catch (IOException e) {
+                LOGGER.warn("Failed to load patreon contributor perks");
+            }
+        }
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
