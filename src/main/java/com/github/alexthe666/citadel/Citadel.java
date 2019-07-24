@@ -25,8 +25,6 @@ import java.util.List;
 
 @Mod("citadel")
 public class Citadel {
-
-
     public static final Logger LOGGER = LogManager.getLogger();
     public static ServerProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     private static final String PROTOCOL_VERSION = Integer.toString(1);
