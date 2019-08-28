@@ -3,6 +3,7 @@ package com.github.alexthe666.citadel.client.model;
 import com.github.alexthe666.citadel.client.model.container.TextureOffset;
 import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,7 +17,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @OnlyIn(Dist.CLIENT)
-public class AdvancedEntityModel extends EntityModel {
+public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
     private float movementScale = 1.0F;
     private final Map<String, TextureOffset> modelTextureMap = Maps.newHashMap();
 
