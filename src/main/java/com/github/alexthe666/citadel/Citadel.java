@@ -51,15 +51,15 @@ public class Citadel {
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, PropertiesMessage.class, PropertiesMessage::write, PropertiesMessage::read, PropertiesMessage.Handler::handle);
         BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
         if (urlContents != null) {
-            String line = null;
             try {
+                String line;
                 while ((line = urlContents.readLine()) != null) {
                     PATREONS.add(line);
                 }
             } catch (IOException e) {
                 LOGGER.warn("Failed to load patreon contributor perks");
             }
-        }
+        } else LOGGER.warn("Failed to load patreon contributor perks");
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
