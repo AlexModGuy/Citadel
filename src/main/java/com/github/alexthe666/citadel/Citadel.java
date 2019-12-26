@@ -1,7 +1,9 @@
 package com.github.alexthe666.citadel;
 
+import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.github.alexthe666.citadel.web.WebHelper;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,8 +15,10 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,6 +53,7 @@ public class Citadel {
     private void setup(final FMLCommonSetupEvent event) {
         PROXY.onPreInit();
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, PropertiesMessage.class, PropertiesMessage::write, PropertiesMessage::read, PropertiesMessage.Handler::handle);
+        NETWORK_WRAPPER.registerMessage(packetsRegistered++, AnimationMessage.class, AnimationMessage::write, AnimationMessage::read, AnimationMessage.Handler::handle);
         BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
         if (urlContents != null) {
             try {
@@ -60,6 +65,22 @@ public class Citadel {
                 LOGGER.warn("Failed to load patreon contributor perks");
             }
         } else LOGGER.warn("Failed to load patreon contributor perks");
+    }
+
+    public static <MSG> void sendMSGToServer(MSG message) {
+        NETWORK_WRAPPER.sendToServer(message);
+    }
+
+    public static <MSG> void sendMSGToAll(MSG message) {
+        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            sendNonLocal(message, player);
+        }
+    }
+
+    public static <MSG> void sendNonLocal(MSG msg, ServerPlayerEntity player) {
+        if (player.server.isDedicatedServer() || !player.getName().equals(player.server.getServerOwner())) {
+            NETWORK_WRAPPER.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+        }
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
