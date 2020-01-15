@@ -1,9 +1,10 @@
 package com.github.alexthe666.citadel.server.message;
 
+import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -23,19 +24,8 @@ public class AnimationMessage {
         }
 
         public static void handle(AnimationMessage message, Supplier<NetworkEvent.Context> context) {
-            ((NetworkEvent.Context)context.get()).setPacketHandled(true);
-            PlayerEntity player = Minecraft.getInstance().player;
-            if(player != null) {
-                IAnimatedEntity entity = (IAnimatedEntity) player.world.getEntityByID(message.entityID);
-                if (entity != null) {
-                    if (message.index == -1) {
-                        entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
-                    } else {
-                        entity.setAnimation(entity.getAnimations()[message.index]);
-                    }
-                    entity.setAnimationTick(0);
-                }
-            }
+            //((NetworkEvent.Context)context.get()).setPacketHandled(true);
+            Citadel.PROXY.handleAnimationPacket(message.entityID, message.index);
         }
     }
 

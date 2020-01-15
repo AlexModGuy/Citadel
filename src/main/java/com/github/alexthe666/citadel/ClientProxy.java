@@ -1,11 +1,13 @@
 package com.github.alexthe666.citadel;
 
+import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.obj.IModelObj;
 import com.github.alexthe666.citadel.client.model.obj.ObjModelLoader;
 import com.github.alexthe666.citadel.client.model.obj.WavefrontModelLoader;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -45,4 +47,21 @@ public class ClientProxy extends ServerProxy {
             GlStateManager.popMatrix();
         }
     }
+
+    @Override
+    public void handleAnimationPacket(int entityId, int index){
+        PlayerEntity player = Minecraft.getInstance().player;
+        if (player != null) {
+            IAnimatedEntity entity = (IAnimatedEntity) player.world.getEntityByID(entityId);
+            if (entity != null) {
+                if (index == -1) {
+                    entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
+                } else {
+                    entity.setAnimation(entity.getAnimations()[index]);
+                }
+                entity.setAnimationTick(0);
+            }
+        }
+    }
+
 }

@@ -19,6 +19,10 @@ public class ServerProxy {
     public void onPreInit() {
     }
 
+    public void handleAnimationPacket(int entityId, int index){
+
+    }
+
     @SubscribeEvent
     public static void onBlocksRegistry(RegistryEvent.Register<Block> blockRegistryEvent) {
 

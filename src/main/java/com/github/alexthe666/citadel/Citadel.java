@@ -32,13 +32,13 @@ public class Citadel {
     public static final Logger LOGGER = LogManager.getLogger();
     public static ServerProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     private static final String PROTOCOL_VERSION = Integer.toString(1);
-    private static int packetsRegistered = 0;
     public static final SimpleChannel NETWORK_WRAPPER = NetworkRegistry.ChannelBuilder
             .named(new ResourceLocation("citadel", "main_channel"))
             .clientAcceptedVersions(PROTOCOL_VERSION::equals)
             .serverAcceptedVersions(PROTOCOL_VERSION::equals)
             .networkProtocolVersion(() -> PROTOCOL_VERSION)
             .simpleChannel();
+
     public static List<String> PATREONS = new ArrayList<>();
 
     public Citadel() {
@@ -52,6 +52,7 @@ public class Citadel {
 
     private void setup(final FMLCommonSetupEvent event) {
         PROXY.onPreInit();
+        int packetsRegistered = 0;
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, PropertiesMessage.class, PropertiesMessage::write, PropertiesMessage::read, PropertiesMessage.Handler::handle);
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, AnimationMessage.class, AnimationMessage::write, AnimationMessage::read, AnimationMessage.Handler::handle);
         BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
