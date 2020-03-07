@@ -23,7 +23,7 @@ public class ModelAnimator {
     private HashMap<AdvancedRendererModel, Transform> transformMap;
     private HashMap<AdvancedRendererModel, Transform> prevTransformMap;
 
-    private ModelAnimator() {
+    public ModelAnimator() {
         this.tempTick = 0;
         this.correctAnimation = false;
         this.transformMap = new HashMap<>();

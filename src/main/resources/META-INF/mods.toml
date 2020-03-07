@@ -3,7 +3,7 @@ loaderVersion="[28,)" #mandatory (26 is current forge version)
 issueTrackerURL="https://github.com/Alex-the-666/Citadel/issues" #optional
 [[mods]] #mandatory
 modId="citadel" #mandatory
-version="1.0.3" #mandatory
+version="1.0.4" #mandatory
 displayName="Citadel" #mandatory
 displayURL="https://github.com/Alex-the-666/Citadel" #optional
 logoFile="citadel.png" #optional
@@ -25,7 +25,6 @@ Code used from LLibrary with permission.
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
-# Here's another dependency
 [[dependencies.citadel]]
     modId="minecraft"
     mandatory=true
