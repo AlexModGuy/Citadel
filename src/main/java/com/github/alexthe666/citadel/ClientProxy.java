@@ -35,7 +35,7 @@ public class ClientProxy extends ServerProxy {
 
     @SubscribeEvent
     public void playerRender(RenderPlayerEvent.Post event) {
-        String username = event.getEntityPlayer().getName().getUnformattedComponentText();
+        String username = event.getPlayer().getName().getUnformattedComponentText();
         if(Citadel.PATREONS.contains(username)) {
             GlStateManager.disableCull();
             float tick = event.getEntity().ticksExisted - 1 + event.getPartialRenderTick();
@@ -47,12 +47,12 @@ public class ClientProxy extends ServerProxy {
             GlStateManager.rotatef(rotation, 0, 1, 0);
             GlStateManager.translatef(0, event.getEntity().getHeight() + bob, event.getEntity().getWidth() + 1.75F + bob * 5);
             GlStateManager.pushMatrix();
-            event.getRenderer().bindTexture(CITADEL_TEXTURE);
+            event.getRenderer().getRenderManager().textureManager.bindTexture(CITADEL_TEXTURE);
             GlStateManager.rotatef(rotation * 10, 0, 1, 0);
             GlStateManager.rotatef(75, 1, 0, 0);
             GlStateManager.scalef(scale, scale, scale);
             GlStateManager.rotatef(90, 1, 0, 0);
-            CITADEL_MODEL.render(event.getEntityLiving(), 0, 0, event.getPartialRenderTick(), 0, 0, 0.0625F);
+            CITADEL_MODEL.func_78088_a(event.getEntityLiving(), 0, 0, event.getPartialRenderTick(), 0, 0, 0.0625F);
             GlStateManager.popMatrix();
             GlStateManager.pushMatrix();
 
@@ -63,7 +63,7 @@ public class ClientProxy extends ServerProxy {
             GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, 240.0F, 0.0F);
             GlStateManager.enableLighting();
 
-            event.getRenderer().bindTexture(CITADEL_GLOW_TEXTURE);
+            event.getRenderer().getRenderManager().textureManager.bindTexture(CITADEL_GLOW_TEXTURE);
             GlStateManager.rotatef(rotation * 10, 0, 1, 0);
             GlStateManager.rotatef(75, 1, 0, 0);
             GlStateManager.scalef(scale, scale, scale);

@@ -1,24 +1,25 @@
 package com.github.alexthe666.citadel.client.model.container;
 
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.Vector3d;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import javax.vecmath.*;
 import java.util.Stack;
 
 @OnlyIn(Dist.CLIENT)
 public class TabulaMatrix {
-    public Stack<Matrix4d> matrixStack;
+    public Stack<Matrix4f> matrixStack;
 
     public TabulaMatrix() {
         this.matrixStack = new Stack<>();
-        Matrix4d matrix = new Matrix4d();
+        Matrix4f matrix = new Matrix4f();
         matrix.setIdentity();
         this.matrixStack.push(matrix);
     }
 
     public void push() {
-        this.matrixStack.push(new Matrix4d(this.matrixStack.peek()));
+        this.matrixStack.push(new Matrix4f(this.matrixStack.peek()));
     }
 
     public void pop() {
@@ -32,100 +33,90 @@ public class TabulaMatrix {
         this.matrixStack.pop();
     }
 
-    public void translate(double x, double y, double z) {
-        Matrix4d matrix = this.matrixStack.peek();
-        Matrix4d translation = new Matrix4d();
+    public void translate(float x, float y, float z) {
+        Matrix4f matrix = this.matrixStack.peek();
+        Matrix4f translation = new Matrix4f();
         translation.setIdentity();
-        translation.setTranslation(new Vector3d(x, y, z));
+        translation.setTranslation(x, y, z);
         matrix.mul(translation);
     }
 
+    public void translate(double x, double y, double z) {
+        translate((float)x, (float)y, (float)z);
+    }
+
     public void rotate(double angle, double x, double y, double z) {
-        Matrix4d matrix = this.matrixStack.peek();
-        Matrix4d rotation = new Matrix4d();
+        Matrix4f matrix = this.matrixStack.peek();
+        Matrix4f rotation = new Matrix4f();
         rotation.setIdentity();
-        rotation.setRotation(new AxisAngle4d(x, y, z, angle * (Math.PI / 180)));
+        //TODO
+        //        rotation.set(new Matrix4f(x, y, z, (float)(angle * (Math.PI / 180F))));
+        rotation.set(new Matrix4f());
         matrix.mul(rotation);
     }
 
-    public void rotate(Quat4f qaut) {
-        Matrix4d matrix = this.matrixStack.peek();
-        Matrix4d rotation = new Matrix4d();
+    public void rotate(float angle, float x, float y, float z) {
+        rotate((float)angle, (float)x, (float)y, (float)z);
+    }
+
+    public void rotate(Matrix4f qaut) {
+        Matrix4f matrix = this.matrixStack.peek();
+        Matrix4f rotation = new Matrix4f();
         rotation.set(qaut);
         matrix.mul(rotation);
     }
 
-    public void rotate(Quat4d quat) {
-        Matrix4d matrix = this.matrixStack.peek();
-        Matrix4d rotation = new Matrix4d();
-        rotation.set(quat);
-        matrix.mul(rotation);
+    public void scale(float x, float y, float z) {
+        Matrix4f matrix = this.matrixStack.peek();
+        Matrix4f scale = new Matrix4f();
+        matrix.mul(scale.makeScale(x, y, z));
     }
 
     public void scale(double x, double y, double z) {
-        Matrix4d matrix = this.matrixStack.peek();
-        Matrix4d scale = new Matrix4d();
-        scale.m00 = x;
-        scale.m11 = y;
-        scale.m22 = z;
-        scale.m33 = 1;
-        matrix.mul(scale);
-    }
-
-    public void transform(Point3f point) {
-        Matrix4d matrix = this.matrixStack.peek();
-        matrix.transform(point);
+        scale((float)x, (float)y, (float)z);
     }
 
     public void transform(Vector3f point) {
-        Matrix4d matrix = this.matrixStack.peek();
-        matrix.transform(point);
+        Matrix4f matrix = this.matrixStack.peek();
+        matrix.translate(point);
     }
 
-    public Point3f getTranslation() {
-        Matrix4d matrix = this.matrixStack.peek();
-        Point3f translation = new Point3f();
-        matrix.transform(translation);
+    public Vector3f getTranslation() {
+        Matrix4f matrix = this.matrixStack.peek();
+        Vector3f translation = new Vector3f();
+        matrix.translate(translation);
         return translation;
     }
 
-    public Quat4f getRotation() {
-        Matrix4d matrix = this.matrixStack.peek();
-        Quat4f rotation = new Quat4f();
-        matrix.get(rotation);
-        return rotation;
+    public Matrix4f getRotation() {
+        Matrix4f matrix = this.matrixStack.peek();
+        return matrix.copy();
     }
 
     public Vector3f getScale() {
-        Matrix4d matrix = this.matrixStack.peek();
-        float x = (float) Math.sqrt(matrix.m00 * matrix.m00 + matrix.m10 * matrix.m10 + matrix.m20 * matrix.m20);
+        Matrix4f matrix = this.matrixStack.peek();
+        /*float x = (float) Math.sqrt(matrix.m00 * matrix.m00 + matrix.m10 * matrix.m10 + matrix.m20 * matrix.m20);
         float y = (float) Math.sqrt(matrix.m01 * matrix.m01 + matrix.m11 * matrix.m11 + matrix.m21 * matrix.m21);
         float z = (float) Math.sqrt(matrix.m02 * matrix.m02 + matrix.m12 * matrix.m12 + matrix.m22 * matrix.m22);
         return new Vector3f(x, y, z);
+         */
+        return new Vector3f(1.0F, 1.0F, 1.0F);
     }
 
     public void multiply(TabulaMatrix matrix) {
         this.matrixStack.peek().mul(matrix.matrixStack.peek());
     }
 
-    public void multiply(Matrix4d matrix) {
-        this.matrixStack.peek().mul(matrix);
-    }
-
     public void multiply(Matrix4f matrix) {
-        this.matrixStack.peek().mul(new Matrix4d(matrix));
+        this.matrixStack.peek().mul(matrix);
     }
 
     public void add(TabulaMatrix matrix) {
         this.matrixStack.peek().add(matrix.matrixStack.peek());
     }
 
-    public void add(Matrix4d matrix) {
-        this.matrixStack.peek().add(matrix);
-    }
-
     public void add(Matrix4f matrix) {
-        this.matrixStack.peek().add(new Matrix4d(matrix));
+        this.matrixStack.peek().add(new Matrix4f(matrix));
     }
 
     public void invert() {

@@ -5,8 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.client.renderer.model.ModelBox;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -18,7 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * @since 1.0.0
  */
 @OnlyIn(Dist.CLIENT)
-public class AdvancedRendererModel extends RendererModel {
+public class AdvancedModelRenderer extends ModelRenderer {
     public float defaultRotationX, defaultRotationY, defaultRotationZ;
     public float defaultOffsetX, defaultOffsetY, defaultOffsetZ;
     public float defaultPositionX, defaultPositionY, defaultPositionZ;
@@ -26,7 +25,7 @@ public class AdvancedRendererModel extends RendererModel {
     public int textureOffsetX, textureOffsetY;
     public boolean scaleChildren;
     private AdvancedEntityModel model;
-    private AdvancedRendererModel parent;
+    private AdvancedModelRenderer parent;
     private int displayList;
     private boolean compiled;
 
@@ -44,7 +43,7 @@ public class AdvancedRendererModel extends RendererModel {
         this.setTextureOffset(textureOffsetX, textureOffsetY);
     }
 
-    public RendererModel addBox(String partName, float offX, float offY, float offZ, int width, int height, int depth) {
+    public ModelRenderer addBox(String partName, float offX, float offY, float offZ, int width, int height, int depth) {
         partName = this.boxName + "." + partName;
         TextureOffset textureoffset = this.model.getTextureOffset(partName);
         this.setTextureOffset(textureoffset.textureOffsetX, textureoffset.textureOffsetY);
@@ -53,13 +52,13 @@ public class AdvancedRendererModel extends RendererModel {
     }
 
     @Override
-    public RendererModel addBox(float offX, float offY, float offZ, int width, int height, int depth) {
+    public ModelRenderer addBox(float offX, float offY, float offZ, int width, int height, int depth) {
         this.cubeList.add(new ModelBox(this, this.textureOffsetX, this.textureOffsetY, offX, offY, offZ, width, height, depth, 0.0F));
         return this;
     }
 
     @Override
-    public RendererModel addBox(float offX, float offY, float offZ, int width, int height, int depth, boolean mirrored) {
+    public ModelRenderer addBox(float offX, float offY, float offZ, int width, int height, int depth, boolean mirrored) {
         this.cubeList.add(new ModelBox(this, this.textureOffsetX, this.textureOffsetY, offX, offY, offZ, width, height, depth, 0.0F, mirrored));
         return this;
     }
@@ -83,7 +82,7 @@ public class AdvancedRendererModel extends RendererModel {
     }
 
     /**
-     * Sets the scale for this AdvancedRendererModel to be rendered at. (Performs a call to GLStateManager.scale()).
+     * Sets the scale for this AdvancedModelRenderer to be rendered at. (Performs a call to GLStateManager.scale()).
      *
      * @param scaleX the x scale
      * @param scaleY the y scale
@@ -143,10 +142,10 @@ public class AdvancedRendererModel extends RendererModel {
     }
 
     @Override
-    public void addChild(RendererModel child) {
+    public void addChild(ModelRenderer child) {
         super.addChild(child);
-        if (child instanceof AdvancedRendererModel) {
-            AdvancedRendererModel advancedChild = (AdvancedRendererModel) child;
+        if (child instanceof AdvancedModelRenderer) {
+            AdvancedModelRenderer advancedChild = (AdvancedModelRenderer) child;
             advancedChild.setParent(this);
         }
     }
@@ -154,7 +153,7 @@ public class AdvancedRendererModel extends RendererModel {
     /**
      * @return the parent of this box
      */
-    public AdvancedRendererModel getParent() {
+    public AdvancedModelRenderer getParent() {
         return this.parent;
     }
 
@@ -163,7 +162,7 @@ public class AdvancedRendererModel extends RendererModel {
      *
      * @param parent the new parent
      */
-    public void setParent(AdvancedRendererModel parent) {
+    public void setParent(AdvancedModelRenderer parent) {
         this.parent = parent;
     }
 
@@ -230,7 +229,7 @@ public class AdvancedRendererModel extends RendererModel {
                     }
                 }
                 if (this.childModels != null) {
-                    for (RendererModel childModel : this.childModels) {
+                    for (ModelRenderer childModel : this.childModels) {
                         childModel.render(scale);
                     }
                 }
@@ -326,13 +325,13 @@ public class AdvancedRendererModel extends RendererModel {
     }
 
     @Override
-    public AdvancedRendererModel setTextureOffset(int textureOffsetX, int textureOffsetY) {
+    public AdvancedModelRenderer setTextureOffset(int textureOffsetX, int textureOffsetY) {
         this.textureOffsetX = textureOffsetX;
         this.textureOffsetY = textureOffsetY;
         return this;
     }
 
-    public void transitionTo(AdvancedRendererModel to, float timer, float maxTime) {
+    public void transitionTo(AdvancedModelRenderer to, float timer, float maxTime) {
         this.rotateAngleX += ((to.rotateAngleX - this.rotateAngleX) / maxTime) * timer;
         this.rotateAngleY += ((to.rotateAngleY - this.rotateAngleY) / maxTime) * timer;
         this.rotateAngleZ += ((to.rotateAngleZ - this.rotateAngleZ) / maxTime) * timer;

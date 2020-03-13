@@ -1,25 +1,20 @@
 package com.github.alexthe666.citadel.client.model.container;
 
+import com.github.alexthe666.citadel.math.Point2f;
+import com.github.alexthe666.citadel.math.Point2i;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
-
 import javax.annotation.Nullable;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point2i;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -32,11 +27,11 @@ import java.util.function.Function;
 @OnlyIn(Dist.CLIENT)
 public class VanillaTabulaModel implements IUnbakedModel {
     private TabulaModelContainer model;
-    private ResourceLocation particle;
-    private ImmutableList<ResourceLocation> textures;
-    private ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms;
+    private Material particle;
+    private Collection<Material> textures;
+    private ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms;
 
-    public VanillaTabulaModel(TabulaModelContainer model, ResourceLocation particle, ImmutableList<ResourceLocation> textures, ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms) {
+    public VanillaTabulaModel(TabulaModelContainer model, Material particle, ImmutableList<Material> textures, ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms) {
         this.model = model;
         this.particle = particle;
         this.textures = textures;
@@ -48,9 +43,16 @@ public class VanillaTabulaModel implements IUnbakedModel {
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors) {
+    public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         return this.textures;
     }
+
+    @Nullable
+    @Override
+    public IBakedModel bakeModel(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> function, IModelTransform iModelTransform, ResourceLocation resourceLocation) {
+        return null;
+    }
+
 
     private void build(TabulaMatrix mat, ImmutableList.Builder<BakedQuad> builder, VertexFormat format, List<TabulaCubeContainer> cubeContainerList, TextureAtlasSprite sprite) {
         for (TabulaCubeContainer cube : cubeContainerList) {
@@ -90,14 +92,14 @@ public class VanillaTabulaModel implements IUnbakedModel {
                 x1 = x0;
                 x0 = x1_;
             }
-            Point3f vertex000 = new Point3f(x0, y0, z0);
-            Point3f vertex100 = new Point3f(x1, y0, z0);
-            Point3f vertex110 = new Point3f(x1, y1, z0);
-            Point3f vertex010 = new Point3f(x0, y1, z0);
-            Point3f vertex001 = new Point3f(x0, y0, z1);
-            Point3f vertex101 = new Point3f(x1, y0, z1);
-            Point3f vertex111 = new Point3f(x1, y1, z1);
-            Point3f vertex011 = new Point3f(x0, y1, z1);
+            Vector3f vertex000 = new Vector3f(x0, y0, z0);
+            Vector3f vertex100 = new Vector3f(x1, y0, z0);
+            Vector3f vertex110 = new Vector3f(x1, y1, z0);
+            Vector3f vertex010 = new Vector3f(x0, y1, z0);
+            Vector3f vertex001 = new Vector3f(x0, y0, z1);
+            Vector3f vertex101 = new Vector3f(x1, y0, z1);
+            Vector3f vertex111 = new Vector3f(x1, y1, z1);
+            Vector3f vertex011 = new Vector3f(x0, y1, z1);
             mat.transform(vertex000);
             mat.transform(vertex100);
             mat.transform(vertex110);
@@ -147,14 +149,14 @@ public class VanillaTabulaModel implements IUnbakedModel {
         return false;
     }
 
-    private void buildQuad(ImmutableList.Builder<BakedQuad> builder, VertexFormat format, boolean isTxMirror, Point3f vert0, Point3f vert1, Point3f vert2, Point3f vert3, Point2i minUV, Point2i maxUV, TextureAtlasSprite sprite, boolean hasTransparency) {
-        Point3f[] vertices = { vert0, vert1, vert2, vert3 };
+    private void buildQuad(ImmutableList.Builder<BakedQuad> builder, VertexFormat format, boolean isTxMirror, Vector3f vert0, Vector3f vert1, Vector3f vert2, Vector3f vert3, Point2i minUV, Point2i maxUV, TextureAtlasSprite sprite, boolean hasTransparency) {
+        Vector3f[] vertices = { vert0, vert1, vert2, vert3 };
         if (this.isQuadOneDimensional(vertices)) {
             return;
         }
         Point2i[] uvs = { new Point2i(maxUV.x, minUV.y), new Point2i(minUV.x, minUV.y), new Point2i(minUV.x, maxUV.y), new Point2i(maxUV.x, maxUV.y) };
         if (isTxMirror) {
-            Point3f[] verticesMirrored = new Point3f[vertices.length];
+            Vector3f[] verticesMirrored = new Vector3f[vertices.length];
             Point2i[] uvsMirrored = new Point2i[vertices.length];
             for (int i = 0, j = vertices.length - 1; i < vertices.length; i++, j--) {
                 verticesMirrored[i] = vertices[j];
@@ -163,12 +165,18 @@ public class VanillaTabulaModel implements IUnbakedModel {
             vertices = verticesMirrored;
             uvs = uvsMirrored;
         }
-        Vector3f v01 = new Vector3f(), v21 = new Vector3f(), normal = new Vector3f();
-        v01.sub(vertices[0], vertices[1]);
-        v21.sub(vertices[2], vertices[1]);
+        Vector3f v01 = new Vector3f();
+        Vector3f v21 = new Vector3f();
+        Vector3f normal = new Vector3f();
+        v01.add(vertices[0]);
+        v01.sub(vertices[1]);
+
+        v21.add(vertices[2]);
+        v21.sub(vertices[1]);
+
         normal.cross(v21, v01);
         normal.normalize();
-        UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
+        UnpackedBakedQuad.Builder quadBuilder = new SimpleBakedModel.Builder(format);
         Direction quadFacing = Direction.getFacingFromVector(normal.x, normal.y, normal.z);
         quadBuilder.setQuadOrientation(quadFacing);
         quadBuilder.setTexture(sprite);
@@ -194,9 +202,9 @@ public class VanillaTabulaModel implements IUnbakedModel {
         }
     }
 
-    private boolean isQuadOneDimensional(Point3f[] vertices) {
+    private boolean isQuadOneDimensional(Vector3f[] vertices) {
         for (int i = 0; i < vertices.length; i++) {
-            Point3f vertex = vertices[i];
+            Vector3f vertex = vertices[i];
             for (int n = i + 1; n < vertices.length; n++) {
                 float epsilon = 1e-4F;
                 if (vertex.epsilonEquals(vertices[n], epsilon)) {
@@ -207,7 +215,7 @@ public class VanillaTabulaModel implements IUnbakedModel {
         return false;
     }
 
-    private void putVertexData(UnpackedBakedQuad.Builder builder, VertexFormat format, Point3f vert, Vector3f normal, Point2f uv) {
+    private void putVertexData(UnpackedBakedQuad.Builder builder, VertexFormat format, Vector3f vert, Vector3f normal, Point2f uv) {
         for (int e = 0; e < format.getElementCount(); e++) {
             switch (format.getElement(e).getUsage()) {
                 case POSITION:
@@ -235,16 +243,10 @@ public class VanillaTabulaModel implements IUnbakedModel {
         TextureAtlasSprite particleSprite = this.particle == null ? spriteA : (TextureAtlasSprite) spriteGetter.apply(this.particle);
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         TabulaMatrix matrix = new TabulaMatrix();
-        matrix.multiply(ModelRotation.X0_Y0.getMatrixVec());
         matrix.translate(0.5F, 1.5F, 0.5F);
         matrix.scale(-0.0625F, -0.0625F, 0.0625F);
         this.build(matrix, builder, format, this.model.getCubes(), spriteA);
         ImmutableList<BakedQuad> leQuads = builder.build();
         return new BakedTabulaModel(leQuads, particleSprite, this.transforms);
-    }
-
-    @Override
-    public IModelState getDefaultState() {
-        return TRSRTransformation.identity();
     }
 }
