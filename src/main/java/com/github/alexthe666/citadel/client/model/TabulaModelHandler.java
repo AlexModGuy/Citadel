@@ -16,7 +16,6 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.PerspectiveMapWrapper;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ import java.util.zip.ZipInputStream;
  * @since 1.0.0
  */
 @OnlyIn(Dist.CLIENT)
-public enum TabulaModelHandler implements ICustomModelLoader, JsonDeserializationContext {
+public enum TabulaModelHandler implements JsonDeserializationContext {
     INSTANCE;
 
     private Gson gson = new GsonBuilder().registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer()).registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer()).create();
@@ -156,7 +155,7 @@ public enum TabulaModelHandler implements ICustomModelLoader, JsonDeserializatio
         return retCubes;
     }
 
-    @Override
+  /*  @Override
     public void onResourceManagerReload(IResourceManager manager) {
         this.manager = manager;
     }
@@ -190,6 +189,8 @@ public enum TabulaModelHandler implements ICustomModelLoader, JsonDeserializatio
         String particle = TabulaModelBlock.textures.get("particle");
         return new VanillaTabulaModel(modelJson, particle != null ? new ResourceLocation(particle) : null, builder.build(), PerspectiveMapWrapper.getTransforms(TabulaModelBlock.getAllTransforms()));
     }
+
+   */
 
     private InputStream getModelJsonStream(String name, InputStream file) throws IOException {
         ZipInputStream zip = new ZipInputStream(file);

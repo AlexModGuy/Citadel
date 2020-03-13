@@ -4,7 +4,11 @@ import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.*;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -37,12 +41,13 @@ public class ClientProxy extends ServerProxy {
     public void playerRender(RenderPlayerEvent.Post event) {
         String username = event.getPlayer().getName().getUnformattedComponentText();
         if(Citadel.PATREONS.contains(username)) {
+            IVertexBuilder ivertexbuilder1 = event.getBuffers().getBuffer(RenderType.getTranslucent());
             GlStateManager.disableCull();
             float tick = event.getEntity().ticksExisted - 1 + event.getPartialRenderTick();
             float bob = (float) (Math.sin(tick * 0.1F) * 1 * 0.05F - 1 * 0.05F);
             float scale = 0.4F;
             GlStateManager.pushMatrix();
-            GlStateManager.translated(event.getX(), event.getY(), event.getZ());
+            GlStateManager.translated(event.getPlayer().getPosX(), event.getPlayer().getPosY(), event.getPlayer().getPosZ());
             float rotation = MathHelper.wrapDegrees(tick % 360);
             GlStateManager.rotatef(rotation, 0, 1, 0);
             GlStateManager.translatef(0, event.getEntity().getHeight() + bob, event.getEntity().getWidth() + 1.75F + bob * 5);
@@ -52,15 +57,14 @@ public class ClientProxy extends ServerProxy {
             GlStateManager.rotatef(75, 1, 0, 0);
             GlStateManager.scalef(scale, scale, scale);
             GlStateManager.rotatef(90, 1, 0, 0);
-            CITADEL_MODEL.func_78088_a(event.getEntityLiving(), 0, 0, event.getPartialRenderTick(), 0, 0, 0.0625F);
+            CITADEL_MODEL.render(event.getMatrixStack(), ivertexbuilder1, event.getLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.15F);
             GlStateManager.popMatrix();
             GlStateManager.pushMatrix();
 
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
             GlStateManager.disableLighting();
             GlStateManager.depthFunc(514);
-            GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, 240.0F, 0.0F);
             GlStateManager.enableLighting();
 
             event.getRenderer().getRenderManager().textureManager.bindTexture(CITADEL_GLOW_TEXTURE);
@@ -68,8 +72,7 @@ public class ClientProxy extends ServerProxy {
             GlStateManager.rotatef(75, 1, 0, 0);
             GlStateManager.scalef(scale, scale, scale);
             GlStateManager.rotatef(90, 1, 0, 0);
-            CITADEL_MODEL.render(event.getEntityLiving(), 0, 0, event.getPartialRenderTick(), 0, 0, 0.0625F);
-
+            CITADEL_MODEL.render(event.getMatrixStack(), ivertexbuilder1, 240, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.15F);
             GlStateManager.disableBlend();
             GlStateManager.depthFunc(515);
 

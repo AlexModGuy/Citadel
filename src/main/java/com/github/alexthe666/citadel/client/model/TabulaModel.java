@@ -3,7 +3,9 @@ package com.github.alexthe666.citadel.client.model;
 import com.github.alexthe666.citadel.client.model.container.TabulaCubeContainer;
 import com.github.alexthe666.citadel.client.model.container.TabulaCubeGroupContainer;
 import com.github.alexthe666.citadel.client.model.container.TabulaModelContainer;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -19,11 +21,11 @@ import java.util.Map;
  */
 @OnlyIn(Dist.CLIENT)
 public class TabulaModel extends AdvancedEntityModel {
-    protected Map<String, AdvancedRendererModel> cubes = new HashMap<>();
-    protected List<AdvancedRendererModel> rootBoxes = new ArrayList<>();
+    protected Map<String, AdvancedModelBox> cubes = new HashMap<>();
+    protected List<AdvancedModelBox> rootBoxes = new ArrayList<>();
     protected ITabulaModelAnimator tabulaAnimator;
     public ModelAnimator llibAnimator;
-    protected Map<String, AdvancedRendererModel> identifierMap = new HashMap<>();
+    protected Map<String, AdvancedModelBox> identifierMap = new HashMap<>();
     protected double[] scale;
 
     public TabulaModel(TabulaModelContainer container, ITabulaModelAnimator tabulaAnimator) {
@@ -50,8 +52,8 @@ public class TabulaModel extends AdvancedEntityModel {
         container.getCubeGroups().forEach(this::parseCubeGroup);
     }
 
-    private void parseCube(TabulaCubeContainer cube, AdvancedRendererModel parent) {
-        AdvancedRendererModel box = this.createBox(cube);
+    private void parseCube(TabulaCubeContainer cube, AdvancedModelBox parent) {
+        AdvancedModelBox box = this.createBox(cube);
         this.cubes.put(cube.getName(), box);
         this.identifierMap.put(cube.getIdentifier(), box);
         if (parent != null) {
@@ -64,13 +66,13 @@ public class TabulaModel extends AdvancedEntityModel {
         }
     }
 
-    private AdvancedRendererModel createBox(TabulaCubeContainer cube) {
+    private AdvancedModelBox createBox(TabulaCubeContainer cube) {
         int[] textureOffset = cube.getTextureOffset();
         double[] position = cube.getPosition();
         double[] rotation = cube.getRotation();
         double[] offset = cube.getOffset();
         int[] dimensions = cube.getDimensions();
-        AdvancedRendererModel box = new AdvancedRendererModel(this, cube.getName());
+        AdvancedModelBox box = new AdvancedModelBox(this, cube.getName());
         box.setTextureOffset(textureOffset[0], textureOffset[1]);
         box.mirror = cube.isTextureMirrorEnabled();
         box.setRotationPoint((float) position[0], (float) position[1], (float) position[2]);
@@ -82,32 +84,26 @@ public class TabulaModel extends AdvancedEntityModel {
     }
 
     @Override
-    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch, float scale) {
-        this.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, rotationYaw, rotationPitch, scale);
-        GlStateManager.pushMatrix();
-        GlStateManager.scaled(this.scale[0], this.scale[1], this.scale[2]);
-        for (AdvancedRendererModel box : this.rootBoxes) {
-            box.render(scale);
-        }
-        GlStateManager.popMatrix();
-    }
-
-    @Override
-    public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch, float scale) {
+    public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
         if (this.tabulaAnimator != null) {
-            this.tabulaAnimator.setRotationAngles(this, entity, limbSwing, limbSwingAmount, ageInTicks, rotationYaw, rotationPitch, scale);
+            this.tabulaAnimator.setRotationAngles(this, entity, limbSwing, limbSwingAmount, ageInTicks, rotationYaw, rotationPitch, 1.0F);
         }
     }
 
-    public AdvancedRendererModel getCube(String name) {
+    public AdvancedModelBox getCube(String name) {
         return this.cubes.get(name);
     }
 
-    public AdvancedRendererModel getCubeByIdentifier(String identifier) {
+    public AdvancedModelBox getCubeByIdentifier(String identifier) {
         return this.identifierMap.get(identifier);
     }
 
-    public Map<String, AdvancedRendererModel> getCubes() {
+    public Map<String, AdvancedModelBox> getCubes() {
         return this.cubes;
+    }
+
+    @Override
+    public Iterable<ModelRenderer> getParts() {
+        return ImmutableList.copyOf(rootBoxes);
     }
 }

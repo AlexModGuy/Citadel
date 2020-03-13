@@ -53,7 +53,7 @@ public class VanillaTabulaModel implements IUnbakedModel {
         return null;
     }
 
-
+/*
     private void build(TabulaMatrix mat, ImmutableList.Builder<BakedQuad> builder, VertexFormat format, List<TabulaCubeContainer> cubeContainerList, TextureAtlasSprite sprite) {
         for (TabulaCubeContainer cube : cubeContainerList) {
             int[] dimensions = cube.getDimensions();
@@ -249,4 +249,6 @@ public class VanillaTabulaModel implements IUnbakedModel {
         ImmutableList<BakedQuad> leQuads = builder.build();
         return new BakedTabulaModel(leQuads, particleSprite, this.transforms);
     }
+
+     */
 }

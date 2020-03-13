@@ -1,8 +1,11 @@
 package com.github.alexthe666.citadel.client.model;
 
 import com.github.alexthe666.citadel.client.model.container.TextureOffset;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.entity.model.SegmentedModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,13 +20,13 @@ import java.util.Map;
  * @since 1.0.0
  */
 @OnlyIn(Dist.CLIENT)
-public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
+public abstract class AdvancedEntityModel<T extends Entity> extends SegmentedModel<T> {
     private float movementScale = 1.0F;
     private final Map<String, TextureOffset> modelTextureMap = Maps.newHashMap();
 
     public void updateDefaultPose() {
-        this.boxList.stream().filter(modelRenderer -> modelRenderer instanceof AdvancedRendererModel).forEach(modelRenderer -> {
-            AdvancedRendererModel advancedRendererModel = (AdvancedRendererModel) modelRenderer;
+        this.getParts().forEach(modelRenderer -> {
+            AdvancedModelBox advancedRendererModel = (AdvancedModelBox) modelRenderer;
             advancedRendererModel.updateDefaultPose();
         });
     }
@@ -40,8 +43,8 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
      * Sets the current pose to the previously set default pose
      */
     public void resetToDefaultPose() {
-        this.boxList.stream().filter(modelRenderer -> modelRenderer instanceof AdvancedRendererModel).forEach(modelRenderer -> {
-            AdvancedRendererModel advancedRendererModel = (AdvancedRendererModel) modelRenderer;
+        this.getParts().forEach(modelRenderer -> {
+            AdvancedModelBox advancedRendererModel = (AdvancedModelBox) modelRenderer;
             advancedRendererModel.resetToDefaultPose();
         });
     }
@@ -54,11 +57,11 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
      * @param rotationDivisor the amount to divide the rotation angles by
      * @param boxes           the boxes to face the given target
      */
-    public void faceTarget(float yaw, float pitch, float rotationDivisor, AdvancedRendererModel... boxes) {
+    public void faceTarget(float yaw, float pitch, float rotationDivisor, AdvancedModelBox... boxes) {
         float actualRotationDivisor = rotationDivisor * boxes.length;
         float yawAmount = yaw / (180.0F / (float) Math.PI) / actualRotationDivisor;
         float pitchAmount = pitch / (180.0F / (float) Math.PI) / actualRotationDivisor;
-        for (AdvancedRendererModel box : boxes) {
+        for (AdvancedModelBox box : boxes) {
             box.rotateAngleY += yawAmount;
             box.rotateAngleX += pitchAmount;
         }
@@ -74,7 +77,7 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
      * @param swing       the swing rotation
      * @param swingAmount the swing amount
      */
-    public void chainSwing(AdvancedRendererModel[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount) {
+    public void chainSwing(AdvancedModelBox[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount) {
         float offset = this.calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; index++) {
             boxes[index].rotateAngleY += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
@@ -91,7 +94,7 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
      * @param swing       the swing rotation
      * @param swingAmount the swing amount
      */
-    public void chainWave(AdvancedRendererModel[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount) {
+    public void chainWave(AdvancedModelBox[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount) {
         float offset = this.calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; index++) {
             boxes[index].rotateAngleX += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
@@ -108,7 +111,7 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
      * @param swing       the swing rotation
      * @param swingAmount the swing amount
      */
-    public void chainFlap(AdvancedRendererModel[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount) {
+    public void chainFlap(AdvancedModelBox[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount) {
         float offset = this.calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; index++) {
             boxes[index].rotateAngleZ += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
@@ -119,7 +122,7 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
         return MathHelper.cos(swing * (speed * this.movementScale) + offset * boxIndex) * swingAmount * (degree * this.movementScale);
     }
 
-    private float calculateChainOffset(double rootOffset, AdvancedRendererModel... boxes) {
+    private float calculateChainOffset(double rootOffset, AdvancedModelBox... boxes) {
         return (float) ((rootOffset * Math.PI) / (2 * boxes.length));
     }
 
@@ -151,7 +154,7 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
      * @param walk       is the walked distance
      * @param walkAmount is the walk speed
      */
-    public void walk(AdvancedRendererModel box, float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount) {
+    public void walk(AdvancedModelBox box, float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount) {
         box.walk(speed, degree, invert, offset, weight, walk, walkAmount);
     }
 
@@ -167,7 +170,7 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
      * @param flap       is the flapped distance
      * @param flapAmount is the flap speed
      */
-    public void flap(AdvancedRendererModel box, float speed, float degree, boolean invert, float offset, float weight, float flap, float flapAmount) {
+    public void flap(AdvancedModelBox box, float speed, float degree, boolean invert, float offset, float weight, float flap, float flapAmount) {
         box.flap(speed, degree, invert, offset, weight, flap, flapAmount);
     }
 
@@ -183,7 +186,7 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
      * @param swing       is the swung distance
      * @param swingAmount is the swing speed
      */
-    public void swing(AdvancedRendererModel box, float speed, float degree, boolean invert, float offset, float weight, float swing, float swingAmount) {
+    public void swing(AdvancedModelBox box, float speed, float degree, boolean invert, float offset, float weight, float swing, float swingAmount) {
         box.swing(speed, degree, invert, offset, weight, swing, swingAmount);
     }
 
@@ -197,7 +200,7 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
      * @param f      is the walked distance;
      * @param f1     is the walk speed.
      */
-    public void bob(AdvancedRendererModel box, float speed, float degree, boolean bounce, float f, float f1) {
+    public void bob(AdvancedModelBox box, float speed, float degree, boolean bounce, float f, float f1) {
         box.bob(speed, degree, bounce, f, f1);
     }
 
@@ -218,39 +221,39 @@ public class AdvancedEntityModel<T extends Entity> extends EntityModel<T> {
         }
     }
 
-    public void setRotateAngle(AdvancedRendererModel model, float x, float y, float z) {
+    public void setRotateAngle(AdvancedModelBox model, float x, float y, float z) {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
 
-    public void rotate(ModelAnimator animator, AdvancedRendererModel model, float x, float y, float z) {
+    public void rotate(ModelAnimator animator, AdvancedModelBox model, float x, float y, float z) {
         animator.rotate(model, (float) Math.toRadians(x), (float) Math.toRadians(y), (float) Math.toRadians(z));
     }
 
-    public void rotateMinus(ModelAnimator animator, AdvancedRendererModel model, float x, float y, float z) {
+    public void rotateMinus(ModelAnimator animator, AdvancedModelBox model, float x, float y, float z) {
         animator.rotate(model, (float) Math.toRadians(x) - model.defaultRotationX, (float) Math.toRadians(y) - model.defaultRotationY, (float) Math.toRadians(z) - model.defaultRotationZ);
     }
 
-    public void progressRotation(AdvancedRendererModel model, float progress, float rotX, float rotY, float rotZ, float divisor) {
+    public void progressRotation(AdvancedModelBox model, float progress, float rotX, float rotY, float rotZ, float divisor) {
         model.rotateAngleX += progress * (rotX - model.defaultRotationX) / divisor;
         model.rotateAngleY += progress * (rotY - model.defaultRotationY) / divisor;
         model.rotateAngleZ += progress * (rotZ - model.defaultRotationZ) / divisor;
     }
 
-    public void progressRotationPrev(AdvancedRendererModel model, float progress, float rotX, float rotY, float rotZ, float divisor) {
+    public void progressRotationPrev(AdvancedModelBox model, float progress, float rotX, float rotY, float rotZ, float divisor) {
         model.rotateAngleX += progress * (rotX) / divisor;
         model.rotateAngleY += progress * (rotY) / divisor;
         model.rotateAngleZ += progress * (rotZ) / divisor;
     }
 
-    public void progressPosition(AdvancedRendererModel model, float progress, float x, float y, float z, float divisor) {
+    public void progressPosition(AdvancedModelBox model, float progress, float x, float y, float z, float divisor) {
         model.rotationPointX += progress * (x - model.defaultPositionX) / divisor;
         model.rotationPointY += progress * (y - model.defaultPositionY) / divisor;
         model.rotationPointZ += progress * (z - model.defaultPositionZ) / divisor;
     }
 
-    public void progressPositionPrev(AdvancedRendererModel model, float progress, float x, float y, float z, float divisor) {
+    public void progressPositionPrev(AdvancedModelBox model, float progress, float x, float y, float z, float divisor) {
         model.rotationPointX += progress * x / divisor;
         model.rotationPointY += progress * y / divisor;
         model.rotationPointZ += progress * z / divisor;
