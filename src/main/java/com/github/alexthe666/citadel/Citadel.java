@@ -4,6 +4,7 @@ import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.github.alexthe666.citadel.web.WebHelper;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -40,6 +41,7 @@ public class Citadel {
             .simpleChannel();
 
     public static List<String> PATREONS = new ArrayList<>();
+    public static final Item DEBUG = new Item(new Item.Properties()).setRegistryName("citadel:debug");
 
     public Citadel() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
