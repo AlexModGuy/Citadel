@@ -11,6 +11,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,9 +25,24 @@ import java.util.Map;
 public abstract class AdvancedEntityModel<T extends Entity> extends SegmentedModel<T> {
     private float movementScale = 1.0F;
     private final Map<String, TextureOffset> modelTextureMap = Maps.newHashMap();
+    protected List<AdvancedModelBox> allParts = new ArrayList<>();
+
+    public AdvancedEntityModel(){
+        super();
+    }
 
     public void updateDefaultPose() {
-        this.getParts().forEach(modelRenderer -> {
+        for(ModelRenderer box : getParts()){
+            if(box instanceof AdvancedModelBox){
+                allParts.add((AdvancedModelBox)box);
+                for(ModelRenderer children : ((AdvancedModelBox)box).childModels){
+                    if(children instanceof AdvancedModelBox){
+                        allParts.add((AdvancedModelBox)children);
+                    }
+                }
+            }
+        }
+        this.getAllParts().forEach(modelRenderer -> {
             AdvancedModelBox advancedRendererModel = (AdvancedModelBox) modelRenderer;
             advancedRendererModel.updateDefaultPose();
         });
@@ -43,7 +60,7 @@ public abstract class AdvancedEntityModel<T extends Entity> extends SegmentedMod
      * Sets the current pose to the previously set default pose
      */
     public void resetToDefaultPose() {
-        this.getParts().forEach(modelRenderer -> {
+        this.getAllParts().forEach(modelRenderer -> {
             AdvancedModelBox advancedRendererModel = (AdvancedModelBox) modelRenderer;
             advancedRendererModel.resetToDefaultPose();
         });
@@ -257,5 +274,9 @@ public abstract class AdvancedEntityModel<T extends Entity> extends SegmentedMod
         model.rotationPointX += progress * x / divisor;
         model.rotationPointY += progress * y / divisor;
         model.rotationPointZ += progress * z / divisor;
+    }
+
+    public Iterable<AdvancedModelBox> getAllParts(){
+        return allParts;
     }
 }

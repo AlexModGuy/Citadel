@@ -34,7 +34,7 @@ public class AdvancedModelBox extends ModelRenderer {
     private int displayList;
     private boolean compiled;
     public ObjectList<TabulaModelRenderUtils.ModelBox> cubeList;
-    private ObjectList<ModelRenderer> childModels;
+    public ObjectList<ModelRenderer> childModels;
     private float textureWidth;
     private float textureHeight;
     private float offsetX;
