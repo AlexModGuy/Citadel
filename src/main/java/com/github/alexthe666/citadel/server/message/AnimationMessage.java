@@ -24,8 +24,8 @@ public class AnimationMessage {
         }
 
         public static void handle(AnimationMessage message, Supplier<NetworkEvent.Context> context) {
-            //((NetworkEvent.Context)context.get()).setPacketHandled(true);
             Citadel.PROXY.handleAnimationPacket(message.entityID, message.index);
+            context.get().setPacketHandled(true);
         }
     }
 

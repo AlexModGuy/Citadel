@@ -107,4 +107,9 @@ public class TabulaModel extends AdvancedEntityModel {
     public Iterable<ModelRenderer> getParts() {
         return ImmutableList.copyOf(rootBoxes);
     }
+
+    @Override
+    public Iterable<AdvancedModelBox> getAllParts() {
+        return ImmutableList.copyOf(cubes.values());
+    }
 }

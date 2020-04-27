@@ -33,8 +33,9 @@ public class Citadel {
     public static final Logger LOGGER = LogManager.getLogger();
     public static ServerProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     private static final String PROTOCOL_VERSION = Integer.toString(1);
+    private static final ResourceLocation PACKET_NETWORK_NAME = new ResourceLocation("citadel:main_channel");
     public static final SimpleChannel NETWORK_WRAPPER = NetworkRegistry.ChannelBuilder
-            .named(new ResourceLocation("citadel", "main_channel"))
+            .named(PACKET_NETWORK_NAME)
             .clientAcceptedVersions(PROTOCOL_VERSION::equals)
             .serverAcceptedVersions(PROTOCOL_VERSION::equals)
             .networkProtocolVersion(() -> PROTOCOL_VERSION)

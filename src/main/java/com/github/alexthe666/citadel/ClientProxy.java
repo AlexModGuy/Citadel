@@ -60,7 +60,7 @@ public class ClientProxy extends ServerProxy {
             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(75));
             matrixStackIn.scale(scale, scale, scale);
             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90));
-            CITADEL_MODEL.render(event.getMatrixStack(), textureBuilder, event.getLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            CITADEL_MODEL.render(matrixStackIn, textureBuilder, event.getLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
             matrixStackIn.pop();
             matrixStackIn.pop();
         }

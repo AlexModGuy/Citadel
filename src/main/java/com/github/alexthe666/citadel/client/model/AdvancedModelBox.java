@@ -43,8 +43,8 @@ public class AdvancedModelBox extends ModelRenderer {
 
     public AdvancedModelBox(AdvancedEntityModel model, String name) {
         super(model);
-        this.textureWidth = 64.0F;
-        this.textureHeight = 32.0F;
+        this.textureWidth = model.textureWidth;
+        this.textureHeight = model.textureHeight;
         this.model = model;
         this.cubeList = new ObjectArrayList();
         this.childModels = new ObjectArrayList();
@@ -52,16 +52,16 @@ public class AdvancedModelBox extends ModelRenderer {
 
     public AdvancedModelBox(AdvancedEntityModel model) {
         this(model, null);
-        this.textureWidth = 64.0F;
-        this.textureHeight = 32.0F;
+        this.textureWidth = model.textureWidth;
+        this.textureHeight = model.textureHeight;
         this.cubeList = new ObjectArrayList();
         this.childModels = new ObjectArrayList();
     }
 
     public AdvancedModelBox(AdvancedEntityModel model, int textureOffsetX, int textureOffsetY) {
         this(model);
-        this.textureWidth = 64.0F;
-        this.textureHeight = 32.0F;
+        this.textureWidth = model.textureWidth;
+        this.textureHeight = model.textureHeight;
         this.setTextureOffset(textureOffsetX, textureOffsetY);
         this.cubeList = new ObjectArrayList();
         this.childModels = new ObjectArrayList();
