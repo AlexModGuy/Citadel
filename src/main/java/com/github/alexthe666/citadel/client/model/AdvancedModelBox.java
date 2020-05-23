@@ -37,9 +37,10 @@ public class AdvancedModelBox extends ModelRenderer {
     public ObjectList<ModelRenderer> childModels;
     private float textureWidth;
     private float textureHeight;
-    private float offsetX;
-    private float offsetY;
-    private float offsetZ;
+    public float offsetX;
+    public float offsetY;
+    public float offsetZ;
+    public String boxName = "";
 
     public AdvancedModelBox(AdvancedEntityModel model, String name) {
         super(model);
@@ -48,6 +49,7 @@ public class AdvancedModelBox extends ModelRenderer {
         this.model = model;
         this.cubeList = new ObjectArrayList();
         this.childModels = new ObjectArrayList();
+        this.boxName = name;
     }
 
     public AdvancedModelBox(AdvancedEntityModel model) {
