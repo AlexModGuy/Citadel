@@ -228,6 +228,23 @@ public class AdvancedModelBox extends ModelRenderer {
         //this.render(scale);
     }
 
+    public void translateRotate(MatrixStack matrixStackIn) {
+        matrixStackIn.translate((double)(this.rotationPointX / 16.0F), (double)(this.rotationPointY / 16.0F), (double)(this.rotationPointZ / 16.0F));
+        if (this.rotateAngleZ != 0.0F) {
+            matrixStackIn.rotate(Vector3f.ZP.rotation(this.rotateAngleZ));
+        }
+
+        if (this.rotateAngleY != 0.0F) {
+            matrixStackIn.rotate(Vector3f.YP.rotation(this.rotateAngleY));
+        }
+
+        if (this.rotateAngleX != 0.0F) {
+            matrixStackIn.rotate(Vector3f.XP.rotation(this.rotateAngleX));
+        }
+
+        matrixStackIn.scale(this.scaleX, this.scaleY, this.scaleZ);
+    }
+
     @Override
     public void render(MatrixStack p_228309_1_, IVertexBuilder p_228309_2_, int p_228309_3_, int p_228309_4_, float p_228309_5_, float p_228309_6_, float p_228309_7_, float p_228309_8_) {
         if (this.showModel) {
@@ -236,7 +253,9 @@ public class AdvancedModelBox extends ModelRenderer {
                 this.translateRotate(p_228309_1_);
                 this.doRender(p_228309_1_.getLast(), p_228309_2_, p_228309_3_, p_228309_4_, p_228309_5_, p_228309_6_, p_228309_7_, p_228309_8_);
                 ObjectListIterator var9 = this.childModels.iterator();
-
+                if(!scaleChildren){
+                    p_228309_1_.scale(1F / Math.max(this.scaleX, 0.0001F), 1F / Math.max(this.scaleY, 0.0001F) , 1F / Math.max(this.scaleZ, 0.0001F));
+                }
                 while (var9.hasNext()) {
                     ModelRenderer lvt_10_1_ = (ModelRenderer) var9.next();
                     lvt_10_1_.render(p_228309_1_, p_228309_2_, p_228309_3_, p_228309_4_, p_228309_5_, p_228309_6_, p_228309_7_, p_228309_8_);

@@ -32,7 +32,7 @@ import java.io.IOException;
 public class ClientProxy extends ServerProxy {
     private static final ResourceLocation CITADEL_TEXTURE = new ResourceLocation("citadel", "textures/citadel_model.png");
     private static final ResourceLocation CITADEL_GLOW_TEXTURE = new ResourceLocation("citadel", "textures/citadel_model_glow.png");
-    private static SegmentedModel CITADEL_MODEL;
+    private static TabulaModel CITADEL_MODEL;
 
     public void onPreInit(){
         try {
@@ -60,6 +60,7 @@ public class ClientProxy extends ServerProxy {
             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(75));
             matrixStackIn.scale(scale, scale, scale);
             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90));
+            CITADEL_MODEL.resetToDefaultPose();
             CITADEL_MODEL.render(matrixStackIn, textureBuilder, event.getLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
             matrixStackIn.pop();
             matrixStackIn.pop();
