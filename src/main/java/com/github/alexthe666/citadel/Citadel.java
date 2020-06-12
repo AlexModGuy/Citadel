@@ -1,5 +1,7 @@
 package com.github.alexthe666.citadel;
 
+import com.github.alexthe666.citadel.server.CitadelServerEvents;
+import com.github.alexthe666.citadel.server.entity.IEntityData;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.github.alexthe666.citadel.web.WebHelper;
@@ -7,6 +9,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -40,7 +44,8 @@ public class Citadel {
             .serverAcceptedVersions(PROTOCOL_VERSION::equals)
             .networkProtocolVersion(() -> PROTOCOL_VERSION)
             .simpleChannel();
-
+    @CapabilityInject(IEntityData.class)
+    public static Capability<IEntityData> ENTITY_DATA_CAPABILITY;
     public static List<String> PATREONS = new ArrayList<>();
     public static final Item DEBUG = new Item(new Item.Properties()).setRegistryName("citadel:debug");
 
@@ -51,6 +56,7 @@ public class Citadel {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(PROXY);
+        MinecraftForge.EVENT_BUS.register(new CitadelServerEvents());
     }
 
     private void setup(final FMLCommonSetupEvent event) {

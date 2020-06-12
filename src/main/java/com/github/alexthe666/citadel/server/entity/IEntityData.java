@@ -17,6 +17,10 @@ public interface IEntityData<T extends Entity> {
      */
     void init(T entity, World world);
 
+    default void init(T entity, World world, boolean init){
+        init(entity, world);
+    }
+
     /**
      * Saves data to an entity
      *
