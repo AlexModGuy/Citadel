@@ -3,7 +3,6 @@ package com.github.alexthe666.citadel;
 import com.github.alexthe666.citadel.server.entity.EntityPropertiesHandler;
 import com.github.alexthe666.citadel.server.entity.PropertiesTracker;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
@@ -26,7 +25,7 @@ public class ServerProxy {
 
     @SubscribeEvent
     public static void onItemsRegistry(RegistryEvent.Register<Item> registry) {
-        registry.getRegistry().register(Citadel.DEBUG);
+        registry.getRegistry().register(Citadel.DEBUG_ITEM);
     }
 
     @SubscribeEvent

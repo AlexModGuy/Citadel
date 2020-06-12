@@ -2,6 +2,7 @@ package com.github.alexthe666.citadel.server;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.entity.*;
+import com.github.alexthe666.citadel.server.entity.implementation.CitadelEntityProperties;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -13,6 +14,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -22,7 +24,10 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,6 +37,40 @@ import java.util.stream.Collectors;
 
 public class CitadelServerEvents {
 
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        event.addCapability(new ResourceLocation("citadel", "extended_entity_data_citadel"), new ICapabilitySerializable() {
+            @Override
+            public INBT serializeNBT() {
+                Capability<IEntityData> capability = Citadel.ENTITY_DATA_CAPABILITY;
+                IEntityData instance = capability.getDefaultInstance();
+                instance.init(event.getObject(), event.getObject().getEntityWorld(), false);
+                return capability.getStorage().writeNBT(capability, instance, null);
+            }
+
+            @Override
+            public void deserializeNBT(INBT nbt) {
+                Capability<IEntityData> capability = Citadel.ENTITY_DATA_CAPABILITY;
+                IEntityData instance = capability.getDefaultInstance();
+                instance.init(event.getObject(), event.getObject().getEntityWorld(), true);
+                capability.getStorage().readNBT(capability, instance, null, nbt);
+            }
+
+            private final LazyOptional<IEntityData> holder = LazyOptional.of(() -> new EntityDataCapabilityImplementation());
+
+            @Override
+            public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final @Nullable Direction side){
+                if (capability == Citadel.ENTITY_DATA_CAPABILITY) {
+                    return Citadel.ENTITY_DATA_CAPABILITY.orEmpty(capability, holder).cast();
+                } else {
+                    return null;
+                }
+            }
+        });
+    }
+
+    
     @SubscribeEvent
     public void onEntityConstructing(EntityEvent.EntityConstructing event) {
         boolean cached = EntityPropertiesHandler.INSTANCE.hasEntityInCache(event.getEntity().getClass());

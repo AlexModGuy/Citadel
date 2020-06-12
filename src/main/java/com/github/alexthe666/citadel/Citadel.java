@@ -1,7 +1,11 @@
 package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.server.CitadelServerEvents;
+import com.github.alexthe666.citadel.server.entity.EntityDataCapabilityImplementation;
+import com.github.alexthe666.citadel.server.entity.EntityDataCapabilityStorage;
+import com.github.alexthe666.citadel.server.entity.EntityPropertiesHandler;
 import com.github.alexthe666.citadel.server.entity.IEntityData;
+import com.github.alexthe666.citadel.server.entity.implementation.CitadelEntityProperties;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.github.alexthe666.citadel.web.WebHelper;
@@ -11,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -47,8 +52,8 @@ public class Citadel {
     @CapabilityInject(IEntityData.class)
     public static Capability<IEntityData> ENTITY_DATA_CAPABILITY;
     public static List<String> PATREONS = new ArrayList<>();
-    public static final Item DEBUG = new Item(new Item.Properties()).setRegistryName("citadel:debug");
-
+    public static final Item DEBUG_ITEM = new Item(new Item.Properties()).setRegistryName("citadel:debug");
+    public static final boolean DEBUG = false;
     public Citadel() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
@@ -75,6 +80,10 @@ public class Citadel {
                 LOGGER.warn("Failed to load patreon contributor perks");
             }
         } else LOGGER.warn("Failed to load patreon contributor perks");
+        CapabilityManager.INSTANCE.register(IEntityData.class, new EntityDataCapabilityStorage(), () ->  new EntityDataCapabilityImplementation());
+        if(DEBUG){
+            EntityPropertiesHandler.INSTANCE.registerProperties(CitadelEntityProperties.class);
+        }
     }
 
     public static <MSG> void sendMSGToServer(MSG message) {
