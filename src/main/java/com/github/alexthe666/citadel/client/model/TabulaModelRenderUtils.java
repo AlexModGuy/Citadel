@@ -1,7 +1,6 @@
 package com.github.alexthe666.citadel.client.model;
 
 import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

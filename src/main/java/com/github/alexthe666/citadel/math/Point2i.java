@@ -1,7 +1,5 @@
 package com.github.alexthe666.citadel.math;
 
-import com.github.alexthe666.citadel.math.Tuple2i;
-
 public class Point2i  extends Tuple2i implements java.io.Serializable {
 
     static final long serialVersionUID = 9208072376494084954L;

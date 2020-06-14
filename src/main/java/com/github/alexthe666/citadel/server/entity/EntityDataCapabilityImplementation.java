@@ -3,9 +3,7 @@ package com.github.alexthe666.citadel.server.entity;
 import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.NonNullSupplier;
 
 public class EntityDataCapabilityImplementation implements IEntityData {
     private Entity entity;

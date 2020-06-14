@@ -1,32 +1,21 @@
 package com.github.alexthe666.citadel.client.model;
 
-import com.github.alexthe666.citadel.client.model.container.*;
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import net.minecraft.client.renderer.model.IUnbakedModel;
+import com.github.alexthe666.citadel.client.model.container.TabulaCubeContainer;
+import com.github.alexthe666.citadel.client.model.container.TabulaCubeGroupContainer;
+import com.github.alexthe666.citadel.client.model.container.TabulaModelBlock;
+import com.github.alexthe666.citadel.client.model.container.TabulaModelContainer;
+import com.google.gson.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.PerspectiveMapWrapper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 

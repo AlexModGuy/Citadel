@@ -1,10 +1,10 @@
 package com.github.alexthe666.citadel.client.model.container;
 
 import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
 import java.util.Stack;
 
 @OnlyIn(Dist.CLIENT)

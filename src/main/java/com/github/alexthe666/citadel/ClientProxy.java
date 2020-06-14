@@ -1,30 +1,26 @@
 package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import com.github.alexthe666.citadel.client.model.*;
+import com.github.alexthe666.citadel.client.model.TabulaModel;
+import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
+import com.github.alexthe666.citadel.server.entity.EntityDataHandler;
+import com.github.alexthe666.citadel.server.entity.EntityProperties;
+import com.github.alexthe666.citadel.server.entity.IEntityData;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GLX;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.entity.model.MinecartModel;
-import net.minecraft.client.renderer.entity.model.PigModel;
-import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
@@ -79,6 +75,21 @@ public class ClientProxy extends ServerProxy {
                     entity.setAnimation(entity.getAnimations()[index]);
                 }
                 entity.setAnimationTick(0);
+            }
+        }
+    }
+
+
+    @Override
+    public void handlePropertiesPacket(String propertyID, CompoundNBT compound, int entityID) {
+        PlayerEntity player = Minecraft.getInstance().player;
+        Entity entity = player.world.getEntityByID(entityID);
+        if (entity != null) {
+            IEntityData<?> extendedProperties = EntityDataHandler.INSTANCE.getEntityData(entity, propertyID);
+            if (extendedProperties instanceof EntityProperties) {
+                EntityProperties<?> properties = (EntityProperties) extendedProperties;
+                properties.loadTrackingSensitiveData(compound);
+                properties.onSync();
             }
         }
     }

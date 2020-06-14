@@ -5,13 +5,12 @@ import com.github.alexthe666.citadel.server.entity.*;
 import com.github.alexthe666.citadel.server.entity.implementation.CitadelEntityProperties;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -21,10 +20,8 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -124,6 +121,20 @@ public class CitadelServerEvents {
     }
 
     @SubscribeEvent
+    public void onEntityUpdateDebug(LivingEvent.LivingUpdateEvent event) {
+        if(Citadel.DEBUG){
+            if(!(event.getEntityLiving() instanceof PlayerEntity)){
+                CitadelEntityProperties props = EntityPropertiesHandler.INSTANCE.getProperties(event.getEntityLiving(), CitadelEntityProperties.class);
+                if(!event.getEntityLiving().world.isRemote){
+                    props.testInteger++;
+                    props.testInteger = props.testInteger % 100;
+                }
+                System.out.println(props.testInteger);
+            }
+        }
+    }
+
+        @SubscribeEvent
     public void onJoinWorld(EntityJoinWorldEvent event) {
         if (!event.getWorld().isRemote && event.getEntity() instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();

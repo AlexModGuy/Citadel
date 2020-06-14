@@ -1,8 +1,6 @@
 
 package com.github.alexthe666.citadel.math;
 
-import java.lang.Math;
-
 /**
  * A generic 2-element tuple that is represented by single-precision
  * floating point x,y coordinates.

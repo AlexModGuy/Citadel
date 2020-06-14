@@ -1,9 +1,11 @@
 package com.github.alexthe666.citadel.server.message;
 
+import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.entity.EntityProperties;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -41,6 +43,9 @@ public class PropertiesMessage {
 
         public static void handle(final PropertiesMessage message, Supplier<NetworkEvent.Context> context) {
             context.get().setPacketHandled(true);
+            if (context.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
+                Citadel.PROXY.handlePropertiesPacket(message.propertyID, message.compound, message.entityID);
+            }
         }
     }
 }

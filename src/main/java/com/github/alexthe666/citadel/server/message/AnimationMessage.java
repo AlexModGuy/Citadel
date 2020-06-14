@@ -1,10 +1,7 @@
 package com.github.alexthe666.citadel.server.message;
 
 import com.github.alexthe666.citadel.Citadel;
-import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;

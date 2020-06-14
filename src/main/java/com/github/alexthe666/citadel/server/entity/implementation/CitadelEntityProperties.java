@@ -15,6 +15,11 @@ public class CitadelEntityProperties extends EntityProperties {
     }
 
     @Override
+    public int getTrackingTime() {
+        return 20;
+    }
+
+    @Override
     public void saveNBTData(CompoundNBT compound) {
         compound.putInt("TestInteger", testInteger);
     }

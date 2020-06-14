@@ -1,20 +1,13 @@
 package com.github.alexthe666.citadel.client.model;
 
 import com.github.alexthe666.citadel.client.model.container.TextureOffset;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.SegmentedModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
