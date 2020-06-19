@@ -26,10 +26,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CitadelServerEvents {
@@ -61,7 +58,7 @@ public class CitadelServerEvents {
                 if (capability == Citadel.ENTITY_DATA_CAPABILITY) {
                     return Citadel.ENTITY_DATA_CAPABILITY.orEmpty(capability, holder).cast();
                 } else {
-                    return null;
+                    return LazyOptional.empty();
                 }
             }
         });
