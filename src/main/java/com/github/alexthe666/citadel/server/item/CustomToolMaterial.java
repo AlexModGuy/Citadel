@@ -1,9 +1,9 @@
 package com.github.alexthe666.citadel.server.item;
 
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
 
-public class CustomToolMaterial implements IItemTier {
+public class CustomToolMaterial implements Tier {
    private String name;
    private int harvestLevel;
    private int durability;
@@ -26,32 +26,32 @@ public class CustomToolMaterial implements IItemTier {
     }
 
     @Override
-    public int getMaxUses() {
+    public int getUses() {
         return durability;
     }
 
     @Override
-    public float getEfficiency() {
+    public float getSpeed() {
         return speed;
     }
 
     @Override
-    public float getAttackDamage() {
+    public float getAttackDamageBonus() {
         return damage;
     }
 
     @Override
-    public int getHarvestLevel() {
+    public int getLevel() {
         return harvestLevel;
     }
 
     @Override
-    public int getEnchantability() {
+    public int getEnchantmentValue() {
         return enchantability;
     }
 
     @Override
-    public Ingredient getRepairMaterial() {
+    public Ingredient getRepairIngredient() {
         return ingredient == null ? Ingredient.EMPTY : ingredient;
     }
 

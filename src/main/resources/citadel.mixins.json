@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "package": "com.github.alexthe666.citadel.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "target": "@env(DEFAULT)",
+  "refmap": "citadel.refmap.json",
+  "mixins": [
+    "ChunkGeneratorMixin",
+    "LivingEntityMixin",
+    "SmithingMenuMixin"
+  ],
+  "client": [
+    "client.HumanoidModelMixin",
+    "client.WorldRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

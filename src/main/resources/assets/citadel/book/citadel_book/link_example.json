@@ -1,0 +1,49 @@
+{
+  "parent": "root.json",
+  "text": "link_example.txt",
+  "title": "Link Example",
+  "title_locale": "book.citadel_book.link_example",
+  "linked_page_buttons": [
+  ],
+  "images": [
+  ],
+  "item_renders": [
+    {
+      "item" : "citadel:effect_item",
+      "x": 5,
+      "y": 20,
+      "page" : 0,
+      "scale": 2.5
+    },
+    {
+      "item" : "citadel:effect_item",
+      "item_tag": "{DisplayEffect:\"minecraft:luck\"}",
+      "x": 25,
+      "y": 20,
+      "page" : 0,
+      "scale": 2.5
+    },
+    {
+      "item" : "citadel:fancy_item",
+      "item_tag": "{DisplayItem:\"citadel:citadel_book\", DisplayBob:1, DisplayZoom:1, DisplayScale:0.8, DisplaySpin:0, DisplayShake:0}",
+      "x": 45,
+      "y": 22,
+      "page" : 0,
+      "scale": 2.5
+    },
+    {
+      "item" : "citadel:fancy_item",
+      "item_tag": "{DisplayItem:\"minecraft:feather\", DisplayBob:0, DisplayZoom:1, DisplayScale:0.65, DisplaySpin:1, DisplayShake:0}",
+      "x": 60,
+      "y": 20,
+      "page" : 0,
+      "scale": 2.5
+    }
+  ],
+  "recipes": [
+  ],
+  "tabula_renders": [
+  ],
+  "entity_renders": [
+  ]
+}

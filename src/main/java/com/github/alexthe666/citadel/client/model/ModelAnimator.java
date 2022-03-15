@@ -4,7 +4,7 @@ import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.container.Transform;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -161,8 +161,8 @@ public class ModelAnimator {
                     box.rotationPointZ += transform.getOffsetZ();
                 }
             } else {
-                float tick = (animationTick - this.prevTempTick + Minecraft.getInstance().getRenderPartialTicks()) / (this.tempTick - this.prevTempTick);
-                float inc = MathHelper.sin((float) (tick * Math.PI / 2.0F)), dec = 1.0F - inc;
+                float tick = (animationTick - this.prevTempTick + Minecraft.getInstance().getFrameTime()) / (this.tempTick - this.prevTempTick);
+                float inc = Mth.sin((float) (tick * Math.PI / 2.0F)), dec = 1.0F - inc;
                 for (AdvancedModelBox box : this.prevTransformMap.keySet()) {
                     Transform transform = this.prevTransformMap.get(box);
                     box.rotateAngleX += dec * transform.getRotationX();

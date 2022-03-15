@@ -1,16 +1,16 @@
 package com.github.alexthe666.citadel.client.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectListIterator;
-import net.minecraft.client.renderer.Matrix3f;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.Vector4f;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -21,7 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * @since 1.0.0
  */
 @OnlyIn(Dist.CLIENT)
-public class AdvancedModelBox extends ModelRenderer {
+public class AdvancedModelBox extends BasicModelPart {
     public float defaultRotationX, defaultRotationY, defaultRotationZ;
     public float defaultOffsetX, defaultOffsetY, defaultOffsetZ;
     public float defaultPositionX, defaultPositionY, defaultPositionZ;
@@ -33,7 +33,7 @@ public class AdvancedModelBox extends ModelRenderer {
     private int displayList;
     private boolean compiled;
     public ObjectList<TabulaModelRenderUtils.ModelBox> cubeList;
-    public ObjectList<ModelRenderer> childModels;
+    public ObjectList<BasicModelPart> childModels;
     private float textureWidth;
     private float textureHeight;
     public float offsetX;
@@ -43,8 +43,8 @@ public class AdvancedModelBox extends ModelRenderer {
 
     public AdvancedModelBox(AdvancedEntityModel model, String name) {
         super(model);
-        this.textureWidth = model.textureWidth;
-        this.textureHeight = model.textureHeight;
+        this.textureWidth = model.texWidth;
+        this.textureHeight = model.texHeight;
         this.model = model;
         this.cubeList = new ObjectArrayList();
         this.childModels = new ObjectArrayList();
@@ -53,39 +53,39 @@ public class AdvancedModelBox extends ModelRenderer {
 
     public AdvancedModelBox(AdvancedEntityModel model) {
         this(model, null);
-        this.textureWidth = model.textureWidth;
-        this.textureHeight = model.textureHeight;
+        this.textureWidth = model.texWidth;
+        this.textureHeight = model.texHeight;
         this.cubeList = new ObjectArrayList();
         this.childModels = new ObjectArrayList();
     }
 
     public AdvancedModelBox(AdvancedEntityModel model, int textureOffsetX, int textureOffsetY) {
         this(model);
-        this.textureWidth = model.textureWidth;
-        this.textureHeight = model.textureHeight;
+        this.textureWidth = model.texWidth;
+        this.textureHeight = model.texHeight;
         this.setTextureOffset(textureOffsetX, textureOffsetY);
         this.cubeList = new ObjectArrayList();
         this.childModels = new ObjectArrayList();
     }
 
-    public ModelRenderer setTextureSize(int p_78787_1_, int p_78787_2_) {
+    public BasicModelPart setTexSize(int p_78787_1_, int p_78787_2_) {
         this.textureWidth = (float)p_78787_1_;
         this.textureHeight = (float)p_78787_2_;
         return this;
     }
 
-    public ModelRenderer addBox(String p_217178_1_, float p_217178_2_, float p_217178_3_, float p_217178_4_, int p_217178_5_, int p_217178_6_, int p_217178_7_, float p_217178_8_, int p_217178_9_, int p_217178_10_) {
+    public BasicModelPart addBox(String p_217178_1_, float p_217178_2_, float p_217178_3_, float p_217178_4_, int p_217178_5_, int p_217178_6_, int p_217178_7_, float p_217178_8_, int p_217178_9_, int p_217178_10_) {
         this.setTextureOffset(p_217178_9_, p_217178_10_);
         this.addBox(this.textureOffsetX, this.textureOffsetY, p_217178_2_, p_217178_3_, p_217178_4_, (float)p_217178_5_, (float)p_217178_6_, (float)p_217178_7_, p_217178_8_, p_217178_8_, p_217178_8_, this.mirror, false);
         return this;
     }
 
-    public ModelRenderer addBox(float p_228300_1_, float p_228300_2_, float p_228300_3_, float p_228300_4_, float p_228300_5_, float p_228300_6_) {
+    public BasicModelPart addBox(float p_228300_1_, float p_228300_2_, float p_228300_3_, float p_228300_4_, float p_228300_5_, float p_228300_6_) {
         this.addBox(this.textureOffsetX, this.textureOffsetY, p_228300_1_, p_228300_2_, p_228300_3_, p_228300_4_, p_228300_5_, p_228300_6_, 0.0F, 0.0F, 0.0F, this.mirror, false);
         return this;
     }
 
-    public ModelRenderer addBox(float p_228304_1_, float p_228304_2_, float p_228304_3_, float p_228304_4_, float p_228304_5_, float p_228304_6_, boolean p_228304_7_) {
+    public BasicModelPart addBox(float p_228304_1_, float p_228304_2_, float p_228304_3_, float p_228304_4_, float p_228304_5_, float p_228304_6_, boolean p_228304_7_) {
         this.addBox(this.textureOffsetX, this.textureOffsetY, p_228304_1_, p_228304_2_, p_228304_3_, p_228304_4_, p_228304_5_, p_228304_6_, 0.0F, 0.0F, 0.0F, p_228304_7_, false);
         return this;
     }
@@ -160,6 +160,11 @@ public class AdvancedModelBox extends ModelRenderer {
         this.defaultPositionZ = this.rotationPointZ;
     }
 
+    public void setPos(float xIn, float yIn, float zIn){
+        this.rotationPointX = xIn;
+        this.rotationPointY = yIn;
+        this.rotationPointZ = zIn;
+    }
     /**
      * Sets the current pose to the previously set default pose.
      */
@@ -178,7 +183,7 @@ public class AdvancedModelBox extends ModelRenderer {
     }
 
     @Override
-    public void addChild(ModelRenderer child) {
+    public void addChild(BasicModelPart child) {
         super.addChild(child);
         this.childModels.add(child);
         if (child instanceof AdvancedModelBox) {
@@ -227,47 +232,47 @@ public class AdvancedModelBox extends ModelRenderer {
         //this.render(scale);
     }
 
-    public void translateRotate(MatrixStack matrixStackIn) {
+    public void translateAndRotate(PoseStack matrixStackIn) {
         matrixStackIn.translate((double)(this.rotationPointX / 16.0F), (double)(this.rotationPointY / 16.0F), (double)(this.rotationPointZ / 16.0F));
         if (this.rotateAngleZ != 0.0F) {
-            matrixStackIn.rotate(Vector3f.ZP.rotation(this.rotateAngleZ));
+            matrixStackIn.mulPose(Vector3f.ZP.rotation(this.rotateAngleZ));
         }
 
         if (this.rotateAngleY != 0.0F) {
-            matrixStackIn.rotate(Vector3f.YP.rotation(this.rotateAngleY));
+            matrixStackIn.mulPose(Vector3f.YP.rotation(this.rotateAngleY));
         }
 
         if (this.rotateAngleX != 0.0F) {
-            matrixStackIn.rotate(Vector3f.XP.rotation(this.rotateAngleX));
+            matrixStackIn.mulPose(Vector3f.XP.rotation(this.rotateAngleX));
         }
 
         matrixStackIn.scale(this.scaleX, this.scaleY, this.scaleZ);
     }
 
     @Override
-    public void render(MatrixStack p_228309_1_, IVertexBuilder p_228309_2_, int p_228309_3_, int p_228309_4_, float p_228309_5_, float p_228309_6_, float p_228309_7_, float p_228309_8_) {
+    public void render(PoseStack p_228309_1_, VertexConsumer p_228309_2_, int p_228309_3_, int p_228309_4_, float p_228309_5_, float p_228309_6_, float p_228309_7_, float p_228309_8_) {
         if (this.showModel) {
             if (!this.cubeList.isEmpty() || !this.childModels.isEmpty()) {
-                p_228309_1_.push();
-                this.translateRotate(p_228309_1_);
-                this.doRender(p_228309_1_.getLast(), p_228309_2_, p_228309_3_, p_228309_4_, p_228309_5_, p_228309_6_, p_228309_7_, p_228309_8_);
+                p_228309_1_.pushPose();
+                this.translateAndRotate(p_228309_1_);
+                this.doRender(p_228309_1_.last(), p_228309_2_, p_228309_3_, p_228309_4_, p_228309_5_, p_228309_6_, p_228309_7_, p_228309_8_);
                 ObjectListIterator var9 = this.childModels.iterator();
                 if(!scaleChildren){
                     p_228309_1_.scale(1F / Math.max(this.scaleX, 0.0001F), 1F / Math.max(this.scaleY, 0.0001F) , 1F / Math.max(this.scaleZ, 0.0001F));
                 }
                 while (var9.hasNext()) {
-                    ModelRenderer lvt_10_1_ = (ModelRenderer) var9.next();
+                    BasicModelPart lvt_10_1_ = (BasicModelPart) var9.next();
                     lvt_10_1_.render(p_228309_1_, p_228309_2_, p_228309_3_, p_228309_4_, p_228309_5_, p_228309_6_, p_228309_7_, p_228309_8_);
                 }
 
-                p_228309_1_.pop();
+                p_228309_1_.popPose();
             }
         }
     }
 
-    private void doRender(MatrixStack.Entry p_228306_1_, IVertexBuilder p_228306_2_, int p_228306_3_, int p_228306_4_, float p_228306_5_, float p_228306_6_, float p_228306_7_, float p_228306_8_) {
-        Matrix4f lvt_9_1_ = p_228306_1_.getMatrix();
-        Matrix3f lvt_10_1_ = p_228306_1_.getNormal();
+    private void doRender(PoseStack.Pose p_228306_1_, VertexConsumer p_228306_2_, int p_228306_3_, int p_228306_4_, float p_228306_5_, float p_228306_6_, float p_228306_7_, float p_228306_8_) {
+        Matrix4f lvt_9_1_ = p_228306_1_.pose();
+        Matrix3f lvt_10_1_ = p_228306_1_.normal();
         ObjectListIterator var11 = this.cubeList.iterator();
 
         while(var11.hasNext()) {
@@ -279,18 +284,18 @@ public class AdvancedModelBox extends ModelRenderer {
                 TabulaModelRenderUtils.TexturedQuad lvt_16_1_ = var13[var15];
                 Vector3f lvt_17_1_ = lvt_16_1_.normal.copy();
                 lvt_17_1_.transform(lvt_10_1_);
-                float lvt_18_1_ = lvt_17_1_.getX();
-                float lvt_19_1_ = lvt_17_1_.getY();
-                float lvt_20_1_ = lvt_17_1_.getZ();
+                float lvt_18_1_ = lvt_17_1_.x();
+                float lvt_19_1_ = lvt_17_1_.y();
+                float lvt_20_1_ = lvt_17_1_.z();
 
                 for(int lvt_21_1_ = 0; lvt_21_1_ < 4; ++lvt_21_1_) {
                     TabulaModelRenderUtils.PositionTextureVertex lvt_22_1_ = lvt_16_1_.vertexPositions[lvt_21_1_];
-                    float lvt_23_1_ = lvt_22_1_.position.getX() / 16.0F;
-                    float lvt_24_1_ = lvt_22_1_.position.getY() / 16.0F;
-                    float lvt_25_1_ = lvt_22_1_.position.getZ() / 16.0F;
+                    float lvt_23_1_ = lvt_22_1_.position.x() / 16.0F;
+                    float lvt_24_1_ = lvt_22_1_.position.y() / 16.0F;
+                    float lvt_25_1_ = lvt_22_1_.position.z() / 16.0F;
                     Vector4f lvt_26_1_ = new Vector4f(lvt_23_1_, lvt_24_1_, lvt_25_1_, 1.0F);
                     lvt_26_1_.transform(lvt_9_1_);
-                    p_228306_2_.addVertex(lvt_26_1_.getX(), lvt_26_1_.getY(), lvt_26_1_.getZ(), p_228306_5_, p_228306_6_, p_228306_7_, p_228306_8_, lvt_22_1_.textureU, lvt_22_1_.textureV, p_228306_4_, p_228306_3_, lvt_18_1_, lvt_19_1_, lvt_20_1_);
+                    p_228306_2_.vertex(lvt_26_1_.x(), lvt_26_1_.y(), lvt_26_1_.z(), p_228306_5_, p_228306_6_, p_228306_7_, p_228306_8_, lvt_22_1_.textureU, lvt_22_1_.textureV, p_228306_4_, p_228306_3_, lvt_18_1_, lvt_19_1_, lvt_20_1_);
                 }
             }
         }
@@ -302,7 +307,7 @@ public class AdvancedModelBox extends ModelRenderer {
 
     private float calculateRotation(float speed, float degree, boolean invert, float offset, float weight, float f, float f1) {
         float movementScale = this.model.getMovementScale();
-        float rotation = (MathHelper.cos(f * (speed * movementScale) + offset) * (degree * movementScale) * f1) + (weight * f1);
+        float rotation = (Mth.cos(f * (speed * movementScale) + offset) * (degree * movementScale) * f1) + (weight * f1);
         return invert ? -rotation : rotation;
     }
 

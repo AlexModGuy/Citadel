@@ -5,8 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.*;
-import net.minecraft.client.renderer.model.*;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
@@ -21,16 +20,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.ItemOverride;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+
 @OnlyIn(Dist.CLIENT)
 public class TabulaModelBlock
 {
     private static final Logger LOGGER = LogManager.getLogger();
     @VisibleForTesting
-    static final Gson SERIALIZER = (new GsonBuilder()).registerTypeAdapter(TabulaModelBlock.class, new TabulaModelBlock.Deserializer()).registerTypeAdapter(BlockPart.class, new BlockPart.Deserializer()).registerTypeAdapter(BlockPartFace.class, new BlockPartFace.Deserializer()).registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer()).registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer()).registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer()).registerTypeAdapter(ItemOverride.class, new ItemOverride.Deserializer()).create();
-    private final List<BlockPart> elements;
+    static final Gson SERIALIZER = (new GsonBuilder()).registerTypeAdapter(TabulaModelBlock.class, new TabulaModelBlock.Deserializer()).registerTypeAdapter(BlockElement.class, new BlockElement.Deserializer()).registerTypeAdapter(BlockElementFace.class, new BlockElementFace.Deserializer()).registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer()).registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer()).registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer()).registerTypeAdapter(ItemOverride.class, new ItemOverride.Deserializer()).create();
+    private final List<BlockElement> elements;
     private final boolean gui3d;
     public final boolean ambientOcclusion;
-    private final ItemCameraTransforms cameraTransforms;
+    private final ItemTransforms cameraTransforms;
     private final List<ItemOverride> overrides;
     public String name = "";
     @VisibleForTesting
@@ -50,7 +56,7 @@ public class TabulaModelBlock
         return deserialize(new StringReader(jsonString));
     }
 
-    public TabulaModelBlock(@Nullable ResourceLocation parentLocationIn, List<BlockPart> elementsIn, Map<String, String> texturesIn, boolean ambientOcclusionIn, boolean gui3dIn, ItemCameraTransforms cameraTransformsIn, List<ItemOverride> overridesIn)
+    public TabulaModelBlock(@Nullable ResourceLocation parentLocationIn, List<BlockElement> elementsIn, Map<String, String> texturesIn, boolean ambientOcclusionIn, boolean gui3dIn, ItemTransforms cameraTransformsIn, List<ItemOverride> overridesIn)
     {
         this.elements = elementsIn;
         this.ambientOcclusion = ambientOcclusionIn;
@@ -61,7 +67,7 @@ public class TabulaModelBlock
         this.overrides = overridesIn;
     }
 
-    public List<BlockPart> getElements()
+    public List<BlockElement> getElements()
     {
         return this.elements.isEmpty() && this.hasParent() ? this.parent.getElements() : this.elements;
     }
@@ -100,7 +106,7 @@ public class TabulaModelBlock
 
         for (ItemOverride itemoverride : this.overrides)
         {
-            set.add(itemoverride.getLocation());
+            set.add(itemoverride.getModel());
         }
 
         return set;
@@ -176,22 +182,22 @@ public class TabulaModelBlock
         return this.hasParent() ? this.parent.getRootModel() : this;
     }
 
-    public ItemCameraTransforms getAllTransforms()
+    public ItemTransforms getAllTransforms()
     {
-        ItemTransformVec3f itemtransformvec3f = this.getTransform(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
-        ItemTransformVec3f itemtransformvec3f1 = this.getTransform(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
-        ItemTransformVec3f itemtransformvec3f2 = this.getTransform(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
-        ItemTransformVec3f itemtransformvec3f3 = this.getTransform(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
-        ItemTransformVec3f itemtransformvec3f4 = this.getTransform(ItemCameraTransforms.TransformType.HEAD);
-        ItemTransformVec3f itemtransformvec3f5 = this.getTransform(ItemCameraTransforms.TransformType.GUI);
-        ItemTransformVec3f itemtransformvec3f6 = this.getTransform(ItemCameraTransforms.TransformType.GROUND);
-        ItemTransformVec3f itemtransformvec3f7 = this.getTransform(ItemCameraTransforms.TransformType.FIXED);
-        return new ItemCameraTransforms(itemtransformvec3f, itemtransformvec3f1, itemtransformvec3f2, itemtransformvec3f3, itemtransformvec3f4, itemtransformvec3f5, itemtransformvec3f6, itemtransformvec3f7);
+        ItemTransform itemtransformvec3f = this.getTransform(ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
+        ItemTransform itemtransformvec3f1 = this.getTransform(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
+        ItemTransform itemtransformvec3f2 = this.getTransform(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
+        ItemTransform itemtransformvec3f3 = this.getTransform(ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
+        ItemTransform itemtransformvec3f4 = this.getTransform(ItemTransforms.TransformType.HEAD);
+        ItemTransform itemtransformvec3f5 = this.getTransform(ItemTransforms.TransformType.GUI);
+        ItemTransform itemtransformvec3f6 = this.getTransform(ItemTransforms.TransformType.GROUND);
+        ItemTransform itemtransformvec3f7 = this.getTransform(ItemTransforms.TransformType.FIXED);
+        return new ItemTransforms(itemtransformvec3f, itemtransformvec3f1, itemtransformvec3f2, itemtransformvec3f3, itemtransformvec3f4, itemtransformvec3f5, itemtransformvec3f6, itemtransformvec3f7);
     }
 
-    private ItemTransformVec3f getTransform(ItemCameraTransforms.TransformType type)
+    private ItemTransform getTransform(ItemTransforms.TransformType type)
     {
-        return this.parent != null && !this.cameraTransforms.hasCustomTransform(type) ? this.parent.getTransform(type) : this.cameraTransforms.getTransform(type);
+        return this.parent != null && !this.cameraTransforms.hasTransform(type) ? this.parent.getTransform(type) : this.cameraTransforms.getTransform(type);
     }
 
     public static void checkModelHierarchy(Map<ResourceLocation, TabulaModelBlock> p_178312_0_)
@@ -233,16 +239,16 @@ public class TabulaModelBlock
         public TabulaModelBlock deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException
         {
             JsonObject jsonobject = p_deserialize_1_.getAsJsonObject();
-            List<BlockPart> list = this.getModelElements(p_deserialize_3_, jsonobject);
+            List<BlockElement> list = this.getModelElements(p_deserialize_3_, jsonobject);
             String s = this.getParent(jsonobject);
             Map<String, String> map = this.getTextures(jsonobject);
             boolean flag = this.getAmbientOcclusionEnabled(jsonobject);
-            ItemCameraTransforms itemcameratransforms = ItemCameraTransforms.DEFAULT;
+            ItemTransforms itemcameratransforms = ItemTransforms.NO_TRANSFORMS;
 
             if (jsonobject.has("display"))
             {
                 JsonObject jsonobject1 = JsonUtils.getJsonObject(jsonobject, "display");
-                itemcameratransforms = (ItemCameraTransforms)p_deserialize_3_.deserialize(jsonobject1, ItemCameraTransforms.class);
+                itemcameratransforms = (ItemTransforms)p_deserialize_3_.deserialize(jsonobject1, ItemTransforms.class);
             }
 
             List<ItemOverride> list1 = this.getItemOverrides(p_deserialize_3_, jsonobject);
@@ -292,15 +298,15 @@ public class TabulaModelBlock
             return JsonUtils.getBoolean(object, "ambientocclusion", true);
         }
 
-        protected List<BlockPart> getModelElements(JsonDeserializationContext deserializationContext, JsonObject object)
+        protected List<BlockElement> getModelElements(JsonDeserializationContext deserializationContext, JsonObject object)
         {
-            List<BlockPart> list = Lists.<BlockPart>newArrayList();
+            List<BlockElement> list = Lists.<BlockElement>newArrayList();
 
             if (object.has("elements"))
             {
                 for (JsonElement jsonelement : JsonUtils.getJsonArray(object, "elements"))
                 {
-                    list.add((BlockPart)deserializationContext.deserialize(jsonelement, BlockPart.class));
+                    list.add((BlockElement)deserializationContext.deserialize(jsonelement, BlockElement.class));
                 }
             }
 

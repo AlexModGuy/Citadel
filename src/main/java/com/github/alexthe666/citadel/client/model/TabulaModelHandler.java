@@ -5,9 +5,9 @@ import com.github.alexthe666.citadel.client.model.container.TabulaCubeGroupConta
 import com.github.alexthe666.citadel.client.model.container.TabulaModelBlock;
 import com.github.alexthe666.citadel.client.model.container.TabulaModelContainer;
 import com.google.gson.*;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -27,10 +27,10 @@ import java.util.zip.ZipInputStream;
 public enum TabulaModelHandler implements JsonDeserializationContext {
     INSTANCE;
 
-    private Gson gson = new GsonBuilder().registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer()).registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer()).create();
+    private Gson gson = new GsonBuilder().registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer()).registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer()).create();
     private JsonParser parser = new JsonParser();
     private TabulaModelBlock.Deserializer TabulaModelBlockDeserializer = new TabulaModelBlock.Deserializer();
-    private IResourceManager manager;
+    private ResourceManager manager;
     private final Set<String> enabledDomains = new HashSet<>();
 
     public void addDomain(String domain) {

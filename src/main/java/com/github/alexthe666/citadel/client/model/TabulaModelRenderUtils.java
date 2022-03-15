@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.client.model;
 
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -51,7 +51,7 @@ public class TabulaModelRenderUtils {
                 }
             }
 
-            this.normal = p_i225951_9_.toVector3f();
+            this.normal = p_i225951_9_.step();
             if (p_i225951_8_) {
                 this.normal.mul(-1.0F, 1.0F, 1.0F);
             }

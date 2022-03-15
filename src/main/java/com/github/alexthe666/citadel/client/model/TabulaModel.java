@@ -1,11 +1,14 @@
 package com.github.alexthe666.citadel.client.model;
 
+import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
 import com.github.alexthe666.citadel.client.model.container.TabulaCubeContainer;
 import com.github.alexthe666.citadel.client.model.container.TabulaCubeGroupContainer;
 import com.github.alexthe666.citadel.client.model.container.TabulaModelContainer;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.Entity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -28,8 +31,8 @@ public class TabulaModel extends AdvancedEntityModel {
     protected double[] scale;
 
     public TabulaModel(TabulaModelContainer container, ITabulaModelAnimator tabulaAnimator) {
-        this.textureWidth = container.getTextureWidth();
-        this.textureHeight = container.getTextureHeight();
+        this.texWidth = container.getTextureWidth();
+        this.texHeight = container.getTextureHeight();
         this.tabulaAnimator = tabulaAnimator;
         for (TabulaCubeContainer cube : container.getCubes()) {
             this.parseCube(cube, null);
@@ -75,7 +78,7 @@ public class TabulaModel extends AdvancedEntityModel {
         AdvancedModelBox box = new AdvancedModelBox(this, cube.getName());
         box.setTextureOffset(textureOffset[0], textureOffset[1]);
         box.mirror = cube.isTextureMirrorEnabled();
-        box.setRotationPoint((float) position[0], (float) position[1], (float) position[2]);
+        box.setPos((float) position[0], (float) position[1], (float) position[2]);
         box.addBox((float) offset[0], (float) offset[1], (float) offset[2], dimensions[0], dimensions[1], dimensions[2], scaleIn);
         box.rotateAngleX = (float) Math.toRadians(rotation[0]);
         box.rotateAngleY = (float) Math.toRadians(rotation[1]);
@@ -84,7 +87,7 @@ public class TabulaModel extends AdvancedEntityModel {
     }
 
     @Override
-    public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
+    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
         if (this.tabulaAnimator != null) {
             this.tabulaAnimator.setRotationAngles(this, entity, limbSwing, limbSwingAmount, ageInTicks, rotationYaw, rotationPitch, 1.0F);
         }
@@ -103,7 +106,7 @@ public class TabulaModel extends AdvancedEntityModel {
     }
 
     @Override
-    public Iterable<ModelRenderer> getParts() {
+    public Iterable<BasicModelPart> parts() {
         return ImmutableList.copyOf(rootBoxes);
     }
 
@@ -111,4 +114,6 @@ public class TabulaModel extends AdvancedEntityModel {
     public Iterable<AdvancedModelBox> getAllParts() {
         return ImmutableList.copyOf(cubes.values());
     }
+
+
 }

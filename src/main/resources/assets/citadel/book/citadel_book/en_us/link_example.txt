@@ -1,0 +1,7 @@
+<NEWLINE>
+<NEWLINE>
+Now on this separate page, pressing the link button should return you to the root page.
+<NEWLINE>
+From 1.8.0 and onwards, the Fancy Item and Effect Item now allow renders of spinning, bouncing items or potion effects.
+These are quite useful for pages on potion effects or for some additional pizzaz for creative tabs, advancements and more.
+The item or effect rendered is specified by NBT data.

@@ -3,9 +3,9 @@ package com.github.alexthe666.citadel.client.model.container;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.world.item.Item;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -114,13 +114,13 @@ public class JsonUtils
     @Nullable
     public static Item getByNameOrId(String id)
     {
-        Item item = Registry.ITEM.getOrDefault(new ResourceLocation(id));
+        Item item = Registry.ITEM.get(new ResourceLocation(id));
 
         if (item == null)
         {
             try
             {
-                return Item.getItemById(Integer.parseInt(id));
+                return Item.byId(Integer.parseInt(id));
             }
             catch (NumberFormatException var3)
             {

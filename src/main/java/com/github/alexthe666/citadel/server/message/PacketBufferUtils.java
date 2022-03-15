@@ -1,9 +1,9 @@
 package com.github.alexthe666.citadel.server.message;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;
@@ -133,8 +133,8 @@ public class PacketBufferUtils {
      * @param stack The itemstack to write
      */
     public static void writeItemStack(ByteBuf to, ItemStack stack) {
-        PacketBuffer pb = new PacketBuffer(to);
-        pb.writeItemStack(stack);
+        FriendlyByteBuf pb = new FriendlyByteBuf(to);
+        pb.writeItem(stack);
     }
 
     /**
@@ -144,9 +144,9 @@ public class PacketBufferUtils {
      * @return The itemstack read
      */
     public static ItemStack readItemStack(ByteBuf from) {
-        PacketBuffer pb = new PacketBuffer(from);
+        FriendlyByteBuf pb = new FriendlyByteBuf(from);
         try {
-            return pb.readItemStack();
+            return pb.readItem();
         } catch (Exception e) {
             // Unpossible?
             throw new RuntimeException(e);
@@ -159,9 +159,9 @@ public class PacketBufferUtils {
      * @param to  The buffer to write to
      * @param tag The tag to write
      */
-    public static void writeTag(ByteBuf to, CompoundNBT tag) {
-        PacketBuffer pb = new PacketBuffer(to);
-        pb.writeCompoundTag(tag);
+    public static void writeTag(ByteBuf to, CompoundTag tag) {
+        FriendlyByteBuf pb = new FriendlyByteBuf(to);
+        pb.writeNbt(tag);
     }
 
     /**
@@ -171,10 +171,10 @@ public class PacketBufferUtils {
      * @return The read tag
      */
     @Nullable
-    public static CompoundNBT readTag(ByteBuf from) {
-        PacketBuffer pb = new PacketBuffer(from);
+    public static CompoundTag readTag(ByteBuf from) {
+        FriendlyByteBuf pb = new FriendlyByteBuf(from);
         try {
-            return pb.readCompoundTag();
+            return pb.readNbt();
         } catch (Exception e) {
             // Unpossible?
             throw new RuntimeException(e);

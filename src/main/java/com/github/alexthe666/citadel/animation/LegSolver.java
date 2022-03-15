@@ -1,12 +1,12 @@
 package com.github.alexthe666.citadel.animation;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 /**
  * @author paul101
@@ -21,7 +21,7 @@ public class LegSolver {
     }
 
     public final void update(LivingEntity entity, float scale) {
-        this.update(entity, entity.renderYawOffset, scale);
+        this.update(entity, entity.yBodyRot, scale);
     }
 
     public final void update(LivingEntity entity, float yaw, float scale) {
@@ -58,21 +58,21 @@ public class LegSolver {
 
         public void update(LivingEntity entity, double sideX, double sideZ, double forwardX, double forwardZ, float scale) {
             this.prevHeight = this.height;
-            double posY = entity.getPosY();
-            float settledHeight = this.settle(entity, entity.getPosX() + sideX * this.side + forwardX * this.forward, posY, entity.getPosZ() + sideZ * this.side + forwardZ * this.forward, this.height);
-            this.height = MathHelper.clamp(settledHeight, -this.range * scale, this.range * scale);
+            double posY = entity.getY();
+            float settledHeight = this.settle(entity, entity.getX() + sideX * this.side + forwardX * this.forward, posY, entity.getZ() + sideZ * this.side + forwardZ * this.forward, this.height);
+            this.height = Mth.clamp(settledHeight, -this.range * scale, this.range * scale);
         }
 
 
         private float settle(LivingEntity entity, double x, double y, double z, float height) {
             BlockPos pos = new BlockPos(x, y + 1e-3, z);
-            float dist = this.getDistance(entity.world, pos);
+            float dist = this.getDistance(entity.level, pos);
             if (1 - dist < 1e-3) {
-                dist = this.getDistance(entity.world, pos.down()) + (float) y % 1;
+                dist = this.getDistance(entity.level, pos.below()) + (float) y % 1;
             } else {
                 dist -= 1 - (y % 1);
             }
-            if (entity.onGround && height <= dist) {
+            if (entity.isOnGround() && height <= dist) {
                 return height == dist ? height : Math.min(height + this.getFallSpeed(), dist);
             } else if (height > 0) {
                 return Math.max(height - this.getRiseSpeed(), dist);
@@ -80,9 +80,9 @@ public class LegSolver {
             return height;
         }
 
-        private float getDistance(World world, BlockPos pos) {
+        private float getDistance(Level world, BlockPos pos) {
             BlockState state = world.getBlockState(pos);
-            AxisAlignedBB aabb = state.getCollisionShape(world, pos).project(Direction.UP).getBoundingBox();
+            AABB aabb = state.getBlockSupportShape(world, pos).getFaceShape(Direction.UP).bounds();
             return aabb == null ? 1 : 1 - Math.min((float) aabb.maxY, 1);
         }
 

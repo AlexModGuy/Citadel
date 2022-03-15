@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.client.model.container;
 
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Vector3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -38,7 +38,7 @@ public class TabulaMatrix {
         Matrix4f translation = new Matrix4f();
         translation.setIdentity();
         translation.setTranslation(x, y, z);
-        matrix.mul(translation);
+        matrix.multiply(translation);
     }
 
     public void translate(double x, double y, double z) {
@@ -49,10 +49,8 @@ public class TabulaMatrix {
         Matrix4f matrix = this.matrixStack.peek();
         Matrix4f rotation = new Matrix4f();
         rotation.setIdentity();
-        //TODO
-        //        rotation.set(new Matrix4f(x, y, z, (float)(angle * (Math.PI / 180F))));
-        rotation.set(new Matrix4f());
-        matrix.mul(rotation);
+        rotation.load(new Matrix4f());
+        matrix.multiply(rotation);
     }
 
     public void rotate(float angle, float x, float y, float z) {
@@ -62,14 +60,14 @@ public class TabulaMatrix {
     public void rotate(Matrix4f qaut) {
         Matrix4f matrix = this.matrixStack.peek();
         Matrix4f rotation = new Matrix4f();
-        rotation.set(qaut);
-        matrix.mul(rotation);
+        rotation.load(qaut);
+        matrix.multiply(rotation);
     }
 
     public void scale(float x, float y, float z) {
         Matrix4f matrix = this.matrixStack.peek();
         Matrix4f scale = new Matrix4f();
-        matrix.mul(scale.makeScale(x, y, z));
+        matrix.multiply(scale.createScaleMatrix(x, y, z));
     }
 
     public void scale(double x, double y, double z) {
@@ -104,11 +102,11 @@ public class TabulaMatrix {
     }
 
     public void multiply(TabulaMatrix matrix) {
-        this.matrixStack.peek().mul(matrix.matrixStack.peek());
+        this.matrixStack.peek().multiply(matrix.matrixStack.peek());
     }
 
     public void multiply(Matrix4f matrix) {
-        this.matrixStack.peek().mul(matrix);
+        this.matrixStack.peek().multiply(matrix);
     }
 
     public void add(TabulaMatrix matrix) {

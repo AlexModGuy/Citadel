@@ -1,34 +1,36 @@
 package com.github.alexthe666.citadel;
 
-import com.github.alexthe666.citadel.server.CitadelServerEvents;
-import com.github.alexthe666.citadel.server.entity.EntityDataCapabilityImplementation;
-import com.github.alexthe666.citadel.server.entity.EntityDataCapabilityStorage;
-import com.github.alexthe666.citadel.server.entity.EntityPropertiesHandler;
-import com.github.alexthe666.citadel.server.entity.IEntityData;
-import com.github.alexthe666.citadel.server.entity.implementation.CitadelEntityProperties;
+import com.github.alexthe666.citadel.config.ConfigHolder;
+import com.github.alexthe666.citadel.config.ServerConfig;
+import com.github.alexthe666.citadel.item.ItemCitadelBook;
+import com.github.alexthe666.citadel.item.ItemCustomRender;
+import com.github.alexthe666.citadel.server.CitadelEvents;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.github.alexthe666.citadel.web.WebHelper;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,8 +41,9 @@ import java.util.List;
 
 @Mod("citadel")
 public class Citadel {
-    public static final Logger LOGGER = LogManager.getLogger();
-    public static ServerProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public static final Logger LOGGER = LogManager.getLogger("citadel");
+    public static final boolean REMAPREFS = true;
+    public static final boolean DEBUG = false;
     private static final String PROTOCOL_VERSION = Integer.toString(1);
     private static final ResourceLocation PACKET_NETWORK_NAME = new ResourceLocation("citadel:main_channel");
     public static final SimpleChannel NETWORK_WRAPPER = NetworkRegistry.ChannelBuilder
@@ -49,19 +52,44 @@ public class Citadel {
             .serverAcceptedVersions(PROTOCOL_VERSION::equals)
             .networkProtocolVersion(() -> PROTOCOL_VERSION)
             .simpleChannel();
-    @CapabilityInject(IEntityData.class)
-    public static Capability<IEntityData> ENTITY_DATA_CAPABILITY;
+    public static ServerProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static List<String> PATREONS = new ArrayList<>();
-    public static final Item DEBUG_ITEM = new Item(new Item.Properties()).setRegistryName("citadel:debug");
-    public static final boolean DEBUG = false;
+    public static final DeferredRegister<Item> ITEM_DEFERRED_REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, "citadel");
+
+    public static final RegistryObject<Item> DEBUG_ITEM = ITEM_DEFERRED_REGISTER.register("debug", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> CITADEL_BOOK = ITEM_DEFERRED_REGISTER.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> EFFECT_ITEM = ITEM_DEFERRED_REGISTER.register("effect_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FANCY_ITEM = ITEM_DEFERRED_REGISTER.register("fancy_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+
     public Citadel() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModConfigEvent);
+        ITEM_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(PROXY);
-        MinecraftForge.EVENT_BUS.register(new CitadelServerEvents());
+        final ModLoadingContext modLoadingContext = ModLoadingContext.get();
+        modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
+        MinecraftForge.EVENT_BUS.register(new CitadelEvents());
+        MinecraftForge.EVENT_BUS.addListener(this::onBiomeLoadFromJSON);
+    }
+
+    public static <MSG> void sendMSGToServer(MSG message) {
+        NETWORK_WRAPPER.sendToServer(message);
+    }
+
+    public static <MSG> void sendMSGToAll(MSG message) {
+        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            sendNonLocal(message, player);
+        }
+    }
+
+    public static <MSG> void sendNonLocal(MSG msg, ServerPlayer player) {
+        if (player.server.isDedicatedServer() || !player.getName().equals(player.server.getSingleplayerName())) {
+            NETWORK_WRAPPER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        }
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -80,25 +108,16 @@ public class Citadel {
                 LOGGER.warn("Failed to load patreon contributor perks");
             }
         } else LOGGER.warn("Failed to load patreon contributor perks");
-        CapabilityManager.INSTANCE.register(IEntityData.class, new EntityDataCapabilityStorage(), () ->  new EntityDataCapabilityImplementation());
-        if(DEBUG){
-            EntityPropertiesHandler.INSTANCE.registerProperties(CitadelEntityProperties.class);
-        }
     }
 
-    public static <MSG> void sendMSGToServer(MSG message) {
-        NETWORK_WRAPPER.sendToServer(message);
-    }
-
-    public static <MSG> void sendMSGToAll(MSG message) {
-        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            sendNonLocal(message, player);
-        }
-    }
-
-    public static <MSG> void sendNonLocal(MSG msg, ServerPlayerEntity player) {
-        if (player.server.isDedicatedServer() || !player.getName().equals(player.server.getServerOwner())) {
-            NETWORK_WRAPPER.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+    @SubscribeEvent
+    public void onModConfigEvent(final ModConfigEvent event) {
+        final ModConfig config = event.getConfig();
+        // Rebake the configs when they change
+        if (config.getSpec() == ConfigHolder.SERVER_SPEC) {
+            ServerConfig.citadelEntityTrack = ConfigHolder.SERVER.citadelEntityTracker.get();
+            ServerConfig.chunkGenSpawnModifierVal = ConfigHolder.SERVER.chunkGenSpawnModifier.get();
+            //citadelTestBiomeData = SpawnBiomeConfig.create(new ResourceLocation("citadel:config_biome"), CitadelBiomeDefinitions.TERRALITH_TEST);
         }
     }
 
@@ -115,6 +134,9 @@ public class Citadel {
     }
 
     @SubscribeEvent
-    public void onServerStarting(FMLServerStartingEvent event) {
+    public void onBiomeLoadFromJSON(BiomeLoadingEvent event) {
+        //if(citadelTestBiomeData.matches(event.getCategory(), event.getName())){
+        //    LOGGER.debug("CONFIG TEST BIOME DATA MATCHES: " + event.getName());
+        //}
     }
 }

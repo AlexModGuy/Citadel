@@ -2,8 +2,8 @@ package com.github.alexthe666.citadel.client.model;
 
 import com.github.alexthe666.citadel.animation.IScaleable;
 import com.github.alexthe666.citadel.animation.LegSolverQuadruped;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.util.Mth;
 
 /**
  * @author paul101
@@ -31,7 +31,7 @@ public final class LegArticulator {
             final float backAvg = LegArticulator.avg(heightBackLeft, heightBackRight);
             final float frontAvg = LegArticulator.avg(heightFrontLeft, heightFrontRight);
             final float bodyLength = Math.abs(avg(legs.backLeft.forward, legs.backRight.forward) - avg(legs.frontLeft.forward, legs.frontRight.forward));
-            final float tilt = (float) (MathHelper.atan2(bodyLength * sc, backAvg - frontAvg) - Math.PI / 2);
+            final float tilt = (float) (Mth.atan2(bodyLength * sc, backAvg - frontAvg) - Math.PI / 2);
             body.rotationPointY += 16 / sc * backAvg;
             body.rotateAngleX += tilt;
             lowerBody.rotateAngleX -= tilt;
@@ -71,6 +71,6 @@ public final class LegArticulator {
         if (entity instanceof IScaleable) {
             return ((IScaleable) entity).getScaleForLegSolver();
         }
-        return entity.getWidth();
+        return entity.getBbWidth();
     }
 }

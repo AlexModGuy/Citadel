@@ -3,10 +3,11 @@ package com.github.alexthe666.citadel.client.model.container;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.TransformationMatrix;
-import net.minecraft.client.renderer.model.*;
+import com.mojang.math.Transformation;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.model.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -20,13 +21,13 @@ import java.util.function.Function;
  * @since 1.0.0
  */
 @OnlyIn(Dist.CLIENT)
-public class VanillaTabulaModel implements IUnbakedModel {
-    private TabulaModelContainer model;
-    private Material particle;
-    private Collection<Material> textures;
-    private ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms;
+public class VanillaTabulaModel implements UnbakedModel {
+    private final TabulaModelContainer model;
+    private final Material particle;
+    private final Collection<Material> textures;
+    private final ImmutableMap<ItemTransforms.TransformType, Transformation> transforms;
 
-    public VanillaTabulaModel(TabulaModelContainer model, Material particle, ImmutableList<Material> textures, ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms) {
+    public VanillaTabulaModel(TabulaModelContainer model, Material particle, ImmutableList<Material> textures, ImmutableMap<ItemTransforms.TransformType, Transformation> transforms) {
         this.model = model;
         this.particle = particle;
         this.textures = textures;
@@ -38,13 +39,13 @@ public class VanillaTabulaModel implements IUnbakedModel {
     }
 
     @Override
-    public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+    public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         return this.textures;
     }
 
     @Nullable
     @Override
-    public IBakedModel bakeModel(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> function, IModelTransform iModelTransform, ResourceLocation resourceLocation) {
+    public BakedModel bake(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> function, ModelState iModelTransform, ResourceLocation resourceLocation) {
         return null;
     }
 

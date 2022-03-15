@@ -2,7 +2,7 @@ package com.github.alexthe666.citadel.animation;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -21,11 +21,11 @@ public enum AnimationHandler {
      * @param <T>       the entity type
      */
     public <T extends Entity & IAnimatedEntity> void sendAnimationMessage(T entity, Animation animation) {
-        if (entity.world.isRemote) {
+        if (entity.level.isClientSide) {
             return;
         }
         entity.setAnimation(animation);
-        Citadel.sendMSGToAll(new AnimationMessage(entity.getEntityId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
+        Citadel.sendMSGToAll(new AnimationMessage(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
     }
 
     /**

@@ -1,0 +1,19 @@
+{
+  "parent": "builtin/entity",
+  "textures": {
+    "particle": "citadel:item/debug"
+  },
+  "gui_light": "front",
+  "display": {
+    "ground": {
+    },
+    "head": {
+    },
+    "thirdperson_righthand": {
+    },
+    "firstperson_righthand": {
+    },
+    "fixed": {
+    }
+  }
+}

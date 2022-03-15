@@ -1,10 +1,11 @@
 package com.github.alexthe666.citadel.client.model;
 
+import com.github.alexthe666.citadel.client.model.basic.BasicEntityModel;
 import com.github.alexthe666.citadel.client.model.container.TextureOffset;
 import com.google.common.collect.Maps;
-import net.minecraft.client.renderer.entity.model.SegmentedModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.ListModel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -17,10 +18,11 @@ import java.util.Map;
  * @since 1.0.0
  */
 @OnlyIn(Dist.CLIENT)
-public abstract class AdvancedEntityModel<T extends Entity> extends SegmentedModel<T> {
+public abstract class AdvancedEntityModel<T extends Entity> extends BasicEntityModel<T> {
     private float movementScale = 1.0F;
     private final Map<String, TextureOffset> modelTextureMap = Maps.newHashMap();
-
+    public int texWidth = 32;
+    public int texHeight = 32;
     public AdvancedEntityModel(){
         super();
     }
@@ -120,7 +122,7 @@ public abstract class AdvancedEntityModel<T extends Entity> extends SegmentedMod
     }
 
     private float calculateChainRotation(float speed, float degree, float swing, float swingAmount, float offset, int boxIndex) {
-        return MathHelper.cos(swing * (speed * this.movementScale) + offset * boxIndex) * swingAmount * (degree * this.movementScale);
+        return Mth.cos(swing * (speed * this.movementScale) + offset * boxIndex) * swingAmount * (degree * this.movementScale);
     }
 
     private float calculateChainOffset(double rootOffset, AdvancedModelBox... boxes) {
@@ -216,9 +218,9 @@ public abstract class AdvancedEntityModel<T extends Entity> extends SegmentedMod
      */
     public float moveBox(float speed, float degree, boolean bounce, float f, float f1) {
         if (bounce) {
-            return -MathHelper.abs((MathHelper.sin(f * speed) * f1 * degree));
+            return -Mth.abs((Mth.sin(f * speed) * f1 * degree));
         } else {
-            return MathHelper.sin(f * speed) * f1 * degree - f1 * degree;
+            return Mth.sin(f * speed) * f1 * degree - f1 * degree;
         }
     }
 

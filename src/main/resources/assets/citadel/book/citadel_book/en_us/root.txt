@@ -1,0 +1,21 @@
+Citadel is a library mod intended to provide a home
+to the codebase of Alexthe666 and other mod authors.
+It is mainly composed of shared code for animation, rendering and entity property tracking.
+It also contains a basic guidebook system, of which you are looking at right now.
+The book system reads in automatically from JSON files.
+Text is automatically wrapped and read in from a .txt file.
+Items and blocks can be rendered, along with recipes like this:
+<NEWLINE>
+Like items and blocks, entities and tabula models can also be rendered.
+These can either be static, rotated in any direction, or follow the
+player's cursor.
+<NEWLINE>
+<NEWLINE>
+<NEWLINE>
+All entities should animate properly. If the
+book is unable to find said entity, it will render a
+pig instead. Link buttons are useful for allowing
+players to navigate books properly.
+Pressing the link button will open the page
+specified, then the back button should allow
+the player to go back to the parent page.
