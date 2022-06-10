@@ -1,8 +1,8 @@
 package com.github.alexthe666.citadel.client.gui;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -10,7 +10,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class GuiCitadelBook extends GuiBasicBook {
 
     public GuiCitadelBook(ItemStack bookStack) {
-        super(bookStack, new TranslatableComponent("citadel_guide_book.title"));
+        super(bookStack, Component.translatable("citadel_guide_book.title"));
     }
 
     @Override

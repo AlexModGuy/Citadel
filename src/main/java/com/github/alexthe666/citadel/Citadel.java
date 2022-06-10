@@ -5,13 +5,21 @@ import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemCitadelBook;
 import com.github.alexthe666.citadel.item.ItemCustomRender;
 import com.github.alexthe666.citadel.server.CitadelEvents;
+import com.github.alexthe666.citadel.server.generation.SpawnProbabilityModifier;
+import com.github.alexthe666.citadel.server.generation.VillageHouseManager;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.github.alexthe666.citadel.web.WebHelper;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.NoneBiomeModifier;
+import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -54,26 +62,31 @@ public class Citadel {
             .simpleChannel();
     public static ServerProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static List<String> PATREONS = new ArrayList<>();
-    public static final DeferredRegister<Item> ITEM_DEFERRED_REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, "citadel");
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "citadel");
 
-    public static final RegistryObject<Item> DEBUG_ITEM = ITEM_DEFERRED_REGISTER.register("debug", () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> CITADEL_BOOK = ITEM_DEFERRED_REGISTER.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> EFFECT_ITEM = ITEM_DEFERRED_REGISTER.register("effect_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> FANCY_ITEM = ITEM_DEFERRED_REGISTER.register("fancy_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> DEBUG_ITEM = ITEMS.register("debug", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> CITADEL_BOOK = ITEMS.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> EFFECT_ITEM = ITEMS.register("effect_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FANCY_ITEM = ITEMS.register("fancy_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+
 
     public Citadel() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModConfigEvent);
-        ITEM_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        bus.addListener(this::setup);
+        bus.addListener(this::enqueueIMC);
+        bus.addListener(this::processIMC);
+        bus.addListener(this::doClientStuff);
+        bus.addListener(this::onModConfigEvent);
+        ITEMS.register(bus);
+        final DeferredRegister<Codec<? extends BiomeModifier>> serializers = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, "citadel");
+        serializers.register(bus);
+        serializers.register("mob_spawn_probability", SpawnProbabilityModifier::makeCodec);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(PROXY);
         final ModLoadingContext modLoadingContext = ModLoadingContext.get();
         modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
         MinecraftForge.EVENT_BUS.register(new CitadelEvents());
-        MinecraftForge.EVENT_BUS.addListener(this::onBiomeLoadFromJSON);
     }
 
     public static <MSG> void sendMSGToServer(MSG message) {
@@ -87,7 +100,7 @@ public class Citadel {
     }
 
     public static <MSG> void sendNonLocal(MSG msg, ServerPlayer player) {
-        if (player.server.isDedicatedServer() || !player.getName().equals(player.server.getSingleplayerName())) {
+        if (player.server.isDedicatedServer() || player.server.getSingleplayerProfile() != null && !player.getName().getString().equals(player.server.getSingleplayerProfile().getName())) {
             NETWORK_WRAPPER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         }
     }
@@ -134,9 +147,8 @@ public class Citadel {
     }
 
     @SubscribeEvent
-    public void onBiomeLoadFromJSON(BiomeLoadingEvent event) {
-        //if(citadelTestBiomeData.matches(event.getCategory(), event.getName())){
-        //    LOGGER.debug("CONFIG TEST BIOME DATA MATCHES: " + event.getName());
-        //}
+    public void onDatapackReload(OnDatapackSyncEvent event) {
+        VillageHouseManager.addAllHouses(event.getPlayerList().getServer().registryAccess());
     }
+
 }

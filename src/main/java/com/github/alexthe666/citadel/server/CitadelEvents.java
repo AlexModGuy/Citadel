@@ -7,12 +7,13 @@ import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.lang.reflect.Constructor;
@@ -33,12 +34,6 @@ public class CitadelEvents {
                 Citadel.LOGGER.debug("Citadel Data Tag tracker example: " + tag.getInt("CitadelInt"));
             }
         }
-    }
-
-    @SubscribeEvent
-    public void onLoadBiome(BiomeLoadingEvent event) {
-        float probability = (float) (ServerConfig.chunkGenSpawnModifierVal) * event.getSpawns().getProbability();
-        event.getSpawns().creatureGenerationProbability(probability);
     }
 
     @SubscribeEvent

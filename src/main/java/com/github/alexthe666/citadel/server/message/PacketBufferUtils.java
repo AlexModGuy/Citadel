@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Utilities for interacting with {@link PacketBuffer}.
+ * Utilities for interacting with PacketBuffer.
  *
  * @author cpw
  * @since 1.0.0
@@ -154,7 +154,7 @@ public class PacketBufferUtils {
     }
 
     /**
-     * Write an {@link CompoundNBT} to the byte buffer. It uses the minecraft encoding.
+     * Write an {@link CompoundTag} to the byte buffer. It uses the minecraft encoding.
      *
      * @param to  The buffer to write to
      * @param tag The tag to write
@@ -165,7 +165,7 @@ public class PacketBufferUtils {
     }
 
     /**
-     * Read an {@link CompoundNBT} from the byte buffer. It uses the minecraft encoding.
+     * Read an {@link CompoundTag} from the byte buffer. It uses the minecraft encoding.
      *
      * @param from The buffer to read from
      * @return The read tag

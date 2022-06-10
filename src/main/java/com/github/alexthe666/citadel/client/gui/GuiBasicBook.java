@@ -25,8 +25,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.sounds.SoundEvents;
@@ -206,7 +204,7 @@ public abstract class GuiBasicBook extends Screen {
             if (linkData.getPage() == this.currentPageCounter) {
                 int maxLength = Math.max(100, Minecraft.getInstance().font.width(linkData.getTitleText()) + 20);
                 yIndexesToSkip.add(new Whitespace(linkData.getPage(), linkData.getX() - maxLength / 2, linkData.getY(), 100, 20));
-                this.addRenderableWidget(new Button(k + linkData.getX() - maxLength / 2, l + linkData.getY(), maxLength, 20, new TextComponent(linkData.getTitleText()), (p_213021_1_) -> {
+                this.addRenderableWidget(new Button(k + linkData.getX() - maxLength / 2, l + linkData.getY(), maxLength, 20, Component.translatable(linkData.getTitleText()), (p_213021_1_) -> {
                     prevPageJSON = this.currentPageJSON;
                     currentPageJSON = new ResourceLocation(getTextFileDirectory() + linkData.getLinkedPage());
                     preservedPageIndex = this.currentPageCounter;
@@ -296,7 +294,7 @@ public abstract class GuiBasicBook extends Screen {
         if (this.entityTooltip != null) {
             matrixStack.pushPose();
             matrixStack.translate(0, 0, 550);
-            renderTooltip(matrixStack, Minecraft.getInstance().font.split(new TranslatableComponent(entityTooltip), Math.max(this.width / 2 - 43, 170)), x, y);
+            renderTooltip(matrixStack, Minecraft.getInstance().font.split(Component.translatable(entityTooltip), Math.max(this.width / 2 - 43, 170)), x, y);
             entityTooltip = null;
             matrixStack.popPose();
         }
@@ -308,7 +306,8 @@ public abstract class GuiBasicBook extends Screen {
             currentPageText = new ResourceLocation(getTextFileDirectory() + lang + "/" + internalPage.getTextFileToReadFrom());
             boolean invalid = false;
             try {
-                Resource res = Minecraft.getInstance().getResourceManager().getResource(currentPageText);
+                //test if it exists. if no exception, then the language is supported
+                Minecraft.getInstance().getResourceManager().getResource(currentPageText).isEmpty();
             } catch (Exception e) {
                 invalid = true;
                 Citadel.LOGGER.warn("Could not find language file for translation, defaulting to english");
@@ -392,19 +391,24 @@ public abstract class GuiBasicBook extends Screen {
                 }
             }
         }
+        for(RecipeData recipeData : recipes){
+            if (recipeData.getPage() == this.currentPageCounter) {
+                matrixStack.pushPose();
+                matrixStack.translate(k + recipeData.getX(), l + recipeData.getY(), 0);
+                float scale = (float) recipeData.getScale();
+                matrixStack.scale(scale, scale, scale);
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, getBookWidgetTexture());
+                this.blit(matrixStack, 0, 0, 0, 88, 116, 53);
+                matrixStack.popPose();
+            }
+        }
         for (RecipeData recipeData : recipes) {
             if (recipeData.getPage() == this.currentPageCounter) {
                 Recipe recipe = getRecipeByName(recipeData.getRecipe());
                 int playerTicks = Minecraft.getInstance().player.tickCount;
                 if (recipe != null) {
                     float scale = (float) recipeData.getScale();
-                    matrixStack.pushPose();
-                    matrixStack.translate(k + recipeData.getX(), l + recipeData.getY(), 0);
-                    matrixStack.scale(scale, scale, scale);
-                    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                    RenderSystem.setShaderTexture(0, getBookWidgetTexture());
-                    this.blit(matrixStack, 0, 0, 0, 88, 116, 53);
-                    matrixStack.popPose();
                     PoseStack poseStack = RenderSystem.getModelViewStack();
 
                     for (int i = 0; i < recipe.getIngredients().size(); i++) {
@@ -594,19 +598,21 @@ public abstract class GuiBasicBook extends Screen {
 
     @Nullable
     protected BookPage generatePage(ResourceLocation res) {
-        Resource resource = null;
+        Optional<Resource> resource = null;
         BookPage page = null;
         try {
             resource = Minecraft.getInstance().getResourceManager().getResource(res);
             try {
                 resource = Minecraft.getInstance().getResourceManager().getResource(res);
-                InputStream inputstream = resource.getInputStream();
-                Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
-                page = BookPage.deserialize(reader);
+                if(resource.isPresent()){
+                    BufferedReader inputstream = resource.get().openAsReader();
+                    page = BookPage.deserialize(inputstream);
+                }
+
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
         return page;
@@ -636,9 +642,9 @@ public abstract class GuiBasicBook extends Screen {
         int actualTextX = 0;
         int yIndex = 0;
         try {
-            resource = Minecraft.getInstance().getResourceManager().getResource(res);
+            resource = Minecraft.getInstance().getResourceManager().getResource(res).get();
             try {
-                List<String> readStrings = IOUtils.readLines(resource.getInputStream(), StandardCharsets.UTF_8);
+                List<String> readStrings = IOUtils.readLines(resource.openAsReader());
                 this.linesFromJSON = readStrings.size();
                 this.lines.clear();
                 List<String> splitBySpaces = new ArrayList<>();
@@ -715,7 +721,7 @@ public abstract class GuiBasicBook extends Screen {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             Citadel.LOGGER.warn("Could not load in page .txt from json from page, page: " + res);
         }
     }

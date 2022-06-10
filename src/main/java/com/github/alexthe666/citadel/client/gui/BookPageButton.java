@@ -7,10 +7,12 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.awt.*;
 
 @OnlyIn(Dist.CLIENT)
 public class BookPageButton extends Button {
@@ -19,7 +21,7 @@ public class BookPageButton extends Button {
     private GuiBasicBook bookGUI;
 
     public BookPageButton(GuiBasicBook bookGUI, int p_i51079_1_, int p_i51079_2_, boolean p_i51079_3_, OnPress p_i51079_4_, boolean p_i51079_5_) {
-        super(p_i51079_1_, p_i51079_2_, 23, 13, TextComponent.EMPTY, p_i51079_4_);
+        super(p_i51079_1_, p_i51079_2_, 23, 13, CommonComponents.EMPTY, p_i51079_4_);
         this.isForward = p_i51079_3_;
         this.playTurnSound = p_i51079_5_;
         this.bookGUI = bookGUI;

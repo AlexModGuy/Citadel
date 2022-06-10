@@ -1,10 +1,10 @@
 modLoader="javafml" #mandatory
-loaderVersion="[40,)" #mandatory (26 is current forge version)
+loaderVersion="[41,)" #mandatory (26 is current forge version)
 license="GNU LESSER GENERAL PUBLIC LICENSE"
 issueTrackerURL="https://github.com/Alex-the-666/Citadel/issues" #optional
 [[mods]] #mandatory
 modId="citadel" #mandatory
-version="1.11.1" #mandatory
+version="1.12.0" #mandatory
 displayName="Citadel" #mandatory
 displayURL="https://github.com/Alex-the-666/Citadel" #optional
 logoFile="citadel.png" #optional

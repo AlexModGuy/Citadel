@@ -21,6 +21,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -30,9 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -71,9 +70,9 @@ public class ClientProxy extends ServerProxy {
     public void openScreen(ScreenEvent.InitScreenEvent event) {
         if (event.getScreen() instanceof SkinCustomizationScreen && Minecraft.getInstance().player != null) {
            try{
-               String username = Minecraft.getInstance().player.getName().getContents();
+               String username = Minecraft.getInstance().player.getName().getString();
                if (Citadel.PATREONS.contains(username)) {
-                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150, 200, 20, new TranslatableComponent("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150, 200, 20, Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
                        Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(event.getScreen(), Minecraft.getInstance().options));
                    }));
                }
@@ -91,7 +90,7 @@ public class ClientProxy extends ServerProxy {
     @SubscribeEvent
     public void playerRender(RenderPlayerEvent.Post event) {
         PoseStack matrixStackIn = event.getPoseStack();
-        String username = event.getPlayer().getName().getContents();
+        String username = event.getPlayer().getName().getString();
         if (!event.getPlayer().isModelPartShown(PlayerModelPart.CAPE)) {
             return;
         }
