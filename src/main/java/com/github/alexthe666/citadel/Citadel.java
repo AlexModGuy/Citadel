@@ -100,9 +100,7 @@ public class Citadel {
     }
 
     public static <MSG> void sendNonLocal(MSG msg, ServerPlayer player) {
-        if (player.server.isDedicatedServer() || player.server.getSingleplayerProfile() != null && !player.getName().getString().equals(player.server.getSingleplayerProfile().getName())) {
-            NETWORK_WRAPPER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
-        }
+        NETWORK_WRAPPER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
