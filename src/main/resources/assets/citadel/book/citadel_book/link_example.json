@@ -38,6 +38,21 @@
       "y": 20,
       "page" : 0,
       "scale": 2.5
+    },
+    {
+      "item" : "citadel:icon_item",
+      "x": 10,
+      "y": 55,
+      "page" : 1,
+      "scale": 2.5
+    },
+    {
+      "item" : "citadel:icon_item",
+      "item_tag": "{IconLocation:\"minecraft:textures/map/map_background.png\"}",
+      "x": 50,
+      "y": 55,
+      "page" : 1,
+      "scale": 2.5
     }
   ],
   "recipes": [
@@ -45,5 +60,28 @@
   "tabula_renders": [
   ],
   "entity_renders": [
+    {
+      "entity": "minecraft:bee",
+      "x": 230,
+      "y": 120,
+      "page" : 1,
+      "scale": 1.7,
+      "rot_x": 30,
+      "rot_y": 135,
+      "rot_z": 0,
+      "follow_cursor": true
+    },
+    {
+      "entity": "minecraft:skeleton",
+      "entity_data": "{ArmorItems:[{},{},{},{Count:1b,id:\"minecraft:diamond_helmet\",tag:{Damage:0}}], HandItems:[{Count:1b,id:\"minecraft:shield\"},{}]}",
+      "x": 230,
+      "y": 70,
+      "page" : 1,
+      "scale": 0.9,
+      "rot_x": 30,
+      "rot_y": 225,
+      "rot_z": 0,
+      "follow_cursor": false
+    }
   ]
 }

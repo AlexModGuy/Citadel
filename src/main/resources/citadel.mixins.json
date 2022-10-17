@@ -5,11 +5,14 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "citadel.refmap.json",
   "mixins": [
+    "ChunkGeneratorMixin",
     "LivingEntityMixin",
     "SmithingMenuMixin"
   ],
   "client": [
+    "client.ClientLevelMixin",
     "client.HumanoidModelMixin",
+    "client.ItemBlockRenderTypesMixin",
     "client.WorldRendererMixin"
   ],
   "injectors": {

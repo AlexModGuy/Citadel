@@ -1,12 +1,12 @@
 package com.github.alexthe666.citadel.item;
 
 import com.github.alexthe666.citadel.Citadel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 public class ItemCitadelBook extends Item {

@@ -1,22 +1,16 @@
 package com.github.alexthe666.citadel.client.render;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
-import net.minecraft.client.renderer.MultiBufferSource;
-import org.apache.commons.lang3.tuple.Pair;
-
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.*;
 
 /*
     Lightning bolt effect code used with permission from aidancbrady

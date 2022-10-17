@@ -12,9 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 public class BakedTabulaModel implements BakedModel {
     private final ImmutableList<BakedQuad> quads;

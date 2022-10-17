@@ -5,3 +5,5 @@ Now on this separate page, pressing the link button should return you to the roo
 From 1.8.0 and onwards, the Fancy Item and Effect Item now allow renders of spinning, bouncing items or potion effects.
 These are quite useful for pages on potion effects or for some additional pizzaz for creative tabs, advancements and more.
 The item or effect rendered is specified by NBT data.
+<NEWLINE>
+From 1.13.0 and onwards, the Icon Item has been added to allow any square icon image to be rendered. If no texture path is specified in its item tag under IconLocation, it will simply render as a pig face, like so.

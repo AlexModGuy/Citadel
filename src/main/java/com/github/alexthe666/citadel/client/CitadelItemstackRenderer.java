@@ -1,31 +1,34 @@
 package com.github.alexthe666.citadel.client;
 
 import com.github.alexthe666.citadel.Citadel;
-import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.client.resources.MobEffectTextureManager;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.Util;
-import net.minecraft.util.Mth;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import net.minecraft.core.Registry;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
+
+    private static final ResourceLocation DEFAULT_ICON_TEXTURE = new ResourceLocation("citadel:textures/gui/book/icon_default.png");
+    private static final Map<String, ResourceLocation> LOADED_ICONS = new HashMap<>();
 
 
     public CitadelItemstackRenderer() {
@@ -115,6 +118,34 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             bufferbuilder.vertex(mx, (float) 0, (float) 1, (float) 0).uv(sprite.getU0(), sprite.getV0()).color(br, br, br, 255).uv2(combinedLight).endVertex();
             bufferbuilder.vertex(mx, (float) 0, (float) 0, (float) 0).uv(sprite.getU0(), sprite.getV1()).color(br, br, br, 255).uv2(combinedLight).endVertex();
             bufferbuilder.vertex(mx, (float) 1, (float) 0, (float) 0).uv(sprite.getU1(), sprite.getV1()).color(br, br, br, 255).uv2(combinedLight).endVertex();
+            tessellator.end();
+            matrixStack.popPose();
+        }
+        if (stack.getItem() == Citadel.ICON_ITEM.get()) {
+            ResourceLocation texture = DEFAULT_ICON_TEXTURE;
+            if (stack.getTag() != null && stack.getTag().contains("IconLocation")) {
+                String iconLocationStr = stack.getTag().getString("IconLocation");
+                if(LOADED_ICONS.containsKey(iconLocationStr)){
+                    texture = LOADED_ICONS.get(iconLocationStr);
+                }else{
+                    texture = new ResourceLocation(iconLocationStr);
+                    LOADED_ICONS.put(iconLocationStr, texture);
+                }
+            }
+            matrixStack.pushPose();
+            matrixStack.translate(0, 0, 0.5F);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, texture);
+            Tesselator tessellator = Tesselator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuilder();
+            bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+            Matrix4f mx = matrixStack.last().pose();
+            int br = 255;
+            bufferbuilder.vertex(mx, (float) 1, (float) 1, (float) 0).uv(1, 0).color(br, br, br, 255).uv2(combinedLight).endVertex();
+            bufferbuilder.vertex(mx, (float) 0, (float) 1, (float) 0).uv(0, 0).color(br, br, br, 255).uv2(combinedLight).endVertex();
+            bufferbuilder.vertex(mx, (float) 0, (float) 0, (float) 0).uv(0, 1).color(br, br, br, 255).uv2(combinedLight).endVertex();
+            bufferbuilder.vertex(mx, (float) 1, (float) 0, (float) 0).uv(1, 1).color(br, br, br, 255).uv2(combinedLight).endVertex();
             tessellator.end();
             matrixStack.popPose();
         }

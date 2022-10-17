@@ -5,19 +5,13 @@ import com.google.gson.*;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.Registry;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 public class SpawnBiomeData {
 
@@ -90,7 +84,7 @@ public class SpawnBiomeData {
                 return false;
             }else{
                 if(type == BiomeEntryType.BIOME_TAG){
-                    if(biomeHolder.is(new ResourceLocation(value))){
+                    if(biomeHolder.getTagKeys().anyMatch((biomeTagKey -> biomeTagKey.location() != null && biomeTagKey.location().toString().equals(value)))){
                         return !negate;
                     }
                     return negate;

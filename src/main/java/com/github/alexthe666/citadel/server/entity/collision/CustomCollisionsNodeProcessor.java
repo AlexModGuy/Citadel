@@ -1,13 +1,13 @@
 package com.github.alexthe666.citadel.server.entity.collision;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
 
 public class CustomCollisionsNodeProcessor extends WalkNodeEvaluator {
 
@@ -49,7 +49,7 @@ public class CustomCollisionsNodeProcessor extends WalkNodeEvaluator {
 
     protected static BlockPathTypes getNodes(BlockGetter p_237238_0_, BlockPos p_237238_1_) {
         BlockState blockstate = p_237238_0_.getBlockState(p_237238_1_);
-        BlockPathTypes type = blockstate.getBlockPathType(p_237238_0_, p_237238_1_);
+        BlockPathTypes type = blockstate.getBlockPathType(p_237238_0_, p_237238_1_, null);
         if (type != null) return type;
         Block block = blockstate.getBlock();
         Material material = blockstate.getMaterial();

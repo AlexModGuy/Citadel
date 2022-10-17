@@ -1,9 +1,9 @@
 package com.github.alexthe666.citadel.server.message;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;

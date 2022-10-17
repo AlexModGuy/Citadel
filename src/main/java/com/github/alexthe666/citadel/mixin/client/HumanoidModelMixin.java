@@ -1,8 +1,7 @@
 package com.github.alexthe666.citadel.mixin.client;
 
-import com.github.alexthe666.citadel.Citadel;
+import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.client.event.EventPosePlayerHand;
-import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.RenderType;
@@ -24,7 +23,7 @@ public abstract class HumanoidModelMixin extends Model {
         super(p_103110_);
     }
 
-    @Inject(at = @At("HEAD"), remap = Citadel.REMAPREFS, method = "Lnet/minecraft/client/model/HumanoidModel;poseRightArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
+    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/model/HumanoidModel;poseRightArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
     private void citadel_poseRightArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), false);
         MinecraftForge.EVENT_BUS.post(event);
@@ -34,7 +33,7 @@ public abstract class HumanoidModelMixin extends Model {
     }
 
 
-    @Inject(at = @At("HEAD"), remap = Citadel.REMAPREFS, method = "Lnet/minecraft/client/model/HumanoidModel;poseLeftArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
+    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/model/HumanoidModel;poseLeftArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
     private void citadel_poseLeftArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), true);
         MinecraftForge.EVENT_BUS.post(event);

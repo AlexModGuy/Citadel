@@ -5,8 +5,8 @@ import com.github.alexthe666.citadel.client.model.container.TabulaCubeGroupConta
 import com.github.alexthe666.citadel.client.model.container.TabulaModelBlock;
 import com.github.alexthe666.citadel.client.model.container.TabulaModelContainer;
 import com.google.gson.*;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

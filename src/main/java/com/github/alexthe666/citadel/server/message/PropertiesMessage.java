@@ -2,10 +2,10 @@ package com.github.alexthe666.citadel.server.message;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 

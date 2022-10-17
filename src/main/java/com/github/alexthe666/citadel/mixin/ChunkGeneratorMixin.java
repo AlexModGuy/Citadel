@@ -1,33 +1,36 @@
 package com.github.alexthe666.citadel.mixin;
 
-import com.github.alexthe666.citadel.Citadel;
-import com.github.alexthe666.citadel.server.generation.GenerationSettingsManager;
-import net.minecraft.world.level.StructureFeatureManager;
-import net.minecraft.world.level.WorldGenLevel;
+import com.github.alexthe666.citadel.CitadelConstants;
+import com.github.alexthe666.citadel.server.event.EventMergeStructureSpawns;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.util.random.WeightedRandomList;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeGenerationSettings;
-import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import javax.annotation.Nullable;
 
 @Mixin(ChunkGenerator.class)
 public class ChunkGeneratorMixin {
 
-
-    @Shadow @Final protected BiomeSource biomeSource;
-
-    @Inject(at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/world/level/levelgen/WorldgenRandom;setFeatureSeed(JII)V"), remap = Citadel.REMAPREFS, method = "Lnet/minecraft/world/level/chunk/ChunkGenerator;applyBiomeDecoration(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkAccess;Lnet/minecraft/world/level/StructureFeatureManager;)V")
-    private void citadel_applyBiomeDecoration(WorldGenLevel level, ChunkAccess access, StructureFeatureManager featureManager, CallbackInfo ci) {
-        GenerationSettingsManager.onChunkPopulate((ChunkGenerator)((Object)this), level, access, featureManager, this.biomeSource);
+    @Inject(at = @At("RETURN"), remap = CitadelConstants.REMAPREFS, cancellable = true,
+            method = "Lnet/minecraft/world/level/chunk/ChunkGenerator;getMobsAt(Lnet/minecraft/core/Holder;Lnet/minecraft/world/level/StructureManager;Lnet/minecraft/world/entity/MobCategory;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/util/random/WeightedRandomList;")
+    private void citadel_getMobsAt(Holder<Biome> biome, StructureManager structureManager, MobCategory mobCategory, BlockPos pos, CallbackInfoReturnable<WeightedRandomList<MobSpawnSettings.SpawnerData>> cir) {
+        WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns = biome.value().getMobSettings().getMobs(mobCategory);
+        if(biomeSpawns != cir.getReturnValue()){
+            EventMergeStructureSpawns event = new EventMergeStructureSpawns(structureManager, pos, mobCategory, cir.getReturnValue(), biomeSpawns);
+            MinecraftForge.EVENT_BUS.post(event);
+            if(event.getResult() == Event.Result.ALLOW){
+                cir.setReturnValue(event.getStructureSpawns());
+            }
+        }
     }
 
 }

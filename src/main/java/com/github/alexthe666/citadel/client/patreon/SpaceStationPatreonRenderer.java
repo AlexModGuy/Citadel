@@ -2,18 +2,15 @@ package com.github.alexthe666.citadel.client.patreon;
 
 import com.github.alexthe666.citadel.ClientProxy;
 import com.github.alexthe666.citadel.client.CitadelPatreonRenderer;
-import com.github.alexthe666.citadel.client.render.LightningBoltData;
-import com.github.alexthe666.citadel.client.render.LightningRender;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import com.mojang.math.Vector3f;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.LivingEntity;
 
 public class SpaceStationPatreonRenderer extends CitadelPatreonRenderer {
 

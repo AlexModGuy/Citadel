@@ -1,7 +1,5 @@
 package com.github.alexthe666.citadel.client.gui.data;
 
-import net.minecraft.nbt.CompoundTag;
-
 public class EntityRenderData {
     private String entity;
     private int x;

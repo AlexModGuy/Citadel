@@ -3,9 +3,8 @@ package com.github.alexthe666.citadel.client.model;
 import com.github.alexthe666.citadel.client.model.basic.BasicEntityModel;
 import com.github.alexthe666.citadel.client.model.container.TextureOffset;
 import com.google.common.collect.Maps;
-import net.minecraft.client.model.ListModel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

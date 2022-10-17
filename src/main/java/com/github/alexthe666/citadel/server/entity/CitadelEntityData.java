@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.server.entity;
 
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.LivingEntity;
 
 /**
  * @author Alexthe666

@@ -1,9 +1,9 @@
 package com.github.alexthe666.citadel.server.item;
 
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.sounds.SoundEvent;
 
 public class CustomArmorMaterial implements ArmorMaterial {
     private String name;

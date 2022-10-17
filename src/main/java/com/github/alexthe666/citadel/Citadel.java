@@ -11,14 +11,12 @@ import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.github.alexthe666.citadel.web.WebHelper;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.NoneBiomeModifier;
-import net.minecraftforge.event.OnDatapackSyncEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -30,8 +28,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -47,11 +44,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+;
+
 @Mod("citadel")
 public class Citadel {
     public static final Logger LOGGER = LogManager.getLogger("citadel");
-    public static final boolean REMAPREFS = true;
-    public static final boolean DEBUG = false;
     private static final String PROTOCOL_VERSION = Integer.toString(1);
     private static final ResourceLocation PACKET_NETWORK_NAME = new ResourceLocation("citadel:main_channel");
     public static final SimpleChannel NETWORK_WRAPPER = NetworkRegistry.ChannelBuilder
@@ -69,6 +66,7 @@ public class Citadel {
     public static final RegistryObject<Item> CITADEL_BOOK = ITEMS.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EFFECT_ITEM = ITEMS.register("effect_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FANCY_ITEM = ITEMS.register("fancy_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ICON_ITEM = ITEMS.register("icon_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
 
 
     public Citadel() {
@@ -125,6 +123,7 @@ public class Citadel {
     public void onModConfigEvent(final ModConfigEvent event) {
         final ModConfig config = event.getConfig();
         // Rebake the configs when they change
+        ServerConfig.skipWarnings = ConfigHolder.SERVER.skipDatapackWarnings.get();
         if (config.getSpec() == ConfigHolder.SERVER_SPEC) {
             ServerConfig.citadelEntityTrack = ConfigHolder.SERVER.citadelEntityTracker.get();
             ServerConfig.chunkGenSpawnModifierVal = ConfigHolder.SERVER.chunkGenSpawnModifier.get();
@@ -145,8 +144,8 @@ public class Citadel {
     }
 
     @SubscribeEvent
-    public void onDatapackReload(OnDatapackSyncEvent event) {
-        VillageHouseManager.addAllHouses(event.getPlayerList().getServer().registryAccess());
+    public void onServerAboutToStart(ServerAboutToStartEvent event) {
+        VillageHouseManager.addAllHouses(event.getServer().registryAccess());
     }
 
 }

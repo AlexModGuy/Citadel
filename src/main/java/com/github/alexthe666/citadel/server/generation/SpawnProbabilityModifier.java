@@ -1,16 +1,12 @@
 package com.github.alexthe666.citadel.server.generation;
 
-import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ModifiableBiomeInfo;
-import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 

@@ -4,6 +4,7 @@ import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.client.gui.data.*;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
+import com.github.alexthe666.citadel.recipe.SpecialRecipeInGuideBook;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -11,9 +12,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,6 +23,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
@@ -37,22 +39,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nullable;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class GuiBasicBook extends Screen {
 
     private static final ResourceLocation BOOK_PAGE_TEXTURE = new ResourceLocation("citadel:textures/gui/book/book_pages.png");
     private static final ResourceLocation BOOK_BINDING_TEXTURE = new ResourceLocation("citadel:textures/gui/book/book_binding.png");
     private static final ResourceLocation BOOK_WIDGET_TEXTURE = new ResourceLocation("citadel:textures/gui/book/widgets.png");
+    private static final ResourceLocation BOOK_BUTTONS_TEXTURE = new ResourceLocation("citadel:textures/gui/book/link_buttons.png");
     private final List<LineData> lines = new ArrayList<>();
     private final List<LinkData> links = new ArrayList<>();
     private final List<ItemRenderData> itemRenders = new ArrayList<>();
@@ -90,58 +91,6 @@ public abstract class GuiBasicBook extends Screen {
         this.currentPageJSON = getRootPage();
     }
 
-    public static void drawEntityOnScreen(PoseStack stackIn, int posX, int posY, float scale, boolean follow, double xRot, double yRot, double zRot, float mouseX, float mouseY, Entity entity) {
-        float customYaw = posX - mouseX;
-        float customPitch = posY - mouseY;
-        float f = (float) Math.atan(customYaw / 40.0F);
-        float f1 = (float) Math.atan(customPitch / 40.0F);
-        RenderSystem.applyModelViewMatrix();
-        PoseStack posestack1 = new PoseStack();
-        posestack1.translate(posX, posY, 120.0D);
-        posestack1.scale(scale, scale, scale);
-        Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
-        Quaternion quaternion1 = Vector3f.XP.rotationDegrees(follow ? -f1 * 20.0F : 0.0F);
-        quaternion.mul(quaternion1);
-        posestack1.mulPose(quaternion);
-        posestack1.mulPose(Vector3f.XP.rotationDegrees((float) xRot));
-        posestack1.mulPose(Vector3f.YP.rotationDegrees((float) yRot - 270F));
-        posestack1.mulPose(Vector3f.ZP.rotationDegrees((float) zRot));
-        if (follow) {
-            float yaw = -f * 20.0F - (float)yRot;
-            entity.setYRot(yaw);
-            entity.setXRot(f1 * 20.0F);
-            if (entity instanceof LivingEntity) {
-                ((LivingEntity) entity).yBodyRot = yaw;
-                ((LivingEntity) entity).yBodyRotO = yaw;
-                ((LivingEntity) entity).yHeadRot = yaw;
-                ((LivingEntity) entity).yHeadRotO = yaw;
-            }
-            quaternion1 = Vector3f.XP.rotationDegrees(f1 * 20.0F);
-            quaternion.mul(quaternion1);
-        }
-        Lighting.setupForEntityInInventory();
-        EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        quaternion1.conj();
-
-        entityrenderdispatcher.overrideCameraOrientation(quaternion1);
-        entityrenderdispatcher.setRenderShadow(false);
-        MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
-        RenderSystem.runAsFancy(() -> {
-            entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, posestack1, multibuffersource$buffersource, 15728880);
-        });
-        multibuffersource$buffersource.endBatch();
-        entityrenderdispatcher.setRenderShadow(true);
-        entity.setYRot(0);
-        entity.setXRot(0);
-        if (entity instanceof LivingEntity) {
-            ((LivingEntity) entity).yBodyRot = 0;
-            ((LivingEntity) entity).yHeadRotO = 0;
-            ((LivingEntity) entity).yHeadRot = 0;
-        }
-        RenderSystem.applyModelViewMatrix();
-        Lighting.setupFor3DItems();
-    }
-
     public static void drawTabulaModelOnScreen(PoseStack stack, TabulaModel model, ResourceLocation tex, int posX, int posY, float scale, boolean follow, double xRot, double yRot, double zRot, float mouseX, float mouseY) {
         float f = (float) Math.atan(mouseX / 40.0F);
         float f1 = (float) Math.atan(mouseY / 40.0F);
@@ -175,6 +124,72 @@ public abstract class GuiBasicBook extends Screen {
         Lighting.setupFor3DItems();
     }
 
+    public void drawEntityOnScreen(PoseStack stackIn, int posX, int posY, float scale, boolean follow, double xRot, double yRot, double zRot, float mouseX, float mouseY, Entity entity) {
+        float customYaw = posX - mouseX;
+        float customPitch = posY - mouseY;
+        float f = (float) Math.atan(customYaw / 40.0F);
+        float f1 = (float) Math.atan(customPitch / 40.0F);
+
+        if (follow) {
+            float setX = f1 * 20.0F;
+            float setY = f * 20.0F;
+            entity.setXRot(setX);
+            entity.setYRot(setY);
+            if (entity instanceof LivingEntity) {
+                ((LivingEntity) entity).yBodyRot = setY;
+                ((LivingEntity) entity).yBodyRotO = setY;
+                ((LivingEntity) entity).yHeadRot = setY;
+                ((LivingEntity) entity).yHeadRotO = setY;
+            }
+        } else {
+            f = 0;
+            f1 = 0;
+        }
+
+        PoseStack posestack = RenderSystem.getModelViewStack();
+        posestack.pushPose();
+        posestack.translate(posX, posY, 1050.0D);
+        posestack.scale(1.0F, 1.0F, -1.0F);
+        RenderSystem.applyModelViewMatrix();
+        PoseStack posestack1 = new PoseStack();
+        posestack1.translate(0.0D, 0.0D, 1000.0D);
+        posestack1.scale(scale, scale, scale);
+        Quaternion quaternion = Vector3f.ZP.rotationDegrees(180F);
+        Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 20.0F);
+        quaternion.mul(quaternion1);
+        quaternion.mul(Vector3f.XN.rotationDegrees((float) xRot));
+        quaternion.mul(Vector3f.YP.rotationDegrees((float) yRot));
+        quaternion.mul(Vector3f.ZP.rotationDegrees((float) zRot));
+        posestack1.mulPose(quaternion);
+
+        Vector3f light0 = Util.make(new Vector3f(1, -1.0F, -1.0F), Vector3f::normalize);
+        Vector3f light1 = Util.make(new Vector3f(-1, -1.0F, 1.0F), Vector3f::normalize);
+        RenderSystem.setShaderLights(light0, light1);
+        EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        quaternion1.conj();
+        entityrenderdispatcher.overrideCameraOrientation(quaternion1);
+        entityrenderdispatcher.setRenderShadow(false);
+        MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
+        RenderSystem.runAsFancy(() -> {
+            entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, posestack1, multibuffersource$buffersource, 15728880);
+        });
+        multibuffersource$buffersource.endBatch();
+        entityrenderdispatcher.setRenderShadow(true);
+
+        entity.setYRot(0);
+        entity.setXRot(0);
+        if (entity instanceof LivingEntity) {
+            ((LivingEntity) entity).yBodyRot = 0;
+            ((LivingEntity) entity).yHeadRotO = 0;
+            ((LivingEntity) entity).yHeadRot = 0;
+        }
+
+
+        posestack.popPose();
+        RenderSystem.applyModelViewMatrix();
+        Lighting.setupFor3DItems();
+    }
+
     protected void init() {
         super.init();
         playBookOpeningSound();
@@ -204,7 +219,7 @@ public abstract class GuiBasicBook extends Screen {
             if (linkData.getPage() == this.currentPageCounter) {
                 int maxLength = Math.max(100, Minecraft.getInstance().font.width(linkData.getTitleText()) + 20);
                 yIndexesToSkip.add(new Whitespace(linkData.getPage(), linkData.getX() - maxLength / 2, linkData.getY(), 100, 20));
-                this.addRenderableWidget(new Button(k + linkData.getX() - maxLength / 2, l + linkData.getY(), maxLength, 20, Component.translatable(linkData.getTitleText()), (p_213021_1_) -> {
+                this.addRenderableWidget(new LinkButton(this, k + linkData.getX() - maxLength / 2, l + linkData.getY(), maxLength, 20, Component.translatable(linkData.getTitleText()), linkData.getDisplayItem(), (p_213021_1_) -> {
                     prevPageJSON = this.currentPageJSON;
                     currentPageJSON = new ResourceLocation(getTextFileDirectory() + linkData.getLinkedPage());
                     preservedPageIndex = this.currentPageCounter;
@@ -279,11 +294,12 @@ public abstract class GuiBasicBook extends Screen {
                 refreshSpacing();
             }
         }
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         if (internalPage != null) {
             writePageText(matrixStack, x, y);
         }
-        prevPageJSON = currentPageJSON;
         super.render(matrixStack, x, y, partialTicks);
+        prevPageJSON = currentPageJSON;
         if (internalPage != null) {
             matrixStack.pushPose();
             RenderSystem.enableBlend();
@@ -307,7 +323,8 @@ public abstract class GuiBasicBook extends Screen {
             boolean invalid = false;
             try {
                 //test if it exists. if no exception, then the language is supported
-                Minecraft.getInstance().getResourceManager().getResource(currentPageText).isEmpty();
+                InputStream is = Minecraft.getInstance().getResourceManager().open(currentPageText);
+                is.close();
             } catch (Exception e) {
                 invalid = true;
                 Citadel.LOGGER.warn("Could not find language file for translation, defaulting to english");
@@ -391,7 +408,7 @@ public abstract class GuiBasicBook extends Screen {
                 }
             }
         }
-        for(RecipeData recipeData : recipes){
+        for (RecipeData recipeData : recipes) {
             if (recipeData.getPage() == this.currentPageCounter) {
                 matrixStack.pushPose();
                 matrixStack.translate(k + recipeData.getX(), l + recipeData.getY(), 0);
@@ -406,42 +423,9 @@ public abstract class GuiBasicBook extends Screen {
         for (RecipeData recipeData : recipes) {
             if (recipeData.getPage() == this.currentPageCounter) {
                 Recipe recipe = getRecipeByName(recipeData.getRecipe());
-                int playerTicks = Minecraft.getInstance().player.tickCount;
                 if (recipe != null) {
-                    float scale = (float) recipeData.getScale();
                     PoseStack poseStack = RenderSystem.getModelViewStack();
-
-                    for (int i = 0; i < recipe.getIngredients().size(); i++) {
-                        Ingredient ing = (Ingredient) recipe.getIngredients().get(i);
-                        ItemStack stack = ItemStack.EMPTY;
-                        if (!ing.isEmpty()) {
-                            if (ing.getItems().length > 1) {
-                                int currentIndex = (int) ((playerTicks / 20F) % ing.getItems().length);
-                                stack = ing.getItems()[currentIndex];
-                            } else {
-                                stack = ing.getItems()[0];
-                            }
-                        }
-                        if (!stack.isEmpty()) {
-                            poseStack.pushPose();
-                            poseStack.translate(k, l, 32.0F);
-                            poseStack.translate((int) (recipeData.getX() + (i % 3) * 20 * scale), (int) (recipeData.getY() + (i / 3) * 20 * scale), 0);
-                            poseStack.scale(scale, scale, scale);
-                            this.itemRenderer.blitOffset = 100.0F;
-                            this.itemRenderer.renderAndDecorateItem(stack, 0, 0);
-                            this.itemRenderer.blitOffset = 0.0F;
-                            poseStack.popPose();
-                        }
-                    }
-                    poseStack.pushPose();
-                    poseStack.translate(k, l, 32.0F);
-                    float finScale = scale * 1.5F;
-                    poseStack.translate(recipeData.getX() + 70 * finScale, recipeData.getY() + 10 * finScale, 0);
-                    poseStack.scale(finScale, finScale, finScale);
-                    this.itemRenderer.blitOffset = 100.0F;
-                    this.itemRenderer.renderAndDecorateItem(recipe.getResultItem(), 0, 0);
-                    this.itemRenderer.blitOffset = 0.0F;
-                    poseStack.popPose();
+                    renderRecipe(poseStack, recipe, recipeData, k, l);
                 }
             }
         }
@@ -475,14 +459,14 @@ public abstract class GuiBasicBook extends Screen {
         for (EntityRenderData data : entityRenders) {
             if (data.getPage() == this.currentPageCounter) {
                 Entity model = null;
-                EntityType type = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(data.getEntity()));
+                EntityType type = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(data.getEntity()));
                 if (type != null) {
                     model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
                 }
                 if (model != null) {
                     float scale = (float) data.getScale();
                     model.tickCount = Minecraft.getInstance().player.tickCount;
-                    if(data.getEntityData() != null){
+                    if (data.getEntityData() != null) {
                         try {
                             CompoundTag tag = TagParser.parseTag(data.getEntityData());
                             model.load(tag);
@@ -526,10 +510,59 @@ public abstract class GuiBasicBook extends Screen {
         }
     }
 
-    private void writePageText(PoseStack matrixStack, int x, int y) {
+    protected void renderRecipe(PoseStack poseStack, Recipe recipe, RecipeData recipeData, int k, int l) {
+        int playerTicks = Minecraft.getInstance().player.tickCount;
+        float scale = (float) recipeData.getScale();
+        NonNullList<Ingredient> ingredients = recipe instanceof SpecialRecipeInGuideBook ? ((SpecialRecipeInGuideBook)recipe).getDisplayIngredients() : recipe.getIngredients();
+        NonNullList<ItemStack> displayedStacks = NonNullList.create();
+
+        for (int i = 0; i < ingredients.size(); i++) {
+            Ingredient ing = ingredients.get(i);
+            ItemStack stack = ItemStack.EMPTY;
+            if (!ing.isEmpty()) {
+                if (ing.getItems().length > 1) {
+                    int currentIndex = (int) ((playerTicks / 20F) % ing.getItems().length);
+                    stack = ing.getItems()[currentIndex];
+                } else {
+                    stack = ing.getItems()[0];
+                }
+            }
+            if (!stack.isEmpty()) {
+                poseStack.pushPose();
+                poseStack.translate(k, l, 32.0F);
+                poseStack.translate((int) (recipeData.getX() + (i % 3) * 20 * scale), (int) (recipeData.getY() + (i / 3) * 20 * scale), 0);
+                poseStack.scale(scale, scale, scale);
+                this.itemRenderer.blitOffset = 100.0F;
+                this.itemRenderer.renderAndDecorateItem(stack, 0, 0);
+                this.itemRenderer.blitOffset = 0.0F;
+                poseStack.popPose();
+            }
+            displayedStacks.add(i, stack);
+        }
+        poseStack.pushPose();
+        poseStack.translate(k, l, 32.0F);
+        float finScale = scale * 1.5F;
+        poseStack.translate(recipeData.getX() + 70 * finScale, recipeData.getY() + 10 * finScale, 0);
+        poseStack.scale(finScale, finScale, finScale);
+        this.itemRenderer.blitOffset = 100.0F;
+        ItemStack result = recipe.getResultItem();
+        if(recipe instanceof SpecialRecipeInGuideBook){
+            result = ((SpecialRecipeInGuideBook) recipe).getDisplayResultFor(displayedStacks);
+        }
+        this.itemRenderer.renderAndDecorateItem(result, 0, 0);
+        this.itemRenderer.blitOffset = 0.0F;
+        poseStack.popPose();
+    }
+
+    protected void writePageText(PoseStack matrixStack, int x, int y) {
         Font font = this.font;
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize + 128) / 2;
+        for (LineData line : this.lines) {
+            if (line.getPage() == this.currentPageCounter) {
+                font.draw(matrixStack, line.getText(), k + 10 + line.getxIndex(), l + 10 + line.getyIndex() * 12, getTextColor());
+            }
+        }
         if (this.currentPageCounter == 0 && !writtenTitle.isEmpty()) {
             String actualTitle = I18n.get(writtenTitle);
             matrixStack.pushPose();
@@ -538,18 +571,12 @@ public abstract class GuiBasicBook extends Screen {
                 scale = 2.0F - Mth.clamp((font.width(actualTitle) - 80) * 0.011F, 0, 1.95F);
             }
             matrixStack.translate(k + 10, l + 10, 0);
-            matrixStack.scale(scale, scale, 1.0F);
+            matrixStack.scale(scale, scale, scale);
             font.draw(matrixStack, actualTitle, 0, 0, getTitleColor());
             matrixStack.popPose();
         }
         this.buttonNextPage.visible = currentPageCounter < maxPagesFromPrinting;
-        boolean rootPage = currentPageJSON.equals(this.getRootPage());
-        this.buttonPreviousPage.visible = currentPageCounter > 0 || !rootPage;
-        for (LineData line : this.lines) {
-            if (line.getPage() == this.currentPageCounter) {
-                font.draw(matrixStack, line.getText(), k + 10 + line.getxIndex(), l + 10 + line.getyIndex() * 12, getTextColor());
-            }
-        }
+        this.buttonPreviousPage.visible = currentPageCounter > 0 || !currentPageJSON.equals(this.getRootPage());
     }
 
     public boolean isPauseScreen() {
@@ -604,7 +631,7 @@ public abstract class GuiBasicBook extends Screen {
             resource = Minecraft.getInstance().getResourceManager().getResource(res);
             try {
                 resource = Minecraft.getInstance().getResourceManager().getResource(res);
-                if(resource.isPresent()){
+                if (resource.isPresent()) {
                     BufferedReader inputstream = resource.get().openAsReader();
                     page = BookPage.deserialize(inputstream);
                 }
@@ -642,9 +669,9 @@ public abstract class GuiBasicBook extends Screen {
         int actualTextX = 0;
         int yIndex = 0;
         try {
-            resource = Minecraft.getInstance().getResourceManager().getResource(res).get();
+            BufferedReader bufferedreader = Minecraft.getInstance().getResourceManager().openAsReader(res);
             try {
-                List<String> readStrings = IOUtils.readLines(resource.openAsReader());
+                List<String> readStrings = IOUtils.readLines(bufferedreader);
                 this.linesFromJSON = readStrings.size();
                 this.lines.clear();
                 List<String> splitBySpaces = new ArrayList<>();
@@ -728,5 +755,9 @@ public abstract class GuiBasicBook extends Screen {
 
     public void setEntityTooltip(String hoverText) {
         this.entityTooltip = hoverText;
+    }
+
+    public ResourceLocation getBookButtonsTexture(){
+        return BOOK_BUTTONS_TEXTURE;
     }
 }

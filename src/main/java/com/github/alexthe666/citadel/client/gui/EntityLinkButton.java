@@ -42,7 +42,7 @@ public class EntityLinkButton extends Button {
         posestack.scale(f, f, 1);
         this.drawBtn(false, posestack, 0, 0, lvt_5_1_, lvt_6_1_, 24, 24);
         Entity model = null;
-        EntityType type = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(data.getEntity()));
+        EntityType type = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(data.getEntity()));
         if (type != null) {
             model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
         }
@@ -106,8 +106,7 @@ public class EntityLinkButton extends Button {
             if (toRender != null) {
                 toRender.tickCount = Minecraft.getInstance().player.tickCount;
                 float transitional = Math.max(0.0F, renderScale - 1.0F) * 8;
-                GuiBasicBook.drawEntityOnScreen(matrixStack, (int) (12 * renderScale + transitional + (x + offsetX)), (int) (24 * renderScale - transitional + y + offsetY), 10 * renderScale, false, 30, -130, 0, 0, 0, toRender);
-                RenderSystem.applyModelViewMatrix();
+                bookGUI.drawEntityOnScreen(matrixStack, (int) (12 * renderScale + transitional + (x + offsetX)), (int) (24 * renderScale - transitional + y + offsetY), 10 * renderScale, false, 30, -130, 0, 0, 0, toRender);
             }
             RenderSystem.depthFunc(518);
             posestack.translate(0.0F, 0.0F, -950.0F);
