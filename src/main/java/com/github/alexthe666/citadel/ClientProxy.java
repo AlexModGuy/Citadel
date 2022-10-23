@@ -2,7 +2,9 @@ package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
-import com.github.alexthe666.citadel.client.CitadelPatreonRenderer;
+import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
+import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
+import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.client.event.EventGetFluidRenderType;
 import com.github.alexthe666.citadel.client.event.EventGetOutlineColor;
 import com.github.alexthe666.citadel.client.event.EventPosePlayerHand;
@@ -10,8 +12,7 @@ import com.github.alexthe666.citadel.client.gui.GuiCitadelBook;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelPatreonConfig;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
-import com.github.alexthe666.citadel.client.patreon.SpaceStationPatreonRenderer;
-import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
+import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -43,6 +44,7 @@ public class ClientProxy extends ServerProxy {
     public static TabulaModel CITADEL_MODEL;
     private static final String RICKROLL_URL = "http://techslides.com/demos/sample-videos/small.mp4";//"https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
     private static final ResourceLocation RICKROLL_LOCATION = new ResourceLocation("citadel:rickroll");
+    public static boolean hideFollower = false;
     public ClientProxy() {
         super();
     }
@@ -63,10 +65,18 @@ public class ClientProxy extends ServerProxy {
         if (event.getScreen() instanceof SkinCustomizationScreen && Minecraft.getInstance().player != null) {
            try{
                String username = Minecraft.getInstance().player.getName().getString();
+               int height = -20;
                if (Citadel.PATREONS.contains(username)) {
-                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150, 200, 20, Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
                        Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(event.getScreen(), Minecraft.getInstance().options));
                    }));
+                   height += 25;
+               }
+               if (!CitadelCapes.getCapesFor(Minecraft.getInstance().player.getUUID()).isEmpty()) {
+                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                       Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(event.getScreen(), Minecraft.getInstance().options));
+                   }));
+                   height += 25;
                }
            }catch (Exception e){
                e.printStackTrace();
@@ -84,7 +94,7 @@ public class ClientProxy extends ServerProxy {
         if (Citadel.PATREONS.contains(username)) {
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
             String rendererName = tag.contains("CitadelFollowerType") ? tag.getString("CitadelFollowerType") : "citadel";
-            if (!rendererName.equals("none")) {
+            if (!rendererName.equals("none") && !hideFollower) {
                 CitadelPatreonRenderer renderer = CitadelPatreonRenderer.get(rendererName);
                 if (renderer != null) {
                     float distance = tag.contains("CitadelRotateDistance") ? tag.getFloat("CitadelRotateDistance") : 2F;

@@ -10,6 +10,7 @@
     "SmithingMenuMixin"
   ],
   "client": [
+    "client.AbstractClientPlayerMixin",
     "client.ClientLevelMixin",
     "client.HumanoidModelMixin",
     "client.ItemBlockRenderTypesMixin",

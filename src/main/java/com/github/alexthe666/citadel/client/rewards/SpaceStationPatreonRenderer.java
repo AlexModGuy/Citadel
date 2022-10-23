@@ -1,10 +1,8 @@
-package com.github.alexthe666.citadel.client.patreon;
+package com.github.alexthe666.citadel.client.rewards;
 
 import com.github.alexthe666.citadel.ClientProxy;
-import com.github.alexthe666.citadel.client.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
