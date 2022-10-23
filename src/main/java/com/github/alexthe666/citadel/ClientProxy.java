@@ -11,6 +11,7 @@ import com.github.alexthe666.citadel.client.gui.GuiCitadelPatreonConfig;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
 import com.github.alexthe666.citadel.client.patreon.SpaceStationPatreonRenderer;
+import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -40,9 +41,6 @@ import java.io.IOException;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientProxy extends ServerProxy {
     public static TabulaModel CITADEL_MODEL;
-    private static final ResourceLocation CITADEL_TEXTURE = new ResourceLocation("citadel", "textures/patreon/citadel_model.png");
-    private static final ResourceLocation CITADEL_TEXTURE_RED = new ResourceLocation("citadel", "textures/patreon/citadel_model_red.png");
-    private static final ResourceLocation CITADEL_TEXTURE_GRAY = new ResourceLocation("citadel", "textures/patreon/citadel_model_gray.png");
     private static final String RICKROLL_URL = "http://techslides.com/demos/sample-videos/small.mp4";//"https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
     private static final ResourceLocation RICKROLL_LOCATION = new ResourceLocation("citadel:rickroll");
     public ClientProxy() {
@@ -55,9 +53,9 @@ public class ClientProxy extends ServerProxy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(CITADEL_TEXTURE));
-        CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(CITADEL_TEXTURE_RED));
-        CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(CITADEL_TEXTURE_GRAY));
+        CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station"), new int[]{}));
+        CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
+        CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
     }
 
     @SubscribeEvent
