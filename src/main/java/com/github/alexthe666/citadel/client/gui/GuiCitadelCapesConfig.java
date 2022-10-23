@@ -57,7 +57,6 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         renderBackwardsEntity(i, j + 144, 60, 0, 0, Minecraft.getInstance().player);
         ClientProxy.hideFollower = false;
         matrixStack.popPose();
-
     }
 
     public static void renderBackwardsEntity(int x, int y, int size, float angleXComponent, float angleYComponent, LivingEntity entity) {
