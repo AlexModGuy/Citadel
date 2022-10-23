@@ -2,6 +2,7 @@ package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
+import com.github.alexthe666.citadel.client.event.EventLivingRenderer;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
 import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
 import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
@@ -172,23 +173,4 @@ public class ClientProxy extends ServerProxy {
         Minecraft.getInstance().setScreen(new GuiCitadelBook(book));
     }
 
-    @SubscribeEvent
-    public void outlineColorTest(EventGetOutlineColor event) {
-    //    event.setColor(0XEB3FFF);
-    //    event.setResult(Event.Result.ALLOW);
-    }
-
-    @SubscribeEvent
-    public void animateHandTest(EventPosePlayerHand event) {
-     //   event.getModel().rightArm.xRot = (float)Math.PI / 2F;
-     //   event.setResult(Event.Result.ALLOW);
-    }
-
-    @SubscribeEvent
-    public void fluidRenderTypeTest(EventGetFluidRenderType event) {
-        //if(event.getFluidState().is(Fluids.WATER) || event.getFluidState().is(Fluids.FLOWING_WATER)){
-        //    event.setResult(Event.Result.ALLOW);
-        //    event.setRenderType(RenderType.solid());
-        //}
-    }
 }
