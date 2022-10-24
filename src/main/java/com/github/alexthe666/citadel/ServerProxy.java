@@ -28,4 +28,7 @@ public class ServerProxy {
     public Object getISTERProperties() {
         return null;
     }
+
+    public void onClientInit() {
+    }
 }

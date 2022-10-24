@@ -1,6 +1,5 @@
 package com.github.alexthe666.citadel;
 
-import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
 import com.github.alexthe666.citadel.config.ConfigHolder;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemCitadelBook;
@@ -43,9 +42,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 ;
 
@@ -135,7 +132,7 @@ public class Citadel {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-
+        event.enqueueWork(() -> PROXY.onClientInit());
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -144,10 +141,6 @@ public class Citadel {
 
     private void processIMC(final InterModProcessEvent event) {
 
-    }
-
-    public static boolean isAprilFools(){
-        return true;
     }
 
     @SubscribeEvent

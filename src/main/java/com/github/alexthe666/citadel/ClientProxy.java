@@ -56,7 +56,7 @@ public class ClientProxy extends ServerProxy {
         super();
     }
 
-    public void onPreInit() {
+    public void onClientInit() {
         try {
             CITADEL_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/citadel/models/citadel_model"));
         } catch (IOException e) {
@@ -93,7 +93,7 @@ public class ClientProxy extends ServerProxy {
 
     @SubscribeEvent
     public void screenRender(ScreenEvent.Render event) {
-        if(event.getScreen() instanceof TitleScreen && Citadel.isAprilFools()){
+        if(event.getScreen() instanceof TitleScreen && CitadelConstants.isAprilFools()){
             if(rickrollVideo == null){
                 VideoFrameTexture videoFrameTexture = CitadelTextureManager.getVideoTexture(RICKROLL_LOCATION, 640, 480);
                 rickrollVideo = new Video(RICKROLL_URL, RICKROLL_LOCATION, videoFrameTexture, 25, false);
@@ -174,7 +174,7 @@ public class ClientProxy extends ServerProxy {
 
     @SubscribeEvent
     public void onRenderSplashTextBefore(EventRenderSplashText.Pre event) {
-        if(Citadel.isAprilFools() && rickrollVideo != null && rickrollVideo.getLastFrame() > 35){
+        if(CitadelConstants.isAprilFools() && rickrollVideo != null && rickrollVideo.getLastFrame() > 35){
             event.setResult(Event.Result.ALLOW);
             float hue = (System.currentTimeMillis() % 6000) / 6000f;
             event.getPoseStack().mulPose(Vector3f.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 360));

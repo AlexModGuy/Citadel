@@ -158,6 +158,7 @@ sourceSets {
 
 
 jar {
+    classifier 'slim'
     configurations.shade.each { dep ->
         from(project.zipTree(dep)){
             exclude 'META-INF', 'META-INF/**'
@@ -181,16 +182,16 @@ jar {
     }
 }
 
+//builds the jar with shadowed dependencies
 shadowJar {
+    classifier ''
     configurations = [project.configurations.shade]
     duplicatesStrategy 'exclude'
     relocate 'net.sourceforge.jaad', 'com.github.alexthe666.citadel.repack.jaad'
     relocate 'org.jcodec', 'com.github.alexthe666.citadel.repack.jcodec'
+    finalizedBy 'reobfShadowJar'
 }
 
-reobf {
-    shadowJar {}
-}
 
 apply plugin: 'org.spongepowered.mixin'
 
@@ -198,9 +199,10 @@ mixin {
     add sourceSets.main, "${modid}.refmap.json"
 }
 
-jar.finalizedBy('reobfJar')
+assemble.dependsOn(shadowJar)
 
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'deobf'
+reobf {
+    shadowJar {}
 }
+
+jar.finalizedBy('reobfJar')
