@@ -182,6 +182,7 @@ jar {
     }
 }
 
+
 //builds the jar with shadowed dependencies
 shadowJar {
     classifier ''
@@ -191,7 +192,6 @@ shadowJar {
     relocate 'org.jcodec', 'com.github.alexthe666.citadel.repack.jcodec'
     finalizedBy 'reobfShadowJar'
 }
-
 
 apply plugin: 'org.spongepowered.mixin'
 
