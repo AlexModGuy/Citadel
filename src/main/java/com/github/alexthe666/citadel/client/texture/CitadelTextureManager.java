@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.client.texture;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -24,5 +25,15 @@ public class CitadelTextureManager {
             textureManager.register(namespace, new ColorMappedTexture(textureLoc, colors));
         }
         return namespace;
+    }
+
+    public static VideoFrameTexture getVideoTexture(ResourceLocation namespace, int defaultWidth, int defaultHeight){
+        TextureManager textureManager = Minecraft.getInstance().getTextureManager();
+        AbstractTexture abstracttexture = textureManager.getTexture(namespace, MissingTextureAtlasSprite.getTexture());
+        if (abstracttexture == MissingTextureAtlasSprite.getTexture()) {
+            abstracttexture = new VideoFrameTexture(new NativeImage(defaultWidth, defaultHeight, false));
+            textureManager.register(namespace, abstracttexture);
+        }
+        return abstracttexture instanceof VideoFrameTexture ? (VideoFrameTexture) abstracttexture : null;
     }
 }

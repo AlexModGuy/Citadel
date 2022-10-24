@@ -146,6 +146,10 @@ public class Citadel {
 
     }
 
+    public static boolean isAprilFools(){
+        return true;
+    }
+
     @SubscribeEvent
     public void onServerAboutToStart(ServerAboutToStartEvent event) {
         VillageHouseManager.addAllHouses(event.getServer().registryAccess());

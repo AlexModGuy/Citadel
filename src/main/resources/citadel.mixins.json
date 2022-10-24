@@ -15,6 +15,7 @@
     "client.HumanoidModelMixin",
     "client.ItemBlockRenderTypesMixin",
     "client.LivingEntityRendererMixin",
+    "client.TitleScreenMixin",
     "client.WorldRendererMixin"
   ],
   "injectors": {

@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.mixin.client;
 
+import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.client.event.EventLivingRenderer;
 import com.github.alexthe666.citadel.client.event.EventPosePlayerHand;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -25,7 +26,7 @@ public class LivingEntityRendererMixin {
 
     @Inject(
             method = {"Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;setupRotations(Lnet/minecraft/world/entity/LivingEntity;Lcom/mojang/blaze3d/vertex/PoseStack;FFF)V"},
-            remap = true,
+            remap = CitadelConstants.REMAPREFS,
             at = @At(value = "RETURN")
     )
     protected void citadel_setupRotations(LivingEntity livingEntity, PoseStack poseStack, float ageInTicks, float bodyYRot, float partialTick, CallbackInfo ci) {
@@ -36,8 +37,7 @@ public class LivingEntityRendererMixin {
 
     @Inject(
             method = {"Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"},
-            remap = true,
-
+            remap = CitadelConstants.REMAPREFS,
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/model/EntityModel;setupAnim(Lnet/minecraft/world/entity/Entity;FFFFF)V",
@@ -67,7 +67,7 @@ public class LivingEntityRendererMixin {
 
     @Inject(
             method = {"Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"},
-            remap = true,
+            remap = CitadelConstants.REMAPREFS,
             at = @At(value = "RETURN")
     )
     protected void citadel_render_renderToBuffer(LivingEntity livingEntity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
