@@ -46,4 +46,10 @@ public abstract class LocalTickRateModifier extends TickRateModifier {
     }
 
     public abstract Vec3 getCenter(Level level);
+
+    @Override
+    public boolean appliesTo(Level level, double x, double y, double z) {
+        Vec3 center = getCenter(level);
+        return center.distanceToSqr(x, y, z) < range * range;
+    }
 }

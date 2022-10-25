@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel.server.tick.modifier;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 
 public class CelestialTickRateModifier extends TickRateModifier {
 
@@ -12,4 +13,8 @@ public class CelestialTickRateModifier extends TickRateModifier {
         super(tag);
     }
 
+    @Override
+    public boolean appliesTo(Level level, double x, double y, double z) {
+        return true;
+    }
 }

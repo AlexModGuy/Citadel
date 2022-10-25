@@ -50,7 +50,7 @@ public class ServerProxy {
             }else{
                 modifiableServer.setGlobalTickLengthMs(tickRateTracker.getServerTickLengthMs());
             }
-            tickRateTracker.masterTick(modifiableServer.getMasterMs());
+            tickRateTracker.masterTick();
         }
     }
 

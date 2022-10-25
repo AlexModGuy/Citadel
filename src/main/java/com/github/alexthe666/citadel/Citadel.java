@@ -3,6 +3,7 @@ package com.github.alexthe666.citadel;
 import com.github.alexthe666.citadel.config.ConfigHolder;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemCitadelBook;
+import com.github.alexthe666.citadel.item.ItemCitadelDebug;
 import com.github.alexthe666.citadel.item.ItemCustomRender;
 import com.github.alexthe666.citadel.server.CitadelEvents;
 import com.github.alexthe666.citadel.server.generation.SpawnProbabilityModifier;
@@ -63,7 +64,7 @@ public class Citadel {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "citadel");
 
 
-    public static final RegistryObject<Item> DEBUG_ITEM = ITEMS.register("debug", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> DEBUG_ITEM = ITEMS.register("debug", () -> new ItemCitadelDebug(new Item.Properties()));
     public static final RegistryObject<Item> CITADEL_BOOK = ITEMS.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EFFECT_ITEM = ITEMS.register("effect_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FANCY_ITEM = ITEMS.register("fancy_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
