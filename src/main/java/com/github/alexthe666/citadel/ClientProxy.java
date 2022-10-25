@@ -13,6 +13,7 @@ import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
 import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
 import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
 import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
+import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import com.github.alexthe666.citadel.client.video.Video;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
@@ -34,6 +35,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -184,6 +186,13 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
+    @SubscribeEvent
+    public void onRenderLevel(RenderLevelStageEvent event) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
+            ClientTickRateTracker.getForClient(Minecraft.getInstance()).tick();
+        }
+    }
+
         @Override
     public void handleAnimationPacket(int entityId, int index) {
         Player player = Minecraft.getInstance().player;
@@ -210,6 +219,12 @@ public class ClientProxy extends ServerProxy {
         if ((propertyID.equals("CitadelPatreonConfig") || propertyID.equals("CitadelTagUpdate")) && entity instanceof LivingEntity) {
             CitadelEntityData.setCitadelTag((LivingEntity) entity, compound);
         }
+    }
+
+
+    @Override
+    public void handleClientTickRatePacket(CompoundTag compound) {
+        ClientTickRateTracker.getForClient(Minecraft.getInstance()).syncFromServer(compound);
     }
 
     @Override

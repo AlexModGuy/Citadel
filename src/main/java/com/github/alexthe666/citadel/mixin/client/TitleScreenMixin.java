@@ -69,7 +69,7 @@ public abstract class TitleScreenMixin extends Screen {
     @ModifyConstant(
             method = {"Lnet/minecraft/client/gui/screens/TitleScreen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"},
             constant = @Constant(intValue = 16776960))
-    private int injected(int value) {
+    private int citadel_splashTextColor(int value) {
         return splashTextColor == -1 ? value : splashTextColor;
     }
 }

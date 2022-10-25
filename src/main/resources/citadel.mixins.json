@@ -7,6 +7,7 @@
   "mixins": [
     "ChunkGeneratorMixin",
     "LivingEntityMixin",
+    "MinecraftServerMixin",
     "SmithingMenuMixin"
   ],
   "client": [
@@ -15,6 +16,7 @@
     "client.HumanoidModelMixin",
     "client.ItemBlockRenderTypesMixin",
     "client.LivingEntityRendererMixin",
+    "client.SoundEngineMixin",
     "client.TitleScreenMixin",
     "client.WorldRendererMixin"
   ],
