@@ -6,8 +6,10 @@
   "refmap": "citadel.refmap.json",
   "mixins": [
     "ChunkGeneratorMixin",
+    "LevelMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
+    "ServerLevelMixin",
     "SmithingMenuMixin"
   ],
   "client": [
@@ -15,10 +17,10 @@
     "client.ClientLevelMixin",
     "client.HumanoidModelMixin",
     "client.ItemBlockRenderTypesMixin",
+    "client.LevelRendererMixin",
     "client.LivingEntityRendererMixin",
     "client.SoundEngineMixin",
-    "client.TitleScreenMixin",
-    "client.WorldRendererMixin"
+    "client.TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

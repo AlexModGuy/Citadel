@@ -15,6 +15,6 @@ public class CelestialTickRateModifier extends TickRateModifier {
 
     @Override
     public boolean appliesTo(Level level, double x, double y, double z) {
-        return true;
+        return false;
     }
 }

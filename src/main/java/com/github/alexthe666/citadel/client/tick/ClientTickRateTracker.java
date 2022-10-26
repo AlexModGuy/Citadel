@@ -1,27 +1,26 @@
 package com.github.alexthe666.citadel.client.tick;
 
+import com.github.alexthe666.citadel.server.tick.TickRateTracker;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifier;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class ClientTickRateTracker {
+public class ClientTickRateTracker extends TickRateTracker {
     public static final Logger LOGGER = LogManager.getLogger("citadel-client-tick");
     private static Map<Minecraft, ClientTickRateTracker> dataMap = new HashMap<>();
 
     public Minecraft client;
-    public List<TickRateModifier> tickRateModifierList = new ArrayList<>();
 
     private static float MS_PER_TICK = 50f;
+
     public ClientTickRateTracker(Minecraft client) {
         this.client = client;
 
@@ -29,16 +28,7 @@ public class ClientTickRateTracker {
 
     public void syncFromServer(CompoundTag tag){
         tickRateModifierList.clear();
-        if (tag.contains("TickRateModifiers")) {
-            ListTag list = tag.getList("TickRateModifiers", 10);
-            for(int i = 0; i < list.size(); ++i) {
-                CompoundTag tag1 = list.getCompound(i);
-                TickRateModifier modifier = TickRateModifier.fromTag(tag1);
-                if(!modifier.doRemove()){
-                    tickRateModifierList.add(modifier);
-                }
-            }
-        }
+        fromTag(tag);
     }
 
     public static ClientTickRateTracker getForClient(Minecraft minecraft){
@@ -50,13 +40,9 @@ public class ClientTickRateTracker {
         return dataMap.get(minecraft);
     }
 
-    public void tick(){
+    public void masterTick(){
+        super.masterTick();
         client.timer.msPerTick = getClientTickRate();
-        debug();
-    }
-
-    private void debug(){
-        LOGGER.debug("client tick length in MS: " + client.timer.msPerTick);
     }
 
     public float getClientTickRate(){
@@ -66,10 +52,7 @@ public class ClientTickRateTracker {
                 f *= modifier.getTickRateMultiplier();
             }
         }
-        if(f <= 0){
-            return 1;
-        }
-        return f;
+        return Math.max(1F, f * getEntityTickLengthModifier(Minecraft.getInstance().player));
     }
 
     public float modifySoundPitch(SoundInstance soundInstance) {
@@ -79,9 +62,13 @@ public class ClientTickRateTracker {
                 f /= modifier.getTickRateMultiplier();
             }
         }
-        if(f <= 0){
-            return 1;
+        return Math.max(1F, f * getEntityTickLengthModifier(Minecraft.getInstance().player));
+    }
+
+    @Override
+    public void tickEntityAtCustomRate(Entity entity) {
+        if(entity.level.isClientSide && entity.level instanceof ClientLevel){
+            ((ClientLevel)entity.level).tickNonPassenger(entity);
         }
-        return f;
     }
 }

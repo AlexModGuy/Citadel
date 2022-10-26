@@ -1,11 +1,9 @@
 package com.github.alexthe666.citadel.mixin;
 
 import com.github.alexthe666.citadel.CitadelConstants;
-import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
 import com.github.alexthe666.citadel.server.world.ModifiableTickRateServer;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;

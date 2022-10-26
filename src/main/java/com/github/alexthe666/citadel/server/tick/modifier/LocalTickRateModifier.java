@@ -13,8 +13,8 @@ public abstract class LocalTickRateModifier extends TickRateModifier {
     private double range;
     private ResourceKey<Level> dimension;
 
-    public LocalTickRateModifier(TickRateModifierType type, double range, ResourceKey<Level> dimension, int durationInMasterTicks, float tickRateMultiplier) {
-        super(type, durationInMasterTicks, tickRateMultiplier);
+    public LocalTickRateModifier(TickRateModifierType localPosition, double range, ResourceKey<Level> dimension, int durationInMasterTicks, float tickRateMultiplier) {
+        super(localPosition, durationInMasterTicks, tickRateMultiplier);
         this.range = range;
         this.dimension = dimension;
     }

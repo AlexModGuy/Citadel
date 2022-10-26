@@ -17,6 +17,7 @@ import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import com.github.alexthe666.citadel.client.video.Video;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
+import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
@@ -34,18 +35,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.awt.*;
 import java.io.IOException;
-
-import static org.jcodec.containers.mkv.MKVType.Video;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientProxy extends ServerProxy {
@@ -187,9 +188,9 @@ public class ClientProxy extends ServerProxy {
     }
 
     @SubscribeEvent
-    public void onRenderLevel(RenderLevelStageEvent event) {
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
-            ClientTickRateTracker.getForClient(Minecraft.getInstance()).tick();
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        if(event.phase == TickEvent.Phase.START && !isGamePaused()){
+            ClientTickRateTracker.getForClient(Minecraft.getInstance()).masterTick();
         }
     }
 
@@ -237,4 +238,24 @@ public class ClientProxy extends ServerProxy {
         Minecraft.getInstance().setScreen(new GuiCitadelBook(book));
     }
 
+    public boolean isGamePaused() {
+        return Minecraft.getInstance().isPaused();
+    }
+
+    public boolean canEntityTickClient(Level level, Entity entity) {
+        ClientTickRateTracker tracker = ClientTickRateTracker.getForClient(Minecraft.getInstance());
+        if(tracker.isTickingHandled(entity)){
+            return false;
+        }else if(!tracker.hasNormalTickRate(entity)){
+            EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
+            MinecraftForge.EVENT_BUS.post(event);
+            if(event.isCanceled()){
+                return true;
+            }else{
+                tracker.addTickBlockedEntity(entity);
+                return false;
+            }
+        }
+        return true;
+    }
 }

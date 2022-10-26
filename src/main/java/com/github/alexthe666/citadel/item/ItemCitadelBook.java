@@ -1,8 +1,6 @@
 package com.github.alexthe666.citadel.item;
 
 import com.github.alexthe666.citadel.Citadel;
-import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
-import com.github.alexthe666.citadel.server.tick.modifier.GlobalTickRateModifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;

@@ -10,7 +10,7 @@ public class LocalPositionTickRateModifier extends LocalTickRateModifier {
     private Vec3 center;
 
     public LocalPositionTickRateModifier(Vec3 center, double range, ResourceKey<Level> dimension, int durationInMasterTicks, float tickRateMultiplier) {
-        super(TickRateModifierType.LOCAL_ENTITY, range, dimension, durationInMasterTicks, tickRateMultiplier);
+        super(TickRateModifierType.LOCAL_POSITION, range, dimension, durationInMasterTicks, tickRateMultiplier);
         this.center = center;
     }
 

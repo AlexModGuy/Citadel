@@ -18,7 +18,7 @@ public abstract class TickRateModifier {
     }
 
     public TickRateModifier(CompoundTag tag) {
-        this.type = TickRateModifierType.values()[Mth.clamp(tag.getInt("Type"), 0, TickRateModifierType.values().length - 1)];
+        this.type = TickRateModifierType.fromId(tag.getInt("TickRateType"));
         this.maxDuration = tag.getFloat("MaxDuration");
         this.duration = tag.getFloat("Duration");
         this.tickRateMultiplier = tag.getFloat("SpeedMultiplier");
@@ -46,7 +46,7 @@ public abstract class TickRateModifier {
 
     public CompoundTag toTag() {
         CompoundTag tag = new CompoundTag();
-        tag.putInt("Type", this.type.ordinal());
+        tag.putInt("TickRateType", this.type.toId());
         tag.putFloat("MaxDuration", maxDuration);
         tag.putFloat("Duration", duration);
         tag.putFloat("SpeedMultiplier", tickRateMultiplier);
@@ -54,7 +54,7 @@ public abstract class TickRateModifier {
     }
 
     public static TickRateModifier fromTag(CompoundTag tag) {
-        TickRateModifierType typeFromNbt = TickRateModifierType.values()[Mth.clamp(tag.getInt("Type"), 0, TickRateModifierType.values().length - 1)];
+        TickRateModifierType typeFromNbt = TickRateModifierType.fromId(tag.getInt("TickRateType"));
         try {
             return typeFromNbt.getTickRateClass().getConstructor(CompoundTag.class).newInstance(tag);
         } catch (Exception e) {
@@ -64,16 +64,17 @@ public abstract class TickRateModifier {
     }
 
     public boolean isGlobal() {
-        return this.type.isGlobal();
+        return this.type.isLocal();
     }
 
     public void masterTick() {
         duration++;
     }
 
+
     public boolean doRemove() {
-        float f = tickRateMultiplier == 0 ? 1.0F : tickRateMultiplier;
-        return duration >= maxDuration / f;
+        float f = tickRateMultiplier == 0 || this.getType() == TickRateModifierType.CELESTIAL ? 1.0F : 1F / tickRateMultiplier;
+        return duration >= maxDuration * f;
     }
 
     public abstract boolean appliesTo(Level level, double x, double y, double z);
