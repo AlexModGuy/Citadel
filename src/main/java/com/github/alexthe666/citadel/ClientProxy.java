@@ -16,6 +16,7 @@ import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import com.github.alexthe666.citadel.client.video.Video;
 import com.github.alexthe666.citadel.config.ServerConfig;
+import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -38,6 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -47,6 +49,9 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientProxy extends ServerProxy {
@@ -55,6 +60,14 @@ public class ClientProxy extends ServerProxy {
     private static final ResourceLocation RICKROLL_LOCATION = new ResourceLocation("citadel:rickroll.mp4");
     public static boolean hideFollower = false;
     private Video rickrollVideo = null;
+
+    private Map<ItemStack, Float> prevMouseOverProgresses = new HashMap<>();
+
+    private Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
+
+    private ItemStack lastHoveredItem = null;
+
+
     public ClientProxy() {
         super();
     }
@@ -176,7 +189,7 @@ public class ClientProxy extends ServerProxy {
     }
 
     @SubscribeEvent
-    public void onRenderSplashTextBefore(EventRenderSplashText.Pre event) {
+    public void renderSplashTextBefore(EventRenderSplashText.Pre event) {
         if(CitadelConstants.isAprilFools() && rickrollVideo != null && rickrollVideo.getLastFrame() > 35){
             event.setResult(Event.Result.ALLOW);
             float hue = (System.currentTimeMillis() % 6000) / 6000f;
@@ -188,10 +201,62 @@ public class ClientProxy extends ServerProxy {
     }
 
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event) {
+    public void clientTick(TickEvent.ClientTickEvent event) {
         if(event.phase == TickEvent.Phase.START && !isGamePaused()){
             ClientTickRateTracker.getForClient(Minecraft.getInstance()).masterTick();
+            tickMouseOverAnimations();
         }
+    }
+
+    private void tickMouseOverAnimations() {
+        prevMouseOverProgresses.putAll(mouseOverProgresses);
+        if (lastHoveredItem != null) {
+            float prev = mouseOverProgresses.getOrDefault(lastHoveredItem, 0F);
+            float maxTime = 5F;
+            if(lastHoveredItem.getItem() instanceof ItemWithHoverAnimation hoverOver){
+                maxTime = hoverOver.getMaxHoverOverTime(lastHoveredItem);
+            }
+            if (prev < maxTime) {
+                mouseOverProgresses.put(lastHoveredItem, prev + 1);
+            }
+        }
+
+        if (!mouseOverProgresses.isEmpty()) {
+            Iterator<Map.Entry<ItemStack, Float>> it = mouseOverProgresses.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<ItemStack, Float> next = it.next();
+                float progress = next.getValue();
+                if (lastHoveredItem == null || next.getKey() != lastHoveredItem) {
+                    if (progress == 0) {
+                        it.remove();
+                    } else {
+                        next.setValue(progress - 1);
+                    }
+                }
+            }
+        }
+        lastHoveredItem = null;
+    }
+
+    @SubscribeEvent
+    public void renderTooltipColor(RenderTooltipEvent.Color event) {
+        if (event.getItemStack().getItem() instanceof ItemWithHoverAnimation hoverOver && hoverOver.canHoverOver(event.getItemStack())) {
+            lastHoveredItem = event.getItemStack();
+        } else {
+            lastHoveredItem = null;
+        }
+    }
+
+    @Override
+    public float getMouseOverProgress(ItemStack itemStack){
+        float prev = prevMouseOverProgresses.getOrDefault(itemStack, 0F);
+        float current = mouseOverProgresses.getOrDefault(itemStack, 0F);
+        float lerped = prev + (current - prev) * Minecraft.getInstance().getFrameTime();
+        float maxTime = 5F;
+        if(itemStack.getItem() instanceof ItemWithHoverAnimation hoverOver){
+            maxTime = hoverOver.getMaxHoverOverTime(itemStack);
+        }
+        return lerped / maxTime;
     }
 
         @Override

@@ -118,4 +118,8 @@ public class ServerProxy {
     public boolean isGamePaused() {
         return false;
     }
+
+    public float getMouseOverProgress(ItemStack itemStack) {
+        return 0.0F;
+    }
 }
