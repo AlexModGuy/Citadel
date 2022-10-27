@@ -18,7 +18,7 @@ public class CitadelConstants {
             calendar.setTime(new Date());
             aprilFools = calendar.get(Calendar.MONTH) + 1 == 4 && calendar.get(Calendar.DATE) == 1;
         }
-        return true;
+        return aprilFools;
     }
 
 }

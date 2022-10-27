@@ -84,8 +84,8 @@ public class Video {
                 } else if(repeat){
                     frameGrabber.seekToFramePrecise(0);
                     if(audioClip != null && !this.muted){
+                        audioClip.loop(-1);
                         audioClip.setFramePosition(0);
-                        audioClip.start();
                     }
                     startTime = System.currentTimeMillis();
                 }
@@ -130,8 +130,10 @@ public class Video {
             audioClip.open(audioInputStream);
             audioClip.setMicrosecondPosition(time);
             audioClip.start();
+            if(!hasAudioLoaded){
+                LOGGER.info("loaded mp4 audio from " + url);
+            }
             hasAudioLoaded = true;
-            LOGGER.info("loaded mp4 audio from " + url);
         } catch (Exception e) {
             e.printStackTrace();
         }
