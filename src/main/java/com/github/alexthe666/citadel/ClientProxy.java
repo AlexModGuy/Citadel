@@ -2,24 +2,31 @@ package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
-import com.github.alexthe666.citadel.client.CitadelPatreonRenderer;
-import com.github.alexthe666.citadel.client.event.EventGetFluidRenderType;
-import com.github.alexthe666.citadel.client.event.EventGetOutlineColor;
-import com.github.alexthe666.citadel.client.event.EventPosePlayerHand;
+import com.github.alexthe666.citadel.client.event.*;
+import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
+import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
+import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelBook;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelPatreonConfig;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
-import com.github.alexthe666.citadel.client.patreon.SpaceStationPatreonRenderer;
+import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
+import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
+import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
+import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
+import com.github.alexthe666.citadel.client.video.Video;
 import com.github.alexthe666.citadel.config.ServerConfig;
+import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Vector3f;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.BackupConfirmScreen;
-import net.minecraft.client.gui.screens.ConfirmScreen;
-import net.minecraft.client.gui.screens.SkinCustomizationScreen;
+import net.minecraft.client.gui.screens.*;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -29,50 +36,105 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.awt.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientProxy extends ServerProxy {
     public static TabulaModel CITADEL_MODEL;
-    private static final ResourceLocation CITADEL_TEXTURE = new ResourceLocation("citadel", "textures/patreon/citadel_model.png");
-    private static final ResourceLocation CITADEL_TEXTURE_RED = new ResourceLocation("citadel", "textures/patreon/citadel_model_red.png");
-    private static final ResourceLocation CITADEL_TEXTURE_GRAY = new ResourceLocation("citadel", "textures/patreon/citadel_model_gray.png");
-    private static final String RICKROLL_URL = "http://techslides.com/demos/sample-videos/small.mp4";//"https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
-    private static final ResourceLocation RICKROLL_LOCATION = new ResourceLocation("citadel:rickroll");
+    public static final String RICKROLL_URL = "https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
+    private static final ResourceLocation RICKROLL_LOCATION = new ResourceLocation("citadel:rickroll.mp4");
+    public static boolean hideFollower = false;
+    private Video rickrollVideo = null;
+
+    private Map<ItemStack, Float> prevMouseOverProgresses = new HashMap<>();
+
+    private Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
+
+    private ItemStack lastHoveredItem = null;
+
+
     public ClientProxy() {
         super();
     }
 
-    public void onPreInit() {
+    public void onClientInit() {
         try {
             CITADEL_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/citadel/models/citadel_model"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(CITADEL_TEXTURE));
-        CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(CITADEL_TEXTURE_RED));
-        CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(CITADEL_TEXTURE_GRAY));
+        CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station"), new int[]{}));
+        CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
+        CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
     }
 
     @SubscribeEvent
-    public void openScreen(ScreenEvent.Init event) {
+    public void screenOpen(ScreenEvent.Init event) {
         if (event.getScreen() instanceof SkinCustomizationScreen && Minecraft.getInstance().player != null) {
            try{
                String username = Minecraft.getInstance().player.getName().getString();
+               int height = -20;
                if (Citadel.PATREONS.contains(username)) {
-                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150, 200, 20, Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
                        Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(event.getScreen(), Minecraft.getInstance().options));
                    }));
+                   height += 25;
+               }
+               if (!CitadelCapes.getCapesFor(Minecraft.getInstance().player.getUUID()).isEmpty()) {
+                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                       Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(event.getScreen(), Minecraft.getInstance().options));
+                   }));
+                   height += 25;
                }
            }catch (Exception e){
                e.printStackTrace();
            }
+        }
+    }
+
+    @SubscribeEvent
+    public void screenRender(ScreenEvent.Render event) {
+        if(event.getScreen() instanceof TitleScreen && CitadelConstants.isAprilFools()){
+            if(rickrollVideo == null){
+                VideoFrameTexture videoFrameTexture = CitadelTextureManager.getVideoTexture(RICKROLL_LOCATION, 640, 480);
+                rickrollVideo = new Video(RICKROLL_URL, RICKROLL_LOCATION, videoFrameTexture, 25, false);
+                rickrollVideo.setRepeat(true);
+            }else{
+                rickrollVideo.setPaused(false);
+                int screenHeight = event.getScreen().height;
+                int screenWidth = event.getScreen().width;
+                rickrollVideo.update();
+                RenderSystem.defaultBlendFunc();
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShaderTexture(0, RICKROLL_LOCATION);
+                Tesselator tesselator = Tesselator.getInstance();
+                BufferBuilder bufferbuilder = tesselator.getBuilder();
+                bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+                bufferbuilder.vertex(0.0D, screenHeight, -90.0D).uv(0.0F, 1.0F).endVertex();
+                bufferbuilder.vertex(screenWidth, screenHeight, -90.0D).uv(1.0F, 1.0F).endVertex();
+                bufferbuilder.vertex(screenWidth, 0.0D, -90.0D).uv(1.0F, 0.0F).endVertex();
+                bufferbuilder.vertex(0.0D, 0.0D, -90.0D).uv(0.0F, 0.0F).endVertex();
+                tesselator.end();
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            }
+        }else if(rickrollVideo != null){
+            rickrollVideo.setPaused(true);
         }
     }
 
@@ -86,7 +148,7 @@ public class ClientProxy extends ServerProxy {
         if (Citadel.PATREONS.contains(username)) {
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
             String rendererName = tag.contains("CitadelFollowerType") ? tag.getString("CitadelFollowerType") : "citadel";
-            if (!rendererName.equals("none")) {
+            if (!rendererName.equals("none") && !hideFollower) {
                 CitadelPatreonRenderer renderer = CitadelPatreonRenderer.get(rendererName);
                 if (renderer != null) {
                     float distance = tag.contains("CitadelRotateDistance") ? tag.getFloat("CitadelRotateDistance") : 2F;
@@ -126,7 +188,78 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
+    @SubscribeEvent
+    public void renderSplashTextBefore(EventRenderSplashText.Pre event) {
+        if(CitadelConstants.isAprilFools() && rickrollVideo != null && rickrollVideo.getLastFrame() > 35){
+            event.setResult(Event.Result.ALLOW);
+            float hue = (System.currentTimeMillis() % 6000) / 6000f;
+            event.getPoseStack().mulPose(Vector3f.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 360));
+            event.setSplashText("Never gonna give you up!");
+            int rainbow = Color.HSBtoRGB(hue, 0.6f, 1);
+            event.setSplashTextColor(rainbow);
+        }
+    }
+
+    @SubscribeEvent
+    public void clientTick(TickEvent.ClientTickEvent event) {
+        if(event.phase == TickEvent.Phase.START && !isGamePaused()){
+            ClientTickRateTracker.getForClient(Minecraft.getInstance()).masterTick();
+            tickMouseOverAnimations();
+        }
+    }
+
+    private void tickMouseOverAnimations() {
+        prevMouseOverProgresses.putAll(mouseOverProgresses);
+        if (lastHoveredItem != null) {
+            float prev = mouseOverProgresses.getOrDefault(lastHoveredItem, 0F);
+            float maxTime = 5F;
+            if(lastHoveredItem.getItem() instanceof ItemWithHoverAnimation hoverOver){
+                maxTime = hoverOver.getMaxHoverOverTime(lastHoveredItem);
+            }
+            if (prev < maxTime) {
+                mouseOverProgresses.put(lastHoveredItem, prev + 1);
+            }
+        }
+
+        if (!mouseOverProgresses.isEmpty()) {
+            Iterator<Map.Entry<ItemStack, Float>> it = mouseOverProgresses.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<ItemStack, Float> next = it.next();
+                float progress = next.getValue();
+                if (lastHoveredItem == null || next.getKey() != lastHoveredItem) {
+                    if (progress == 0) {
+                        it.remove();
+                    } else {
+                        next.setValue(progress - 1);
+                    }
+                }
+            }
+        }
+        lastHoveredItem = null;
+    }
+
+    @SubscribeEvent
+    public void renderTooltipColor(RenderTooltipEvent.Color event) {
+        if (event.getItemStack().getItem() instanceof ItemWithHoverAnimation hoverOver && hoverOver.canHoverOver(event.getItemStack())) {
+            lastHoveredItem = event.getItemStack();
+        } else {
+            lastHoveredItem = null;
+        }
+    }
+
     @Override
+    public float getMouseOverProgress(ItemStack itemStack){
+        float prev = prevMouseOverProgresses.getOrDefault(itemStack, 0F);
+        float current = mouseOverProgresses.getOrDefault(itemStack, 0F);
+        float lerped = prev + (current - prev) * Minecraft.getInstance().getFrameTime();
+        float maxTime = 5F;
+        if(itemStack.getItem() instanceof ItemWithHoverAnimation hoverOver){
+            maxTime = hoverOver.getMaxHoverOverTime(itemStack);
+        }
+        return lerped / maxTime;
+    }
+
+        @Override
     public void handleAnimationPacket(int entityId, int index) {
         Player player = Minecraft.getInstance().player;
         if (player != null) {
@@ -154,6 +287,12 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
+
+    @Override
+    public void handleClientTickRatePacket(CompoundTag compound) {
+        ClientTickRateTracker.getForClient(Minecraft.getInstance()).syncFromServer(compound);
+    }
+
     @Override
     public Object getISTERProperties() {
         return new CitadelItemRenderProperties();
@@ -164,23 +303,24 @@ public class ClientProxy extends ServerProxy {
         Minecraft.getInstance().setScreen(new GuiCitadelBook(book));
     }
 
-    @SubscribeEvent
-    public void outlineColorTest(EventGetOutlineColor event) {
-    //    event.setColor(0XEB3FFF);
-    //    event.setResult(Event.Result.ALLOW);
+    public boolean isGamePaused() {
+        return Minecraft.getInstance().isPaused();
     }
 
-    @SubscribeEvent
-    public void animateHandTest(EventPosePlayerHand event) {
-     //   event.getModel().rightArm.xRot = (float)Math.PI / 2F;
-     //   event.setResult(Event.Result.ALLOW);
-    }
-
-    @SubscribeEvent
-    public void fluidRenderTypeTest(EventGetFluidRenderType event) {
-        //if(event.getFluidState().is(Fluids.WATER) || event.getFluidState().is(Fluids.FLOWING_WATER)){
-        //    event.setResult(Event.Result.ALLOW);
-        //    event.setRenderType(RenderType.solid());
-        //}
+    public boolean canEntityTickClient(Level level, Entity entity) {
+        ClientTickRateTracker tracker = ClientTickRateTracker.getForClient(Minecraft.getInstance());
+        if(tracker.isTickingHandled(entity)){
+            return false;
+        }else if(!tracker.hasNormalTickRate(entity)){
+            EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
+            MinecraftForge.EVENT_BUS.post(event);
+            if(event.isCanceled()){
+                return true;
+            }else{
+                tracker.addTickBlockedEntity(entity);
+                return false;
+            }
+        }
+        return true;
     }
 }

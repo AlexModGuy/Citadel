@@ -1,4 +1,4 @@
-package com.github.alexthe666.citadel.client;
+package com.github.alexthe666.citadel.client.rewards;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;

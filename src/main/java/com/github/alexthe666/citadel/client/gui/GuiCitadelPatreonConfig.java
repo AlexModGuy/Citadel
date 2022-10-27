@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.client.gui;
 
 import com.github.alexthe666.citadel.Citadel;
-import com.github.alexthe666.citadel.client.CitadelPatreonRenderer;
+import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.mojang.blaze3d.vertex.PoseStack;

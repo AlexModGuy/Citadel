@@ -1,23 +1,43 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
+        maven {
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+            content { includeGroup "org.spongepowered" }
+        }
         mavenCentral()
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        gradlePluginPortal()
+        jcenter()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-//apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+
+configurations {
+    shade
+    library
+    library.extendsFrom(shade)
+    implementation.extendsFrom(library)
+}
 
 version = "${mod_version}-${mc_version}"
 group = "com.tfar.${modid}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "${modid}"
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
@@ -69,7 +89,14 @@ minecraft {
     }
 }
 
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
+
 repositories{
+    mavenCentral()
     maven {
         // location of the maven that hosts JEI files
         name = "Progwml6 maven"
@@ -87,20 +114,60 @@ repositories{
             includeGroup "curse.maven"
         }
     }
-    mavenCentral()
+    maven {
+        //maven for all github project releases
+        url "https://jitpack.io"
+    }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.1.1'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    //jaadec fork by yours truly to decode mp4 audio
+    shade ('com.github.AlexModGuy:JAADec:master-SNAPSHOT') {
+        ['commons-logging', 'org.slf4j'].each {
+            exclude group: "$it"
+        }
+    }
+    //jcodec for decoding mp4 video
+    shade ('org.jcodec:jcodec:0.2.5') {
+        exclude group: 'net.sourceforge.jaad.aac'
+        ['commons-logging', 'org.slf4j', 'net.sourceforge.jaad.aac'].each {
+            exclude group: "$it"
+        }
+    }
+}
+
+configurations {
+    all*.exclude group: 'net.sourceforge.jaad', module:'jcodec'
+}
+
+// Fix the classpath the right way and once and for all
+afterEvaluate {
+    // Collect deps in runtimeClasspath but NOT in minecraft
+    def deps = (configurations.runtimeClasspath - configurations.minecraft).join(';')
+    // Add deps to classpath
+    minecraft.runs.each { run ->
+        run.token 'minecraft_classpath', deps
+    }
 }
 
 sourceSets {
     main.resources.srcDirs += 'src/generated/resources'
 }
 
+
+jar {
+    classifier 'slim'
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+}
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
+    duplicatesStrategy 'exclude'
     manifest {
         attributes([
                 "Specification-Title": "${modid}",
@@ -115,26 +182,15 @@ jar {
     }
 }
 
-// Example configuration to allow publishing using the maven-publish task
-// we define a custom artifact that is sourced from the reobfJar output task
-// and then declare that to be published
-// Note you'll need to add a repository here
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) {
-    type 'jar'
-    builtBy 'reobfJar'
-}
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact reobfArtifact
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
+
+//builds the jar with shadowed dependencies
+shadowJar {
+    classifier ''
+    configurations = [project.configurations.shade]
+    duplicatesStrategy 'exclude'
+    relocate 'net.sourceforge.jaad', 'com.github.alexthe666.citadel.repack.jaad'
+    relocate 'org.jcodec', 'com.github.alexthe666.citadel.repack.jcodec'
+    finalizedBy 'reobfShadowJar'
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -143,7 +199,10 @@ mixin {
     add sourceSets.main, "${modid}.refmap.json"
 }
 
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'deobf'
+assemble.dependsOn(shadowJar)
+
+reobf {
+    shadowJar {}
 }
+
+jar.finalizedBy('reobfJar')

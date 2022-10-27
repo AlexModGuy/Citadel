@@ -2,21 +2,34 @@ package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.config.ConfigHolder;
 import com.github.alexthe666.citadel.config.ServerConfig;
+import com.github.alexthe666.citadel.config.biome.CitadelBiomeDefinitions;
 import com.github.alexthe666.citadel.item.ItemCitadelBook;
+import com.github.alexthe666.citadel.item.ItemCitadelDebug;
 import com.github.alexthe666.citadel.item.ItemCustomRender;
 import com.github.alexthe666.citadel.server.CitadelEvents;
 import com.github.alexthe666.citadel.server.generation.SpawnProbabilityModifier;
 import com.github.alexthe666.citadel.server.generation.VillageHouseManager;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
+import com.github.alexthe666.citadel.server.message.SyncClientTickRateMessage;
+import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
+import com.github.alexthe666.citadel.server.world.ExpandedBiomes;
 import com.github.alexthe666.citadel.web.WebHelper;
 import com.mojang.serialization.Codec;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -41,8 +54,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 ;
 
@@ -61,8 +73,7 @@ public class Citadel {
     public static List<String> PATREONS = new ArrayList<>();
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "citadel");
 
-
-    public static final RegistryObject<Item> DEBUG_ITEM = ITEMS.register("debug", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> DEBUG_ITEM = ITEMS.register("debug", () -> new ItemCitadelDebug(new Item.Properties()));
     public static final RegistryObject<Item> CITADEL_BOOK = ITEMS.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EFFECT_ITEM = ITEMS.register("effect_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FANCY_ITEM = ITEMS.register("fancy_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
@@ -106,6 +117,7 @@ public class Citadel {
         int packetsRegistered = 0;
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, PropertiesMessage.class, PropertiesMessage::write, PropertiesMessage::read, PropertiesMessage.Handler::handle);
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, AnimationMessage.class, AnimationMessage::write, AnimationMessage::read, AnimationMessage.Handler::handle);
+        NETWORK_WRAPPER.registerMessage(packetsRegistered++, SyncClientTickRateMessage.class, SyncClientTickRateMessage::write, SyncClientTickRateMessage::read, SyncClientTickRateMessage.Handler::handle);
         BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
         if (urlContents != null) {
             try {
@@ -131,8 +143,10 @@ public class Citadel {
         }
     }
 
-    private void doClientStuff(final FMLClientSetupEvent event) {
 
+
+    private void doClientStuff(final FMLClientSetupEvent event) {
+        event.enqueueWork(() -> PROXY.onClientInit());
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -145,7 +159,21 @@ public class Citadel {
 
     @SubscribeEvent
     public void onServerAboutToStart(ServerAboutToStartEvent event) {
-        VillageHouseManager.addAllHouses(event.getServer().registryAccess());
+        RegistryAccess registryAccess = event.getServer().registryAccess();
+        VillageHouseManager.addAllHouses(registryAccess);
+        Registry<Biome> allBiomes = registryAccess.registryOrThrow(Registry.BIOME_REGISTRY);
+        Map<ResourceKey<Biome>, Holder<Biome>> biomeMap = new HashMap<>();
+        for(ResourceKey<Biome> biomeResourceKey : allBiomes.registryKeySet()){
+            Optional<Holder<Biome>> holderOptional = allBiomes.getHolder(biomeResourceKey);
+            holderOptional.ifPresent(biomeHolder -> biomeMap.put(biomeResourceKey, biomeHolder));
+        }
+        for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : event.getServer().getWorldData().worldGenSettings().dimensions().entrySet()) {
+            if(entry.getValue().generator().getBiomeSource() instanceof ExpandedBiomeSource expandedBiomeSource){
+                expandedBiomeSource.setResourceKeyMap(biomeMap);
+                Set<Holder<Biome>> biomeHolders = ExpandedBiomes.buildBiomeList(registryAccess, entry.getKey());
+                expandedBiomeSource.expandBiomesWith(biomeHolders);
+            }
+        }
     }
 
 }
