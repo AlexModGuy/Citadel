@@ -4,6 +4,7 @@
  "item.citadel.effect_item": "Potion Effect",
  "item.citadel.fancy_item": "Fancy Item",
  "item.citadel.icon_item": "Icon Item",
+ "block.citadel.lectern": "Lectern",
  "book.citadel_book.root": "Citadel Book!!!",
  "book.citadel_book.link_example": "Link Example",
  "book.citadel_book.hover_text_pillager_example": "Entity Links are small, cute buttons!",

@@ -63,6 +63,31 @@ public class EventReplaceBiome extends Event {
         return depth;
     }
 
+
+    public boolean testContinentalness(float min, float max) {
+        return continentalness >= min && continentalness <= max;
+    }
+
+    public boolean testErosion(float min, float max) {
+        return erosion >= min && erosion <= max;
+    }
+
+    public boolean testTemperature(float min, float max) {
+        return temperature >= min && temperature <= max;
+    }
+
+    public boolean testHumidity(float min, float max) {
+        return humidity >= min && humidity <= max;
+    }
+
+    public boolean testWeirdness(float min, float max) {
+        return weirdness >= min && weirdness <= max;
+    }
+
+    public boolean testDepth(float min, float max) {
+        return depth >= min && depth <= max;
+    }
+
     public ExpandedBiomeSource getBiomeSource(){
         return biomeSource;
     }

@@ -3,6 +3,7 @@ package com.github.alexthe666.citadel;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.github.alexthe666.citadel.server.event.EventMergeStructureSpawns;
 import com.github.alexthe666.citadel.server.event.EventReplaceBiome;
+import com.github.alexthe666.citadel.server.generation.SurfaceRulesManager;
 import com.github.alexthe666.citadel.server.world.CitadelServerData;
 import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
 import com.github.alexthe666.citadel.server.world.ModifiableTickRateServer;
@@ -19,7 +20,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
@@ -38,7 +41,6 @@ public class ServerProxy {
 
 
     public ServerProxy() {
-
     }
 
     public void onPreInit() {
