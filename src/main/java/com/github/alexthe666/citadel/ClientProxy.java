@@ -311,6 +311,10 @@ public class ClientProxy extends ServerProxy {
         return Minecraft.getInstance().isPaused();
     }
 
+    public Player getClientSidePlayer() {
+        return Minecraft.getInstance().player;
+    }
+
     public boolean canEntityTickClient(Level level, Entity entity) {
         ClientTickRateTracker tracker = ClientTickRateTracker.getForClient(Minecraft.getInstance());
         if(tracker.isTickingHandled(entity)){

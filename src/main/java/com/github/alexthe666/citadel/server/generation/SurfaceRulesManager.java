@@ -6,8 +6,13 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.data.worldgen.DimensionTypes;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
@@ -65,17 +70,9 @@ public class SurfaceRulesManager {
     }
 
 
-    public static SurfaceRules.RuleSource replaceRulesOf(Holder<NoiseGeneratorSettings> holder) {
-        List<SurfaceRules.RuleSource> replaceWith = null;
-        if(holder.is(NoiseGeneratorSettings.OVERWORLD) || holder.is(NoiseGeneratorSettings.AMPLIFIED)  || holder.is(NoiseGeneratorSettings.LARGE_BIOMES) || holder.is(NoiseGeneratorSettings.FLOATING_ISLANDS)){
-            replaceWith = OVERWORLD_REGISTRY;
-        }else if(holder.is(NoiseGeneratorSettings.CAVES)){
-            replaceWith = CAVE_REGISTRY;
-        }else if(holder.is(NoiseGeneratorSettings.NETHER)){
-            replaceWith = NETHER_REGISTRY;
-        }else if(holder.is(NoiseGeneratorSettings.END)){
-            replaceWith = END_REGISTRY;
-        }
+    public static SurfaceRules.RuleSource replaceRulesOf(Holder<NoiseGeneratorSettings> holder, LevelAccessor level) {
+        List<SurfaceRules.RuleSource> replaceWith = OVERWORLD_REGISTRY;
+        //TODO
         return replaceWith == null ? holder.value().surfaceRule() : mergeRules(holder.get().surfaceRule(), replaceWith);
     }
 }

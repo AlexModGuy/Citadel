@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel;
 
+import com.github.alexthe666.citadel.server.entity.IDancesToJukebox;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.github.alexthe666.citadel.server.event.EventMergeStructureSpawns;
 import com.github.alexthe666.citadel.server.event.EventReplaceBiome;
@@ -8,6 +9,7 @@ import com.github.alexthe666.citadel.server.world.CitadelServerData;
 import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
 import com.github.alexthe666.citadel.server.world.ModifiableTickRateServer;
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -16,6 +18,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -55,6 +58,15 @@ public class ServerProxy {
 
     public void handleClientTickRatePacket(CompoundTag compound) {
     }
+
+    public void handleJukeboxPacket(Level level, int entityId, BlockPos jukeBox, boolean dancing) {
+        Entity entity = level.getEntity(entityId);
+        if (entity instanceof IDancesToJukebox dancer) {
+            dancer.setDancing(dancing);
+            dancer.setJukeboxPos(dancing ? jukeBox : null);
+        }
+    }
+
 
     public void openBookGUI(ItemStack book) {
     }
@@ -123,5 +135,9 @@ public class ServerProxy {
 
     public float getMouseOverProgress(ItemStack itemStack) {
         return 0.0F;
+    }
+
+    public Player getClientSidePlayer() {
+        return null;
     }
 }
