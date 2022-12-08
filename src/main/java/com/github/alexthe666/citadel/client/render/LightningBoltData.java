@@ -1,6 +1,6 @@
 package com.github.alexthe666.citadel.client.render;
 
-import com.mojang.math.Vector4f;
+import org.joml.Vector4f;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
 

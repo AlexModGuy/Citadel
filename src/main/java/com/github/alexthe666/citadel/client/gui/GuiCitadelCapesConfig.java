@@ -8,8 +8,7 @@ import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
@@ -23,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
 
@@ -65,10 +65,10 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         PoseStack posestack1 = new PoseStack();
         posestack1.translate(0.0D, 0.0D, 1000.0D);
         posestack1.scale((float)size, (float)size, (float)size);
-        Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
-        Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 20.0F);
+        Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
+        Quaternionf quaternion1 = Axis.XP.rotationDegrees(f1 * 20.0F);
         quaternion.mul(quaternion1);
-        quaternion.mul(Vector3f.YP.rotationDegrees(180.0F));
+        quaternion.mul(Axis.YP.rotationDegrees(180.0F));
         posestack1.mulPose(quaternion);
         float f2 = entity.yBodyRot;
         float f3 = entity.getYRot();
@@ -82,7 +82,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         entity.yHeadRotO = entity.getYRot();
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        quaternion1.conj();
+        quaternion1.conjugate();
         entityrenderdispatcher.overrideCameraOrientation(quaternion1);
         entityrenderdispatcher.setRenderShadow(false);
         MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
@@ -106,11 +106,11 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         super.init();
         int i = this.width / 2;
         int j = this.height / 6;
-        this.addRenderableWidget(new Button(i - 100, j+ 160, 200, 20, CommonComponents.GUI_DONE, (p_213079_1_) -> {
+        Button doneButton = Button.builder(CommonComponents.GUI_DONE, (p_213079_1_) -> {
             this.minecraft.setScreen(this.lastScreen);
-        }));
-
-        this.addRenderableWidget(button = new Button(i - 100, j, 200, 20, getTypeText(), (p_213079_1_) -> {
+        }).size(200, 20).pos(i - 100, j+ 160).build();
+        this.addRenderableWidget(doneButton);
+        Button changeCapeButton = Button.builder(getTypeText(), (p_213079_1_) -> {
             CitadelCapes.Cape nextCape = CitadelCapes.getNextCape(capeType, Minecraft.getInstance().player.getUUID());
             this.capeType = nextCape == null ? null : nextCape.getIdentifier();
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
@@ -126,7 +126,8 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
             }
             Citadel.sendMSGToServer(new PropertiesMessage("CitadelCapesConfig", tag, Minecraft.getInstance().player.getId()));
             button.setMessage(getTypeText());
-        }));
+        }).size(200, 20).pos(i - 100, j).build();
+        this.addRenderableWidget(changeCapeButton);
 
     }
 

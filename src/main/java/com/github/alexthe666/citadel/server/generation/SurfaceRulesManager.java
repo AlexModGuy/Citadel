@@ -6,13 +6,7 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
-import net.minecraft.data.worldgen.DimensionTypes;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
@@ -55,11 +49,6 @@ public class SurfaceRulesManager {
 
     public static void registerCaveSurfaceRule(SurfaceRules.RuleSource rule) {
         CAVE_REGISTRY.add(rule);
-    }
-
-
-    private static boolean sameNoiseGenSettings(NoiseGeneratorSettings settings, ResourceKey<NoiseGeneratorSettings> key) {
-        return Objects.equals(settings, BuiltinRegistries.NOISE_GENERATOR_SETTINGS.get(key));
     }
 
     private static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, List<SurfaceRules.RuleSource> toMerge) {

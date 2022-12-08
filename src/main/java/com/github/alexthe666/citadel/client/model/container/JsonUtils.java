@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -114,7 +115,7 @@ public class JsonUtils
     @Nullable
     public static Item getByNameOrId(String id)
     {
-        Item item = Registry.ITEM.get(new ResourceLocation(id));
+        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(id));
 
         if (item == null)
         {

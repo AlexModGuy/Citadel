@@ -24,6 +24,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -65,6 +66,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.ref.Reference;
 import java.util.*;
 
 ;
@@ -182,16 +184,18 @@ public class Citadel {
     public void onServerAboutToStart(ServerAboutToStartEvent event) {
         RegistryAccess registryAccess = event.getServer().registryAccess();
         VillageHouseManager.addAllHouses(registryAccess);
-        Registry<Biome> allBiomes = registryAccess.registryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<Biome> allBiomes = registryAccess.registryOrThrow(Registries.BIOME);
+        Registry<LevelStem> levelStems = registryAccess.registryOrThrow(Registries.LEVEL_STEM);
         Map<ResourceKey<Biome>, Holder<Biome>> biomeMap = new HashMap<>();
         for(ResourceKey<Biome> biomeResourceKey : allBiomes.registryKeySet()){
-            Optional<Holder<Biome>> holderOptional = allBiomes.getHolder(biomeResourceKey);
+            Optional<Holder.Reference<Biome>> holderOptional = allBiomes.getHolder(biomeResourceKey);
             holderOptional.ifPresent(biomeHolder -> biomeMap.put(biomeResourceKey, biomeHolder));
         }
-        for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : event.getServer().getWorldData().worldGenSettings().dimensions().entrySet()) {
-            if(entry.getValue().generator().getBiomeSource() instanceof ExpandedBiomeSource expandedBiomeSource){
+        for (ResourceKey<LevelStem> levelStemResourceKey : levelStems.registryKeySet()) {
+            Optional<Holder.Reference<LevelStem>> holderOptional = levelStems.getHolder(levelStemResourceKey);
+            if(holderOptional.isPresent() && holderOptional.get().value().generator().getBiomeSource() instanceof ExpandedBiomeSource expandedBiomeSource){
                 expandedBiomeSource.setResourceKeyMap(biomeMap);
-                Set<Holder<Biome>> biomeHolders = ExpandedBiomes.buildBiomeList(registryAccess, entry.getKey());
+                Set<Holder<Biome>> biomeHolders = ExpandedBiomes.buildBiomeList(registryAccess, levelStemResourceKey);
                 expandedBiomeSource.expandBiomesWith(biomeHolders);
             }
         }

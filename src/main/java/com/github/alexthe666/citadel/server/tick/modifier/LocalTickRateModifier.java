@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel.server.tick.modifier;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +33,7 @@ public abstract class LocalTickRateModifier extends TickRateModifier {
         this.range = tag.getDouble("Range");
         ResourceKey<Level> dimFromTag = Level.OVERWORLD;
         if(tag.contains("Dimension")){
-            dimFromTag = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dimension")));
+            dimFromTag = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString("dimension")));
         }
         this.dimension = dimFromTag;
     }

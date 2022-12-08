@@ -18,8 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractClientPlayer.class)
 public abstract class AbstractClientPlayerMixin extends Player {
 
-    public AbstractClientPlayerMixin(Level level, BlockPos pos, float f, GameProfile profile, @Nullable ProfilePublicKey key) {
-        super(level, pos, f, profile, key);
+    public AbstractClientPlayerMixin(Level p_250508_, BlockPos p_250289_, float p_251702_, GameProfile p_252153_) {
+        super(p_250508_, p_250289_, p_251702_, p_252153_);
     }
 
     @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/player/AbstractClientPlayer;getCloakTextureLocation()Lnet/minecraft/resources/ResourceLocation;", cancellable = true)
