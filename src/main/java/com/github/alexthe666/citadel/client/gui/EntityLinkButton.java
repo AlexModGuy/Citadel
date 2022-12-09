@@ -25,7 +25,7 @@ public class EntityLinkButton extends Button {
     private final EnttyRenderWindow window = new EnttyRenderWindow();
 
     public EntityLinkButton(GuiBasicBook bookGUI, EntityLinkData linkData, int k, int l, Button.OnPress o) {
-        super(k + linkData.getX() - 12, l + linkData.getY(), (int) (24 * linkData.getScale()), (int) (24 * linkData.getScale()), CommonComponents.EMPTY, o);
+        super(k + linkData.getX() - 12, l + linkData.getY(), (int) (24 * linkData.getScale()), (int) (24 * linkData.getScale()), CommonComponents.EMPTY, o, DEFAULT_NARRATION);
         this.data = linkData;
         this.bookGUI = bookGUI;
     }
@@ -38,7 +38,7 @@ public class EntityLinkButton extends Button {
         float f = (float) data.getScale();
         RenderSystem.setShaderTexture(0, bookGUI.getBookWidgetTexture());
         posestack.pushPose();
-        posestack.translate(this.x, this.y, 0);
+        posestack.translate(this.getX(), this.getY(), 0);
         posestack.scale(f, f, 1);
         this.drawBtn(false, posestack, 0, 0, lvt_5_1_, lvt_6_1_, 24, 24);
         Entity model = null;
@@ -49,7 +49,7 @@ public class EntityLinkButton extends Button {
 
         posestack.pushPose();
         if (model != null) {
-            window.renderEntityWindow(posestack, x, y, model, (float) data.getEntityScale() * f, data.getOffset_x() * f, data.getOffset_y() * f, 2, 2, 22, 22);
+            window.renderEntityWindow(posestack, this.getX(), this.getY(), model, (float) data.getEntityScale() * f, data.getOffset_x() * f, data.getOffset_y() * f, 2, 2, 22, 22);
         }
         posestack.popPose();
         RenderSystem.depthFunc(515);

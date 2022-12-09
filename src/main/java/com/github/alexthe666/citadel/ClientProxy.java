@@ -4,6 +4,7 @@ import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
 import com.github.alexthe666.citadel.client.event.*;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
+import com.github.alexthe666.citadel.client.render.CitadelLecternRenderer;
 import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
 import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelBook;
@@ -21,13 +22,16 @@ import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.blockentity.LecternRenderer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -78,6 +82,7 @@ public class ClientProxy extends ServerProxy {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        BlockEntityRenderers.register(Citadel.LECTERN_BE.get(), CitadelLecternRenderer::new);
         CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station"), new int[]{}));
         CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
         CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
@@ -90,15 +95,17 @@ public class ClientProxy extends ServerProxy {
                String username = Minecraft.getInstance().player.getName().getString();
                int height = -20;
                if (Citadel.PATREONS.contains(username)) {
-                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                   Button button1 = Button.builder(Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
                        Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(event.getScreen(), Minecraft.getInstance().options));
-                   }));
+                   }).size(200, 20).pos(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height).build();
+                   event.addListener(button1);
                    height += 25;
                }
                if (!CitadelCapes.getCapesFor(Minecraft.getInstance().player.getUUID()).isEmpty()) {
-                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                   Button button2 = Button.builder(Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
                        Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(event.getScreen(), Minecraft.getInstance().options));
-                   }));
+                   }).size(200, 20).pos(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height).build();
+                   event.addListener(button2);
                    height += 25;
                }
            }catch (Exception e){
@@ -193,7 +200,7 @@ public class ClientProxy extends ServerProxy {
         if(CitadelConstants.isAprilFools() && rickrollVideo != null && rickrollVideo.getLastFrame() > 35){
             event.setResult(Event.Result.ALLOW);
             float hue = (System.currentTimeMillis() % 6000) / 6000f;
-            event.getPoseStack().mulPose(Vector3f.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 360));
+            event.getPoseStack().mulPose(Axis.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 360));
             event.setSplashText("Never gonna give you up!");
             int rainbow = Color.HSBtoRGB(hue, 0.6f, 1);
             event.setSplashTextColor(rainbow);
@@ -305,6 +312,10 @@ public class ClientProxy extends ServerProxy {
 
     public boolean isGamePaused() {
         return Minecraft.getInstance().isPaused();
+    }
+
+    public Player getClientSidePlayer() {
+        return Minecraft.getInstance().player;
     }
 
     public boolean canEntityTickClient(Level level, Entity entity) {

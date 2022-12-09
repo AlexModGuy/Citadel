@@ -18,7 +18,7 @@ public class BookPageButton extends Button {
     private GuiBasicBook bookGUI;
 
     public BookPageButton(GuiBasicBook bookGUI, int p_i51079_1_, int p_i51079_2_, boolean p_i51079_3_, OnPress p_i51079_4_, boolean p_i51079_5_) {
-        super(p_i51079_1_, p_i51079_2_, 23, 13, CommonComponents.EMPTY, p_i51079_4_);
+        super(p_i51079_1_, p_i51079_2_, 23, 13, CommonComponents.EMPTY, p_i51079_4_, DEFAULT_NARRATION);
         this.isForward = p_i51079_3_;
         this.playTurnSound = p_i51079_5_;
         this.bookGUI = bookGUI;
@@ -41,7 +41,7 @@ public class BookPageButton extends Button {
         int g = (color & 0xFF00) >> 8;
         int b = (color & 0xFF);
         BookBlit.setRGB(r, g, b, 255);
-        drawNextArrow(p_230431_1_, this.x, this.y, lvt_5_1_, lvt_6_1_, 18, 12);
+        drawNextArrow(p_230431_1_, this.getX(), this.getY(), lvt_5_1_, lvt_6_1_, 18, 12);
     }
 
     public void drawNextArrow(PoseStack p_238474_1_, int p_238474_2_, int p_238474_3_, int p_238474_4_, int p_238474_5_, int p_238474_6_, int p_238474_7_) {

@@ -3,8 +3,9 @@ package com.github.alexthe666.citadel.client;
 import com.github.alexthe666.citadel.Citadel;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.joml.Matrix4f;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -13,7 +14,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -30,6 +31,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
     private static final ResourceLocation DEFAULT_ICON_TEXTURE = new ResourceLocation("citadel:textures/gui/book/icon_default.png");
     private static final Map<String, ResourceLocation> LOADED_ICONS = new HashMap<>();
 
+    private static List<MobEffect> mobEffectList = null;
 
     public CitadelItemstackRenderer() {
         super(null, null);
@@ -46,7 +48,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             ItemStack toRender = null;
             if (stack.getTag() != null && stack.getTag().contains("DisplayItem")) {
                 String displayID = stack.getTag().getString("DisplayItem");
-                toRender = new ItemStack(Registry.ITEM.get(new ResourceLocation(displayID)));
+                toRender = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(displayID)));
                 if (stack.getTag().contains("DisplayItemNBT")) {
                     try {
                         toRender.setTag(stack.getTag().getCompound("DisplayItemNBT"));
@@ -68,7 +70,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
                 matrixStack.translate(0, 0.05F + 0.1F * Mth.sin(0.3F * ticksExisted), 0);
             }
             if(stack.getTag() != null && stack.getTag().contains("DisplaySpin") && stack.getTag().getBoolean("DisplaySpin")){
-                matrixStack.mulPose(Vector3f.YP.rotationDegrees(6 * ticksExisted));
+                matrixStack.mulPose(Axis.YP.rotationDegrees(6 * ticksExisted));
             }
             if(animateAnyways || stack.getTag() != null && stack.getTag().contains("DisplayZoom") && stack.getTag().getBoolean("DisplayZoom")) {
                 float scale = (float) (1F + 0.15F * (Math.sin(ticksExisted * 0.3F) + 1F));
@@ -90,11 +92,14 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             MobEffect effect;
             if (stack.getTag() != null && stack.getTag().contains("DisplayEffect")) {
                 String displayID = stack.getTag().getString("DisplayEffect");
-                effect = Registry.MOB_EFFECT.get(new ResourceLocation(displayID));
+                effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(displayID));
             } else {
-                int size = Registry.MOB_EFFECT.keySet().size();
+                if(mobEffectList == null){
+                    mobEffectList = ForgeRegistries.MOB_EFFECTS.getValues().stream().toList();
+                }
+                int size = mobEffectList.size();
                 int time = (int) (Util.getMillis() / 500);
-                effect = Registry.MOB_EFFECT.byId(time % size);
+                effect = mobEffectList.get(time % size);
                 if (effect == null) {
                     effect = MobEffects.MOVEMENT_SPEED;
                 }
@@ -108,7 +113,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             TextureAtlasSprite sprite = potionspriteuploader.get(effect);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, sprite.atlas().location());
+            RenderSystem.setShaderTexture(0, sprite.atlasLocation());
             Tesselator tessellator = Tesselator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuilder();
             bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);

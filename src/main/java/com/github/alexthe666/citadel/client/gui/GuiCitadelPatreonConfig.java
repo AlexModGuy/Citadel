@@ -75,37 +75,47 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
         super.init();
         int i = this.width / 2;
         int j = this.height / 6;
-        this.addRenderableWidget(new Button(i - 100, j+ 120, 200, 20, CommonComponents.GUI_DONE, (p_213079_1_) -> {
+        Button doneButton = Button.builder(CommonComponents.GUI_DONE, (p_213079_1_) -> {
             this.minecraft.setScreen(this.lastScreen);
-        }));
+        }).size(200, 20).pos(i - 100, j+ 120).build();
+        this.addRenderableWidget(doneButton);
         this.addRenderableWidget(distSlider = new ForgeSlider(i - 150 / 2 - 25, j + 30, 150, 20, Component.translatable("citadel.gui.orbit_dist").append(Component.translatable( ": ")), Component.translatable( ""), 0.125F, 5F, rotateDist, 0.1D, 1, true){
             @Override
             protected void applyValue() {
                 GuiCitadelPatreonConfig.this.setSliderValue(0, (float)getValue());
             }
         });
-        this.addRenderableWidget(new Button(i - 150 / 2 + 135, j+ 30, 40, 20,  Component.translatable("citadel.gui.reset"), (p_213079_1_) -> {
+
+        Button reset1Button = Button.builder(Component.translatable("citadel.gui.reset"), (p_213079_1_) -> {
             this.setSliderValue(0, 0.4F);
-        }));
+        }).size(40, 20).pos(i - 150 / 2 + 135, j+ 30).build();
+        this.addRenderableWidget(reset1Button);
+
         this.addRenderableWidget(speedSlider = new ForgeSlider(i - 150 / 2 - 25, j + 60, 150, 20, Component.translatable("citadel.gui.orbit_speed").append(Component.translatable( ": ")), Component.translatable( ""), 0.0F, 5F, rotateSpeed, 0.1D, 2, true){
             @Override
             protected void applyValue() {
                 GuiCitadelPatreonConfig.this.setSliderValue(1, (float)getValue());
             }
         });
-        this.addRenderableWidget(new Button(i - 150 / 2 + 135, j+ 60, 40, 20,  Component.translatable("citadel.gui.reset"), (p_213079_1_) -> {
+
+        Button reset2Button = Button.builder(Component.translatable("citadel.gui.reset"), (p_213079_1_) -> {
             this.setSliderValue(1, 1F / 5F);
-        }));
+        }).size(40, 20).pos(i - 150 / 2 + 135, j+ 60).build();
+        this.addRenderableWidget(reset2Button);
+
         this.addRenderableWidget(heightSlider = new ForgeSlider(i - 150 / 2 - 25, j + 90, 150, 20, Component.translatable("citadel.gui.orbit_height").append(Component.translatable( ": ")), Component.translatable( ""), 0.0F, 2F, rotateHeight, 0.1D, 2, true){
             @Override
             protected void applyValue() {
                 GuiCitadelPatreonConfig.this.setSliderValue(2, (float)getValue());
             }
         });
-        this.addRenderableWidget(new Button(i - 150 / 2 + 135, j+ 90, 40, 20,  Component.translatable("citadel.gui.reset"), (p_213079_1_) -> {
+
+        Button reset3Button = Button.builder(Component.translatable("citadel.gui.reset"), (p_213079_1_) -> {
             this.setSliderValue(2, 0.5F);
-        }));
-        this.addRenderableWidget(changeButton = new Button(i - 100, j, 200, 20, getTypeText(), (p_213079_1_) -> {
+        }).size(40, 20).pos(i - 150 / 2 + 135, j+ 90).build();
+        this.addRenderableWidget(reset3Button);
+
+        changeButton = Button.builder(getTypeText(), (p_213079_1_) -> {
             this.followType = CitadelPatreonRenderer.getIdOfNext(followType);
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
             if(tag != null){
@@ -114,9 +124,8 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
             }
             Citadel.sendMSGToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
             changeButton.setMessage(getTypeText());
-
-        }));
-
+        }).size(200, 20).pos(i - 100, j).build();
+        this.addRenderableWidget(changeButton);
     }
 
     private  Component getTypeText(){

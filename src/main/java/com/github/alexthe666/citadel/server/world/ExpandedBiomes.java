@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -32,10 +33,10 @@ public class ExpandedBiomes {
         if(list == null || list.isEmpty()){
             return Set.of();
         }
-        Registry<Biome> allBiomes = registryAccess.registryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<Biome> allBiomes = registryAccess.registryOrThrow(Registries.BIOME);
         ImmutableSet.Builder<Holder<Biome>> biomeHolders = ImmutableSet.builder();
         for(ResourceKey<Biome> biomeResourceKey : list){
-            Optional<Holder<Biome>> holderOptional = allBiomes.getHolder(biomeResourceKey);
+            Optional<Holder.Reference<Biome>> holderOptional = allBiomes.getHolder(biomeResourceKey);
             holderOptional.ifPresent(biomeHolders::add);
         }
         return biomeHolders.build();

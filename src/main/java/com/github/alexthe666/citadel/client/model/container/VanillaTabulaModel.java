@@ -39,13 +39,13 @@ public class VanillaTabulaModel implements UnbakedModel {
     }
 
     @Override
-    public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-        return this.textures;
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> p_119538_) {
+
     }
 
-    @Nullable
+    @org.jetbrains.annotations.Nullable
     @Override
-    public BakedModel bake(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> function, ModelState iModelTransform, ResourceLocation resourceLocation) {
+    public BakedModel bake(ModelBaker p_250133_, Function<Material, TextureAtlasSprite> p_119535_, ModelState p_119536_, ResourceLocation p_119537_) {
         return null;
     }
 

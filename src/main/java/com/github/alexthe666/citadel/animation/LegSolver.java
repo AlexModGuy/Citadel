@@ -1,12 +1,14 @@
 package com.github.alexthe666.citadel.animation;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.Optional;
 
 /**
  * @author paul101
@@ -52,7 +54,7 @@ public class LegSolver {
             this.isWing = isWing;
         }
 
-        public final float getHeight(float delta) {
+        public float getHeight(float delta) {
             return this.prevHeight + (this.height - this.prevHeight) * delta;
         }
 
@@ -63,29 +65,37 @@ public class LegSolver {
             this.height = Mth.clamp(settledHeight, -this.range * scale, this.range * scale);
         }
 
-
-        private float settle(LivingEntity entity, double x, double y, double z, float height) {
+        protected float settle(LivingEntity entity, double x, double y, double z, float height) {
             BlockPos pos = new BlockPos(x, y + 1e-3, z);
-            float dist = this.getDistance(entity.level, pos);
-            if (1 - dist < 1e-3) {
-                dist = this.getDistance(entity.level, pos.below()) + (float) y % 1;
+            Vec3 vec3 = new Vec3(x, y, z);
+            float dist = this.getDistance(entity.level, pos, vec3);
+            if ((double)(1.0F - dist) < 0.001D) {
+                dist = this.getDistance(entity.level, pos.below(), vec3) + (float) y % 1;
             } else {
-                dist -= 1 - (y % 1);
+                dist = (float)((double)dist - (1.0D - y % 1.0D));
             }
             if (entity.isOnGround() && height <= dist) {
                 return height == dist ? height : Math.min(height + this.getFallSpeed(), dist);
             } else if (height > 0) {
-                return Math.max(height - this.getRiseSpeed(), dist);
+                return height == dist ? height : Math.max(height - this.getRiseSpeed(), dist);
             }
             return height;
         }
 
-        private float getDistance(Level world, BlockPos pos) {
+        protected float getDistance(Level world, BlockPos pos, Vec3 position) {
             BlockState state = world.getBlockState(pos);
-            AABB aabb = state.getBlockSupportShape(world, pos).getFaceShape(Direction.UP).bounds();
-            return aabb == null ? 1 : 1 - Math.min((float) aabb.maxY, 1);
+            VoxelShape shape = state.getCollisionShape(world, pos);
+            if(shape.isEmpty()){
+                return 1.0F;
+            }
+            Optional<Vec3> closest = shape.closestPointTo(position);
+            if(closest.isEmpty()){
+                return 1.0F;
+            }else{
+                float closestY = Math.min((float)closest.get().y, 1.0F);
+                return position.y < 0.0 ? closestY : 1.0F - closestY;
+            }
         }
-
         protected float getFallSpeed() {
             return 0.25F;
         }
