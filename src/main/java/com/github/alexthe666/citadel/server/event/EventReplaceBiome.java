@@ -96,7 +96,15 @@ public class EventReplaceBiome extends Event {
         biomeToGenerate = biome;
     }
 
-    public BlockPos getSamplePosition(){
-        return new BlockPos(x, y, z);
+    public int getX(){
+        return x;
+    }
+
+    public int getY(){
+        return y;
+    }
+
+    public int getZ(){
+        return z;
     }
 }

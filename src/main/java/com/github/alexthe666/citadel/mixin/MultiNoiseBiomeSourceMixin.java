@@ -5,6 +5,7 @@ import com.github.alexthe666.citadel.server.event.EventReplaceBiome;
 import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
@@ -28,9 +29,9 @@ public class MultiNoiseBiomeSourceMixin {
             method = "Lnet/minecraft/world/level/biome/MultiNoiseBiomeSource;getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;"
     )
     private void citadel_getNoiseBiomeCoords(int x, int y, int z, Climate.Sampler sampler, CallbackInfoReturnable<Holder<Biome>> cir) {
-        lastSampledX = x;
-        lastSampledY = y;
-        lastSampledZ = z;
+        lastSampledX = QuartPos.toBlock(x);
+        lastSampledY = QuartPos.toBlock(y);
+        lastSampledZ = QuartPos.toBlock(z);
     }
 
         @Inject(at = @At("RETURN"),
