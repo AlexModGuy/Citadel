@@ -1,6 +1,8 @@
 package com.github.alexthe666.citadel.mixin;
 
+import com.github.alexthe666.citadel.server.generation.IMultiNoiseBiomeSourceAccessor;
 import com.github.alexthe666.citadel.server.generation.SurfaceRulesManager;
+import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.StructureManager;
@@ -33,7 +35,6 @@ public class NoiseBasedChunkGeneratorMixin {
     private void citadel_buildSurface(ChunkAccess chunkGenerator, WorldGenerationContext context, RandomState state, StructureManager structureManager, BiomeManager biomeManager, Registry<Biome> registry, Blender blender, CallbackInfo ci) {
        if(!mergedSurfaceRules){
            mergedSurfaceRules = true;
-           ;
            settings = Holder.direct(copyOfWithRules(settings.value(), SurfaceRulesManager.replaceRulesOf(settings, chunkGenerator.getWorldForge())));
        }
     }
