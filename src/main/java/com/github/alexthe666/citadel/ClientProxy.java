@@ -12,6 +12,7 @@ import com.github.alexthe666.citadel.client.gui.GuiCitadelPatreonConfig;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
 import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
+import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
 import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
@@ -42,6 +43,7 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -70,7 +72,6 @@ public class ClientProxy extends ServerProxy {
     private Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
 
     private ItemStack lastHoveredItem = null;
-
 
     public ClientProxy() {
         super();
