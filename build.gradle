@@ -18,7 +18,6 @@ buildscript {
 plugins {
     id 'java'
     id 'idea'
-    id 'net.minecraftforge.gradle' version '5.1.+'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
@@ -144,10 +143,13 @@ sourceSets {
 
 jar {
     classifier 'slim'
-    configurations.shade.each { dep ->
-        from(project.zipTree(dep)){
-            exclude 'META-INF', 'META-INF/**'
+    afterEvaluate {
+        configurations.shade.each { dep ->
+            from(project.zipTree(dep)){
+                exclude 'META-INF', 'META-INF/**'
+            }
         }
+
     }
 }
 // Example for how to get properties into the manifest for reading by the runtime..
