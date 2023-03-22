@@ -31,8 +31,8 @@ public class CitadelEvents {
         if (CitadelConstants.DEBUG) {
             if ((event.getEntity() instanceof Player)) {
                 CompoundTag tag = CitadelEntityData.getCitadelTag(event.getEntity());
-                tag.putInt("CitadelInt", tag.getInt("CitadelInt") + 1);
-                Citadel.LOGGER.debug("Citadel Data Tag tracker example: " + tag.getInt("CitadelInt"));
+                //tag.putInt("CitadelInt", tag.getInt("CitadelInt") + 1);
+                //Citadel.LOGGER.debug("Citadel Data Tag tracker example: " + tag.getInt("CitadelInt"));
             }
         }
     }

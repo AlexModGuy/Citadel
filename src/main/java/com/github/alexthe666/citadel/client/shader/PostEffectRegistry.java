@@ -18,7 +18,9 @@ import java.util.Map;
 public class PostEffectRegistry {
 
     private static List<ResourceLocation> registry = new ArrayList<>();
+
     private static Map<ResourceLocation, PostEffect> postEffects = new HashMap<>();
+
     public static void clear(){
         registry.clear();
         for(PostEffect postEffect : postEffects.values()){
@@ -56,6 +58,7 @@ public class PostEffectRegistry {
             postEffects.put(resourceLocation, new PostEffect(postChain, renderTarget, false));
         }
     }
+
     public static void resize(int x, int y) {
         for(PostEffect postEffect : postEffects.values()){
             postEffect.resize(x, y);
@@ -79,7 +82,7 @@ public class PostEffectRegistry {
         }
     }
 
-    public static void onDrawOutline() {
+    public static void blitEffects() {
         for(PostEffect postEffect : postEffects.values()) {
             if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
                 RenderSystem.enableBlend();
@@ -92,7 +95,7 @@ public class PostEffectRegistry {
         }
     }
 
-    public static void onClearRender(RenderTarget mainTarget) {
+    public static void copyDepth(RenderTarget mainTarget) {
         for(PostEffect postEffect : postEffects.values()) {
             if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
                 postEffect.getRenderTarget().clear(Minecraft.ON_OSX);
@@ -103,14 +106,15 @@ public class PostEffectRegistry {
         }
     }
 
-    public static void onEndRender(RenderTarget mainTarget, float f) {
+    public static void processEffects(RenderTarget mainTarget, float f) {
         for(PostEffect postEffect : postEffects.values()) {
             if (postEffect.isEnabled() && postEffect.postChain != null) {
-                postEffect.postChain.process(f);
-                mainTarget.bindWrite(false);
+                postEffect.postChain.process(Minecraft.getInstance().getFrameTime());
             }
         }
     }
+
+
     private static class PostEffect {
         private PostChain postChain;
         private RenderTarget renderTarget;

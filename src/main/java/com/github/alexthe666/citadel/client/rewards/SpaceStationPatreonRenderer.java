@@ -1,8 +1,12 @@
 package com.github.alexthe666.citadel.client.rewards;
 
+import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.ClientProxy;
+import com.github.alexthe666.citadel.client.render.CitadelRenderTypes;
+import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import org.joml.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -41,8 +45,15 @@ public class SpaceStationPatreonRenderer extends CitadelPatreonRenderer {
         matrixStackIn.scale(scale, scale, scale);
         matrixStackIn.mulPose(Axis.XP.rotationDegrees(90));
         matrixStackIn.mulPose(Axis.YP.rotationDegrees(rotation * 10));
+        VertexConsumer buf;
+        if(CitadelConstants.DEBUG){
+            PostEffectRegistry.renderEffectForNextTick(ClientProxy.DEBUG_SHADER);
+            buf = buffer.getBuffer(CitadelRenderTypes.getDebugPages(resourceLocation));
+        }else{
+            buf = buffer.getBuffer(RenderType.entityCutoutNoCull(CitadelTextureManager.getColorMappedTexture(resourceLocation, CITADEL_TEXTURE, colors)));
+        }
         ClientProxy.CITADEL_MODEL.resetToDefaultPose();
-        ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buffer.getBuffer(RenderType.entityCutoutNoCull(CitadelTextureManager.getColorMappedTexture(resourceLocation, CITADEL_TEXTURE, colors))), light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buf, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buffer.getBuffer(RenderType.eyes(CITADEL_LIGHTS_TEXTURE)), light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStackIn.popPose();
         matrixStackIn.popPose();
