@@ -22,7 +22,7 @@ public class BiomeSourceMixin implements ExpandedBiomeSource {
 
 
     @Shadow
-    private Supplier<Set<Holder<Biome>>> lazyPossibleBiomes;
+    private Supplier<Set<Holder<Biome>>> possibleBiomes;
     private boolean expanded;
     private Map<ResourceKey<Biome>, Holder<Biome>> map = new HashMap<>();
 
@@ -40,9 +40,9 @@ public class BiomeSourceMixin implements ExpandedBiomeSource {
     public void expandBiomesWith(Set<Holder<Biome>> newGenBiomes) {
         if(!expanded){
             ImmutableSet.Builder<Holder<Biome>> builder = ImmutableSet.builder();
-            builder.addAll(this.lazyPossibleBiomes.get());
+            builder.addAll(this.possibleBiomes.get());
             builder.addAll(newGenBiomes);
-            lazyPossibleBiomes = Suppliers.memoize(builder::build);
+            possibleBiomes = Suppliers.memoize(builder::build);
             expanded = true;
         }
     }

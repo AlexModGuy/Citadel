@@ -12,6 +12,7 @@ import com.github.alexthe666.citadel.client.gui.GuiCitadelPatreonConfig;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
 import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
+import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
 import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
@@ -28,10 +29,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.blockentity.LecternRenderer;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -42,14 +42,17 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.awt.*;
 import java.io.IOException;
@@ -64,13 +67,13 @@ public class ClientProxy extends ServerProxy {
     private static final ResourceLocation RICKROLL_LOCATION = new ResourceLocation("citadel:rickroll.mp4");
     public static boolean hideFollower = false;
     private Video rickrollVideo = null;
+    public static final ResourceLocation HOLOGRAM_SHADER = new ResourceLocation("citadel:shaders/post/hologram.json");
 
     private Map<ItemStack, Float> prevMouseOverProgresses = new HashMap<>();
 
     private Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
 
     private ItemStack lastHoveredItem = null;
-
 
     public ClientProxy() {
         super();
@@ -82,11 +85,14 @@ public class ClientProxy extends ServerProxy {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         BlockEntityRenderers.register(Citadel.LECTERN_BE.get(), CitadelLecternRenderer::new);
         CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station"), new int[]{}));
         CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
         CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
+        PostEffectRegistry.registerEffect(HOLOGRAM_SHADER);
     }
+
 
     @SubscribeEvent
     public void screenOpen(ScreenEvent.Init event) {

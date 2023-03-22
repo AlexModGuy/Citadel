@@ -36,14 +36,26 @@ public class LinkButton extends Button {
         return this.isHovered ? book.getWidgetColor() : this.active ? 0X94745A : 10526880;
     }
 
+    private int getTextureY() {
+        int i = 1;
+        if (!this.active) {
+            i = 0;
+        } else if (this.isHoveredOrFocused()) {
+            i = 2;
+        }
+
+        return 46 + i * 20;
+    }
+
+
     @Override
-    public void renderButton(PoseStack poseStack, int guiX, int guiY, float partialTicks) {
+    public void renderWidget(PoseStack poseStack, int guiX, int guiY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, book.getBookButtonsTexture());
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-        int i = this.getYImage(this.isHoveredOrFocused());
+        int i = this.getTextureY();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
@@ -63,14 +75,11 @@ public class LinkButton extends Button {
             BookBlit.blit(poseStack, this.getX() + this.width / 2, this.getY(), 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height, 256, 256);
         }
 
-        this.renderBg(poseStack, minecraft, guiX, guiY);
         int j = getFGColor();
         int itemTextOffset = previewStack.isEmpty() ? 0 : 8;
         if(!previewStack.isEmpty()){
             ItemRenderer itemRenderer =  Minecraft.getInstance().getItemRenderer();
-            itemRenderer.blitOffset = 100.0F;
-            itemRenderer.renderAndDecorateItem(previewStack, this.getX() + 2, this.getY() + 1);
-            itemRenderer.blitOffset = 0.0F;
+            itemRenderer.renderAndDecorateItem(poseStack, previewStack, this.getX() + 2, this.getY() + 1);
         }
         drawTextOf(poseStack, font, this.getMessage(), this.getX() + itemTextOffset + this.width / 2, this.getY() + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
     }

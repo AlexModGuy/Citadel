@@ -319,7 +319,7 @@ public abstract class GuiBasicBook extends Screen {
 
     private void refreshSpacing() {
         if (internalPage != null) {
-            String lang = Minecraft.getInstance().getLanguageManager().getSelected().getCode().toLowerCase();
+            String lang = Minecraft.getInstance().getLanguageManager().getSelected().toLowerCase();
             currentPageText = new ResourceLocation(getTextFileDirectory() + lang + "/" + internalPage.getTextFileToReadFrom());
             boolean invalid = false;
             try {
@@ -495,14 +495,12 @@ public abstract class GuiBasicBook extends Screen {
                         }
                         stack.setTag(tag);
                     }
-                    this.itemRenderer.blitOffset = 100.0F;
                     matrixStack.pushPose();
                     PoseStack poseStack = RenderSystem.getModelViewStack();
                     poseStack.pushPose();
                     poseStack.translate(k, l, 0);
                     poseStack.scale(scale, scale, scale);
-                    this.itemRenderer.renderAndDecorateItem(stack, itemRenderData.getX(), itemRenderData.getY());
-                    this.itemRenderer.blitOffset = 0.0F;
+                    this.itemRenderer.renderAndDecorateItem(new PoseStack(), stack, itemRenderData.getX(), itemRenderData.getY());
                     poseStack.popPose();
                     matrixStack.popPose();
                     RenderSystem.applyModelViewMatrix();
@@ -533,9 +531,7 @@ public abstract class GuiBasicBook extends Screen {
                 poseStack.translate(k, l, 32.0F);
                 poseStack.translate((int) (recipeData.getX() + (i % 3) * 20 * scale), (int) (recipeData.getY() + (i / 3) * 20 * scale), 0);
                 poseStack.scale(scale, scale, scale);
-                this.itemRenderer.blitOffset = 100.0F;
-                this.itemRenderer.renderAndDecorateItem(stack, 0, 0);
-                this.itemRenderer.blitOffset = 0.0F;
+                this.itemRenderer.renderAndDecorateItem(new PoseStack(), stack, 0, 0);
                 poseStack.popPose();
             }
             displayedStacks.add(i, stack);
@@ -545,13 +541,12 @@ public abstract class GuiBasicBook extends Screen {
         float finScale = scale * 1.5F;
         poseStack.translate(recipeData.getX() + 70 * finScale, recipeData.getY() + 10 * finScale, 0);
         poseStack.scale(finScale, finScale, finScale);
-        this.itemRenderer.blitOffset = 100.0F;
-        ItemStack result = recipe.getResultItem();
+        ItemStack result = recipe.getResultItem(Minecraft.getInstance().level.registryAccess());
         if(recipe instanceof SpecialRecipeInGuideBook){
             result = ((SpecialRecipeInGuideBook) recipe).getDisplayResultFor(displayedStacks);
         }
-        this.itemRenderer.renderAndDecorateItem(result, 0, 0);
-        this.itemRenderer.blitOffset = 0.0F;
+        poseStack.translate(0.0F, 0.0F, 100.0F);
+        this.itemRenderer.renderAndDecorateItem(new PoseStack(), result, 0, 0);
         poseStack.popPose();
     }
 

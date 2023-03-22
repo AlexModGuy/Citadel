@@ -14,7 +14,6 @@ buildscript {
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
-
 plugins {
     id 'java'
     id 'idea'
@@ -41,7 +40,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'official', version: '1.19.3'
+    mappings channel: 'official', version: '1.19.4'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
@@ -121,7 +120,7 @@ repositories{
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.3-44.0.1'
+    minecraft 'net.minecraftforge:forge:1.19.4-45.0.8'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     //jaadec fork by yours truly to decode mp4 audio
     shade ('com.github.AlexModGuy:JAADec:master-SNAPSHOT') {

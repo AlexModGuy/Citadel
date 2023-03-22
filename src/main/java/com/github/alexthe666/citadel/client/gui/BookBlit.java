@@ -41,7 +41,6 @@ public class BookBlit {
         float lvt_9_1_ = (float) (p_238460_5_ & 255) / 255.0F;
         BufferBuilder lvt_10_1_ = Tesselator.getInstance().getBuilder();
         RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
         lvt_10_1_.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         lvt_10_1_.vertex(p_238460_0_, (float) p_238460_1_, (float) p_238460_4_, 0.0F).color(lvt_7_1_, lvt_8_1_, lvt_9_1_, lvt_6_3_).endVertex();
@@ -49,7 +48,6 @@ public class BookBlit {
         lvt_10_1_.vertex(p_238460_0_, (float) p_238460_3_, (float) p_238460_2_, 0.0F).color(lvt_7_1_, lvt_8_1_, lvt_9_1_, lvt_6_3_).endVertex();
         lvt_10_1_.vertex(p_238460_0_, (float) p_238460_1_, (float) p_238460_2_, 0.0F).color(lvt_7_1_, lvt_8_1_, lvt_9_1_, lvt_6_3_).endVertex();
         BufferUploader.drawWithShader(lvt_10_1_.end());
-        RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }
 

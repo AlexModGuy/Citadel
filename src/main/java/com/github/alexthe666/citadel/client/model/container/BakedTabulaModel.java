@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -17,9 +18,9 @@ import java.util.List;
 public class BakedTabulaModel implements BakedModel {
     private final ImmutableList<BakedQuad> quads;
     private final TextureAtlasSprite particle;
-    private final ImmutableMap<ItemTransforms.TransformType, Transformation> transforms;
+    private final ImmutableMap<ItemDisplayContext, Transformation> transforms;
 
-    public BakedTabulaModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<ItemTransforms.TransformType, Transformation> transforms) {
+    public BakedTabulaModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<ItemDisplayContext, Transformation> transforms) {
         this.quads = quads;
         this.particle = particle;
         this.transforms = transforms;

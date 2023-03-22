@@ -3,6 +3,7 @@ package com.github.alexthe666.citadel.client.texture;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.util.FastColor;
 
 import java.awt.image.BufferedImage;
 
@@ -29,7 +30,7 @@ public class VideoFrameTexture extends DynamicTexture {
                 int r = color >> 16 & 255;
                 int g = color >> 8 & 255;
                 int b = color & 255;
-                this.getPixels().setPixelRGBA(i, j, NativeImage.combine(0XFF, b, g, r));
+                this.getPixels().setPixelRGBA(i, j, FastColor.ABGR32.color(0XFF, b, g, r));
             }
         }
         this.upload();

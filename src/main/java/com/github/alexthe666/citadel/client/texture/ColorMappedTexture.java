@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.GsonHelper;
 
 import javax.annotation.Nullable;
@@ -70,7 +71,7 @@ public class ColorMappedTexture extends SimpleTexture {
         for (int i = 0; i < nativeImage.getWidth(); i++) {
             for (int j = 0; j < nativeImage.getHeight(); j++) {
                 int colorAt = nativeImage.getPixelRGBA(i, j);
-                if(NativeImage.getA(colorAt) == 0){
+                if(FastColor.ABGR32.alpha(colorAt) == 0){
                     continue;
                 }
                 int replaceIndex = -1;
@@ -83,7 +84,7 @@ public class ColorMappedTexture extends SimpleTexture {
                     int r = colors[replaceIndex] >> 16 & 255;
                     int g = colors[replaceIndex] >> 8 & 255;
                     int b = colors[replaceIndex] & 255;
-                    nativeImage.setPixelRGBA(i, j, NativeImage.combine(NativeImage.getA(colorAt), b, g, r));
+                    nativeImage.setPixelRGBA(i, j, FastColor.ABGR32.color(FastColor.ABGR32.alpha(colorAt), b, g, r));
                 }
             }
         }

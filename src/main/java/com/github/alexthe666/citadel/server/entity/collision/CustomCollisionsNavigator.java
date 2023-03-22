@@ -106,13 +106,13 @@ public class CustomCollisionsNavigator extends GroundPathNavigation {
                     double d0 = (double) k + 0.5D - vec31.x;
                     double d1 = (double) l + 0.5D - vec31.z;
                     if (!(d0 * p_179683_8_ + d1 * p_179683_10_ < 0.0D)) {
-                        BlockPathTypes pathnodetype = this.nodeEvaluator.getBlockPathType(this.level, k, y - 1, l, this.mob, sizeX, sizeY, sizeZ, true, true);
+                        BlockPathTypes pathnodetype = this.nodeEvaluator.getBlockPathType(this.level, k, y - 1, l, this.mob);
                         mutable.set(k, y - 1, l);
                         if (!this.hasValidPathType(pathnodetype) || ((ICustomCollisions)mob).canPassThrough(mutable, level.getBlockState(mutable), null)) {
                             return false;
                         }
 
-                        pathnodetype = this.nodeEvaluator.getBlockPathType(this.level, k, y, l, this.mob, sizeX, sizeY, sizeZ, true, true);
+                        pathnodetype = this.nodeEvaluator.getBlockPathType(this.level, k, y, l, this.mob);
                         float f = this.mob.getPathfindingMalus(pathnodetype);
                         if (f < 0.0F || f >= 8.0F) {
                             return false;

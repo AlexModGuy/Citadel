@@ -1,5 +1,7 @@
 package com.github.alexthe666.citadel.client.render;
 
+import com.github.alexthe666.citadel.ClientProxy;
+import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import com.github.alexthe666.citadel.server.block.CitadelLecternBlockEntity;
 import com.github.alexthe666.citadel.server.block.LecternBooks;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -35,6 +37,7 @@ public class CitadelLecternRenderer implements BlockEntityRenderer<CitadelLecter
 
     public void render(CitadelLecternBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int i, int j) {
         BlockState blockstate = blockEntity.getBlockState();
+        PostEffectRegistry.renderEffectForNextTick(ClientProxy.HOLOGRAM_SHADER);
         if (blockstate.getValue(LecternBlock.HAS_BOOK)) {
             LecternBooks.BookData bookData = LecternBooks.BOOKS.getOrDefault(ForgeRegistries.ITEMS.getKey(blockEntity.getBook().getItem()), EMPTY_BOOK_DATA);
             poseStack.pushPose();
@@ -50,7 +53,7 @@ public class CitadelLecternRenderer implements BlockEntityRenderer<CitadelLecter
             int pageR = (bookData.getPageColor() & 0xFF0000) >> 16;
             int pageG = (bookData.getPageColor() & 0xFF00) >> 8;
             int pageB = (bookData.getPageColor() & 0xFF);
-            VertexConsumer pages = bufferSource.getBuffer(RenderType.entitySolid(BOOK_PAGE_TEXTURE));
+            VertexConsumer pages = bufferSource.getBuffer(CitadelRenderTypes.getHologram(BOOK_PAGE_TEXTURE));
             this.bookModel.render(poseStack, pages, i, j, pageR / 255F, pageG / 255F, pageB / 255F, 1.0F);
             VertexConsumer binding = bufferSource.getBuffer(RenderType.entityCutoutNoCull(BOOK_BINDING_TEXTURE));
             this.bookModel.render(poseStack, binding, i, j, bindingR / 255F, bindingG / 255F, bindingB / 255F, 1.0F);

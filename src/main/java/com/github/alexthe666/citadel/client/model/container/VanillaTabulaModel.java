@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -25,9 +26,9 @@ public class VanillaTabulaModel implements UnbakedModel {
     private final TabulaModelContainer model;
     private final Material particle;
     private final Collection<Material> textures;
-    private final ImmutableMap<ItemTransforms.TransformType, Transformation> transforms;
+    private final ImmutableMap<ItemDisplayContext, Transformation> transforms;
 
-    public VanillaTabulaModel(TabulaModelContainer model, Material particle, ImmutableList<Material> textures, ImmutableMap<ItemTransforms.TransformType, Transformation> transforms) {
+    public VanillaTabulaModel(TabulaModelContainer model, Material particle, ImmutableList<Material> textures, ImmutableMap<ItemDisplayContext, Transformation> transforms) {
         this.model = model;
         this.particle = particle;
         this.textures = textures;

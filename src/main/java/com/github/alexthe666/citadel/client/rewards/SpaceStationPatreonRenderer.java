@@ -4,7 +4,6 @@ import com.github.alexthe666.citadel.ClientProxy;
 import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import org.joml.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -31,7 +30,6 @@ public class SpaceStationPatreonRenderer extends CitadelPatreonRenderer {
         float tick = entity.tickCount + partialTick;
         float bob = (float) (Math.sin(tick * 0.1F) * 1 * 0.05F - 1 * 0.05F);
         float scale = 0.4F;
-
         float rotation = Mth.wrapDegrees((tick * rotateSpeed) % 360);
         matrixStackIn.pushPose();
         matrixStackIn.mulPose(Axis.YP.rotationDegrees(rotation));

@@ -26,10 +26,6 @@ public class CustomCollisionsNodeProcessor extends WalkNodeEvaluator {
                 pathnodetype = BlockPathTypes.DAMAGE_FIRE;
             }
 
-            if (pathnodetype1 == BlockPathTypes.DAMAGE_CACTUS) {
-                pathnodetype = BlockPathTypes.DAMAGE_CACTUS;
-            }
-
             if (pathnodetype1 == BlockPathTypes.DAMAGE_OTHER) {
                 pathnodetype = BlockPathTypes.DAMAGE_OTHER;
             }
@@ -68,8 +64,8 @@ public class CustomCollisionsNodeProcessor extends WalkNodeEvaluator {
     }
 
     @Override
-    protected BlockPathTypes evaluateBlockPathType(BlockGetter world, boolean b1, boolean b2, BlockPos pos, BlockPathTypes nodeType) {
+    protected BlockPathTypes evaluateBlockPathType(BlockGetter world, BlockPos pos, BlockPathTypes nodeType) {
         BlockState state = world.getBlockState(pos);
-        return ((ICustomCollisions) this.mob).canPassThrough(pos, state, state.getBlockSupportShape(world, pos)) ? BlockPathTypes.OPEN : super.evaluateBlockPathType(world, b1, b2, pos, nodeType);
+        return ((ICustomCollisions) this.mob).canPassThrough(pos, state, state.getBlockSupportShape(world, pos)) ? BlockPathTypes.OPEN : super.evaluateBlockPathType(world, pos, nodeType);
     }
 }

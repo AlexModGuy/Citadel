@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.*;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
@@ -178,18 +179,18 @@ public class TabulaModelBlock
 
     public ItemTransforms getAllTransforms()
     {
-        ItemTransform itemtransformvec3f = this.getTransform(ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
-        ItemTransform itemtransformvec3f1 = this.getTransform(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
-        ItemTransform itemtransformvec3f2 = this.getTransform(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
-        ItemTransform itemtransformvec3f3 = this.getTransform(ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
-        ItemTransform itemtransformvec3f4 = this.getTransform(ItemTransforms.TransformType.HEAD);
-        ItemTransform itemtransformvec3f5 = this.getTransform(ItemTransforms.TransformType.GUI);
-        ItemTransform itemtransformvec3f6 = this.getTransform(ItemTransforms.TransformType.GROUND);
-        ItemTransform itemtransformvec3f7 = this.getTransform(ItemTransforms.TransformType.FIXED);
+        ItemTransform itemtransformvec3f = this.getTransform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
+        ItemTransform itemtransformvec3f1 = this.getTransform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND);
+        ItemTransform itemtransformvec3f2 = this.getTransform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND);
+        ItemTransform itemtransformvec3f3 = this.getTransform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND);
+        ItemTransform itemtransformvec3f4 = this.getTransform(ItemDisplayContext.HEAD);
+        ItemTransform itemtransformvec3f5 = this.getTransform(ItemDisplayContext.GUI);
+        ItemTransform itemtransformvec3f6 = this.getTransform(ItemDisplayContext.GROUND);
+        ItemTransform itemtransformvec3f7 = this.getTransform(ItemDisplayContext.FIXED);
         return new ItemTransforms(itemtransformvec3f, itemtransformvec3f1, itemtransformvec3f2, itemtransformvec3f3, itemtransformvec3f4, itemtransformvec3f5, itemtransformvec3f6, itemtransformvec3f7);
     }
 
-    private ItemTransform getTransform(ItemTransforms.TransformType type)
+    private ItemTransform getTransform(ItemDisplayContext type)
     {
         return this.parent != null && !this.cameraTransforms.hasTransform(type) ? this.parent.getTransform(type) : this.cameraTransforms.getTransform(type);
     }

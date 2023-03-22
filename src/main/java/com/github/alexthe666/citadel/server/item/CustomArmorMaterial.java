@@ -2,6 +2,7 @@ package com.github.alexthe666.citadel.server.item;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -26,13 +27,13 @@ public class CustomArmorMaterial implements ArmorMaterial {
     }
 
     @Override
-    public int getDurabilityForSlot(EquipmentSlot slotIn) {
+    public int getDurabilityForType(ArmorItem.Type slotIn) {
         return durability;
     }
 
     @Override
-    public int getDefenseForSlot(EquipmentSlot slotIn) {
-        return damageReduction[slotIn.getIndex()];
+    public int getDefenseForType(ArmorItem.Type slotIn) {
+        return damageReduction[slotIn.ordinal()];
     }
 
     @Override

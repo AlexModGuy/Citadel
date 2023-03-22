@@ -4,6 +4,7 @@ import com.github.alexthe666.citadel.Citadel;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Matrix4f;
 import net.minecraft.Util;
@@ -11,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.resources.ResourceLocation;
@@ -38,7 +38,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+    public void renderByItem(ItemStack stack, ItemDisplayContext transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         float partialTicks = Minecraft.getInstance().getFrameTime();
         float ticksExisted = Util.getMillis() / 50F + partialTicks;
         int id = Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.getId();
@@ -80,7 +80,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
                 float scale = stack.getTag().getFloat("DisplayScale");
                 matrixStack.scale(scale, scale, scale);
             }
-            Minecraft.getInstance().getItemRenderer().renderStatic(toRender, transformType, combinedLight, combinedOverlay, matrixStack, buffer, id);
+            Minecraft.getInstance().getItemRenderer().renderStatic(toRender, transformType, combinedLight, combinedOverlay, matrixStack, buffer, null, id);
             matrixStack.popPose();
         }
         if (stack.getItem() == Citadel.EFFECT_ITEM.get()) {

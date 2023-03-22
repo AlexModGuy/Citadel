@@ -6,7 +6,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.UpgradeRecipe;
+import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,8 +22,8 @@ public class SmithingMenuMixin {
             method = "Lnet/minecraft/world/inventory/SmithingMenu;createResult()V",
             remap = CitadelConstants.REMAPREFS, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/RecipeManager;getRecipesFor(Lnet/minecraft/world/item/crafting/RecipeType;Lnet/minecraft/world/Container;Lnet/minecraft/world/level/Level;)Ljava/util/List;")
     )
-    private List<UpgradeRecipe> citadel_getRecipesFor(RecipeManager recipeManager, RecipeType<UpgradeRecipe> type, Container container, Level level) {
-        List<UpgradeRecipe> list = new ArrayList<>();
+    private List<SmithingRecipe> citadel_getRecipesFor(RecipeManager recipeManager, RecipeType<SmithingRecipe> type, Container container, Level level) {
+        List<SmithingRecipe> list = new ArrayList<>();
         list.addAll(recipeManager.getRecipesFor(type, container, level));
         if(type == RecipeType.SMITHING && container.getContainerSize() >= 2 && !container.getItem(0).isEmpty()&& !container.getItem(1).isEmpty()){
             list.addAll(CitadelRecipes.getSmithingRecipes());
