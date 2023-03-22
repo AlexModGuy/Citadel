@@ -50,30 +50,12 @@ public class LevelRendererMixin {
         PostEffectRegistry.resize(x, y);
     }
 
-    @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;doEntityOutline()V",
-            at = @At("TAIL"))
-    private void ac_doEntityOutline(CallbackInfo ci) {
-        PostEffectRegistry.onDrawOutline();
-    }
-
-    @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/RenderBuffers;bufferSource()Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;",
-                    shift = At.Shift.BEFORE
-            ))
-    private void ac_renderLevel_clear(PoseStack poseStack, float f, long l, boolean b, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
-        PostEffectRegistry.onClearRender(this.minecraft.getMainRenderTarget());
-    }
-
-
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",
             at = @At(value = "TAIL"))
     private void ac_renderLevel_end(PoseStack poseStack, float f, long l, boolean b, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
         PostEffectRegistry.onEndRender(this.minecraft.getMainRenderTarget(), f);
+        PostEffectRegistry.onDrawOutline();
     }
-
-
 
     @Redirect(
             method = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",

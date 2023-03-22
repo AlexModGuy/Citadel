@@ -96,11 +96,11 @@ public class PostEffectRegistry {
     }
 
     public static void onClearRender(RenderTarget mainTarget) {
+        mainTarget.bindWrite(false);
         for(PostEffect postEffect : postEffects.values()) {
             if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
                 postEffect.getRenderTarget().clear(Minecraft.ON_OSX);
                 postEffect.getRenderTarget().copyDepthFrom(mainTarget);
-                mainTarget.bindWrite(false);
                 postEffect.setEnabled(false);
             }
         }

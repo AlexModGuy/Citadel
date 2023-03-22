@@ -42,10 +42,7 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterShadersEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -339,5 +336,12 @@ public class ClientProxy extends ServerProxy {
             }
         }
         return true;
+    }
+
+    @SubscribeEvent
+    public void postRenderStage(RenderLevelStageEvent event) {
+        if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES){
+            PostEffectRegistry.onClearRender(Minecraft.getInstance().getMainRenderTarget());
+        }
     }
 }
