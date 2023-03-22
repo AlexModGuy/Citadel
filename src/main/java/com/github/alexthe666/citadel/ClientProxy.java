@@ -64,8 +64,6 @@ public class ClientProxy extends ServerProxy {
     private static final ResourceLocation RICKROLL_LOCATION = new ResourceLocation("citadel:rickroll.mp4");
     public static boolean hideFollower = false;
     private Video rickrollVideo = null;
-    public static final ResourceLocation HOLOGRAM_SHADER = new ResourceLocation("citadel:shaders/post/hologram.json");
-
     private Map<ItemStack, Float> prevMouseOverProgresses = new HashMap<>();
 
     private Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
@@ -87,7 +85,6 @@ public class ClientProxy extends ServerProxy {
         CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station"), new int[]{}));
         CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
         CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
-        PostEffectRegistry.registerEffect(HOLOGRAM_SHADER);
     }
 
 
