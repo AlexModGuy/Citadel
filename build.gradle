@@ -14,9 +14,11 @@ buildscript {
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
+
 plugins {
     id 'java'
     id 'idea'
+    id 'net.minecraftforge.gradle' version '5.1.+'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
@@ -29,7 +31,7 @@ configurations {
     shade
     library
     library.extendsFrom(shade)
-    implementation.extendsFrom(library)
+    minecraftLibrary.extendsFrom(library)
 }
 
 version = "${mod_version}-${mc_version}"
@@ -88,12 +90,6 @@ minecraft {
     }
 }
 
-minecraft.runs.all {
-    lazyToken('minecraft_classpath') {
-        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-    }
-}
-
 repositories{
     mavenCentral()
     maven {
@@ -139,16 +135,6 @@ dependencies {
 
 configurations {
     all*.exclude group: 'net.sourceforge.jaad', module:'jcodec'
-}
-
-// Fix the classpath the right way and once and for all
-afterEvaluate {
-    // Collect deps in runtimeClasspath but NOT in minecraft
-    def deps = (configurations.runtimeClasspath - configurations.minecraft).join(';')
-    // Add deps to classpath
-    minecraft.runs.each { run ->
-        run.token 'minecraft_classpath', deps
-    }
 }
 
 sourceSets {
