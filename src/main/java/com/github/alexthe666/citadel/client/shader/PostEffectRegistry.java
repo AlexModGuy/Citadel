@@ -82,7 +82,7 @@ public class PostEffectRegistry {
         }
     }
 
-    public static void onDrawOutline() {
+    public static void blitEffects() {
         for(PostEffect postEffect : postEffects.values()) {
             if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
                 RenderSystem.enableBlend();
@@ -95,22 +95,21 @@ public class PostEffectRegistry {
         }
     }
 
-    public static void onClearRender(RenderTarget mainTarget) {
-        mainTarget.bindWrite(false);
+    public static void copyDepth(RenderTarget mainTarget) {
         for(PostEffect postEffect : postEffects.values()) {
             if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
                 postEffect.getRenderTarget().clear(Minecraft.ON_OSX);
                 postEffect.getRenderTarget().copyDepthFrom(mainTarget);
+                mainTarget.bindWrite(false);
                 postEffect.setEnabled(false);
             }
         }
     }
 
-    public static void onEndRender(RenderTarget mainTarget, float f) {
+    public static void processEffects(RenderTarget mainTarget, float f) {
         for(PostEffect postEffect : postEffects.values()) {
             if (postEffect.isEnabled() && postEffect.postChain != null) {
-                postEffect.postChain.process(f);
-                mainTarget.bindWrite(false);
+                postEffect.postChain.process(Minecraft.getInstance().getFrameTime());
             }
         }
     }
