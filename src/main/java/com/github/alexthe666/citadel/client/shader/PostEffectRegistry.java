@@ -22,7 +22,6 @@ public class PostEffectRegistry {
     private static Map<ResourceLocation, PostEffect> postEffects = new HashMap<>();
 
     public static void clear(){
-        registry.clear();
         for(PostEffect postEffect : postEffects.values()){
             postEffect.close();
         }
@@ -34,10 +33,7 @@ public class PostEffectRegistry {
     }
 
     public static void onInitializeOutline(){
-        for(PostEffect postEffect : postEffects.values()){
-            postEffect.close();
-        }
-        postEffects.clear();
+        clear();
         Minecraft minecraft = Minecraft.getInstance();
         for(ResourceLocation resourceLocation : registry){
             PostChain postChain;
@@ -91,6 +87,7 @@ public class PostEffectRegistry {
                 postEffect.getRenderTarget().blitToScreen(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), false);
                 postEffect.setEnabled(false);
                 postEffect.getRenderTarget().clear(Minecraft.ON_OSX);
+                Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
             }
         }
         RenderSystem.disableBlend();
@@ -101,7 +98,7 @@ public class PostEffectRegistry {
         for(PostEffect postEffect : postEffects.values()) {
             if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
                 postEffect.getRenderTarget().clear(Minecraft.ON_OSX);
-                mainTarget.bindWrite(false);
+                postEffect.getRenderTarget().copyDepthFrom(mainTarget);
             }
         }
     }
@@ -110,6 +107,7 @@ public class PostEffectRegistry {
         for(PostEffect postEffect : postEffects.values()) {
             if (postEffect.isEnabled() && postEffect.postChain != null) {
                 postEffect.postChain.process(Minecraft.getInstance().getFrameTime());
+                mainTarget.bindWrite(false);
             }
         }
     }
