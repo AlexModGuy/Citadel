@@ -127,7 +127,9 @@ public class Video {
         try {
             AudioInputStream audioInputStream = aacAudioFileReader.getAudioInputStream(mp4File);
             audioClip = AudioSystem.getClip();
+
             audioClip.open(audioInputStream);
+
             audioClip.setMicrosecondPosition(time);
             audioClip.start();
             if(!hasAudioLoaded){

@@ -25,6 +25,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.GameRenderer;
@@ -130,12 +131,18 @@ public class ClientProxy extends ServerProxy {
                 Tesselator tesselator = Tesselator.getInstance();
                 BufferBuilder bufferbuilder = tesselator.getBuilder();
                 bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-                bufferbuilder.vertex(0.0D, screenHeight, -90.0D).uv(0.0F, 1.0F).endVertex();
-                bufferbuilder.vertex(screenWidth, screenHeight, -90.0D).uv(1.0F, 1.0F).endVertex();
-                bufferbuilder.vertex(screenWidth, 0.0D, -90.0D).uv(1.0F, 0.0F).endVertex();
-                bufferbuilder.vertex(0.0D, 0.0D, -90.0D).uv(0.0F, 0.0F).endVertex();
+                bufferbuilder.vertex(0.0D, screenHeight, -800.0D).uv(0.0F, 1.0F).endVertex();
+                bufferbuilder.vertex(screenWidth, screenHeight, -800.0D).uv(1.0F, 1.0F).endVertex();
+                bufferbuilder.vertex(screenWidth, 0.0D, -800.0D).uv(1.0F, 0.0F).endVertex();
+                bufferbuilder.vertex(0.0D, 0.0D, -800.0D).uv(0.0F, 0.0F).endVertex();
                 tesselator.end();
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                String s = "Happy April Fools from Citadel!";
+                event.getPoseStack().pushPose();
+                event.getPoseStack().scale(0.65F, 0.65F, 0.65F);
+                float hue = (System.currentTimeMillis() % 6000) / 6000f;
+                GuiComponent.drawString(event.getPoseStack(), Minecraft.getInstance().font, s, 5, 5, Color.HSBtoRGB(hue, 0.6f, 1));
+                event.getPoseStack().popPose();
             }
         }else if(rickrollVideo != null){
             rickrollVideo.setPaused(true);
