@@ -1,5 +1,7 @@
 package com.github.alexthe666.citadel;
 
+import com.github.alexthe666.citadel.config.ServerConfig;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -18,7 +20,7 @@ public class CitadelConstants {
             calendar.setTime(new Date());
             aprilFools = calendar.get(Calendar.MONTH) + 1 == 4 && calendar.get(Calendar.DATE) == 1;
         }
-        return aprilFools;
+        return aprilFools && ServerConfig.aprilFools;
     }
 
 }
