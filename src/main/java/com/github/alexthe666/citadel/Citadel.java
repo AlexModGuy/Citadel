@@ -162,6 +162,7 @@ public class Citadel {
         if (config.getSpec() == ConfigHolder.SERVER_SPEC) {
             ServerConfig.citadelEntityTrack = ConfigHolder.SERVER.citadelEntityTracker.get();
             ServerConfig.chunkGenSpawnModifierVal = ConfigHolder.SERVER.chunkGenSpawnModifier.get();
+            ServerConfig.aprilFools = ConfigHolder.SERVER.aprilFoolsContent.get();
             //citadelTestBiomeData = SpawnBiomeConfig.create(new ResourceLocation("citadel:config_biome"), CitadelBiomeDefinitions.TERRALITH_TEST);
         }
     }
