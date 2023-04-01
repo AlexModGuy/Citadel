@@ -345,7 +345,7 @@ public class ClientProxy extends ServerProxy {
     @SubscribeEvent
     public void postRenderStage(RenderLevelStageEvent event) {
         if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES){
-            PostEffectRegistry.onClearRender(Minecraft.getInstance().getMainRenderTarget());
+           // PostEffectRegistry.onClearRender(Minecraft.getInstance().getMainRenderTarget());
         }
     }
 }
