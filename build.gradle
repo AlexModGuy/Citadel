@@ -121,7 +121,7 @@ repositories{
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.1.1'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.2.8'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     //jaadec fork by yours truly to decode mp4 audio
     shade ('com.github.AlexModGuy:JAADec:master-SNAPSHOT') {
@@ -159,9 +159,11 @@ sourceSets {
 
 jar {
     classifier 'slim'
-    configurations.shade.each { dep ->
-        from(project.zipTree(dep)){
-            exclude 'META-INF', 'META-INF/**'
+    afterEvaluate {
+        configurations.shade.each { dep ->
+            from(project.zipTree(dep)) {
+                exclude 'META-INF', 'META-INF/**'
+            }
         }
     }
 }
