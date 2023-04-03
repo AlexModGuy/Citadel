@@ -3,6 +3,7 @@ package com.github.alexthe666.citadel;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
 import com.github.alexthe666.citadel.client.event.*;
+import com.github.alexthe666.citadel.client.game.Tetris;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
 import com.github.alexthe666.citadel.client.render.CitadelLecternRenderer;
 import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
@@ -63,18 +64,14 @@ import java.util.Map;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientProxy extends ServerProxy {
     public static TabulaModel CITADEL_MODEL;
-    public static final String RICKROLL_URL = "https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
-    private static final ResourceLocation RICKROLL_LOCATION = new ResourceLocation("citadel:rickroll.mp4");
     public static boolean hideFollower = false;
-    private Video rickrollVideo = null;
-
     private Map<ItemStack, Float> prevMouseOverProgresses = new HashMap<>();
 
     private Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
-
     private ItemStack lastHoveredItem = null;
 
     public static final ResourceLocation DEBUG_SHADER = new ResourceLocation("citadel:shaders/post/debug.json");
+    private Tetris aprilFoolsTetrisGame = null;
 
     public ClientProxy() {
         super();
@@ -121,38 +118,12 @@ public class ClientProxy extends ServerProxy {
 
     @SubscribeEvent
     public void screenRender(ScreenEvent.Render event) {
-        if (event.getScreen() instanceof TitleScreen && CitadelConstants.isAprilFools()) {
-            if (rickrollVideo == null) {
-                VideoFrameTexture videoFrameTexture = CitadelTextureManager.getVideoTexture(RICKROLL_LOCATION, 640, 480);
-                rickrollVideo = new Video(RICKROLL_URL, RICKROLL_LOCATION, videoFrameTexture, 25, false);
-                rickrollVideo.setRepeat(true);
-            } else {
-                rickrollVideo.setPaused(false);
-                int screenHeight = event.getScreen().height;
-                int screenWidth = event.getScreen().width;
-                rickrollVideo.update();
-                RenderSystem.defaultBlendFunc();
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                RenderSystem.setShaderTexture(0, RICKROLL_LOCATION);
-                Tesselator tesselator = Tesselator.getInstance();
-                BufferBuilder bufferbuilder = tesselator.getBuilder();
-                bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-                bufferbuilder.vertex(0.0D, screenHeight, -800.0D).uv(0.0F, 1.0F).endVertex();
-                bufferbuilder.vertex(screenWidth, screenHeight, -800.0D).uv(1.0F, 1.0F).endVertex();
-                bufferbuilder.vertex(screenWidth, 0.0D, -800.0D).uv(1.0F, 0.0F).endVertex();
-                bufferbuilder.vertex(0.0D, 0.0D, -800.0D).uv(0.0F, 0.0F).endVertex();
-                tesselator.end();
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                String s = "Happy April Fools from Citadel!";
-                event.getPoseStack().pushPose();
-                event.getPoseStack().scale(0.65F, 0.65F, 0.65F);
-                float hue = (System.currentTimeMillis() % 6000) / 6000f;
-                GuiComponent.drawString(event.getPoseStack(), Minecraft.getInstance().font, s, 5, 5, Color.HSBtoRGB(hue, 0.6f, 1));
-                event.getPoseStack().popPose();
+        if(event.getScreen() instanceof TitleScreen && CitadelConstants.isAprilFools()) {
+            if(aprilFoolsTetrisGame == null){
+                aprilFoolsTetrisGame = new Tetris();
+            }else{
+                aprilFoolsTetrisGame.render((TitleScreen) event.getScreen(), event.getPoseStack(), event.getPartialTick());
             }
-        } else if (rickrollVideo != null) {
-            rickrollVideo.setPaused(true);
         }
     }
 
@@ -208,11 +179,15 @@ public class ClientProxy extends ServerProxy {
 
     @SubscribeEvent
     public void renderSplashTextBefore(EventRenderSplashText.Pre event) {
-        if (CitadelConstants.isAprilFools() && rickrollVideo != null && rickrollVideo.getLastFrame() > 35) {
+        if(CitadelConstants.isAprilFools() && aprilFoolsTetrisGame != null){
             event.setResult(Event.Result.ALLOW);
             float hue = (System.currentTimeMillis() % 6000) / 6000f;
-            event.getPoseStack().mulPose(Axis.ZP.rotationDegrees((float) Math.sin(hue * Math.PI) * 360));
-            event.setSplashText("Never gonna give you up!");
+            event.getPoseStack().mulPose(Vector3f.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 10));
+            if(!aprilFoolsTetrisGame.isStarted()){
+                event.setSplashText("Psst... press 'T' ;)");
+            }else{
+                event.setSplashText("");
+            }
             int rainbow = Color.HSBtoRGB(hue, 0.6f, 1);
             event.setSplashTextColor(rainbow);
         }
@@ -223,6 +198,15 @@ public class ClientProxy extends ServerProxy {
         if (event.phase == TickEvent.Phase.START && !isGamePaused()) {
             ClientTickRateTracker.getForClient(Minecraft.getInstance()).masterTick();
             tickMouseOverAnimations();
+        }
+        if(event.type == TickEvent.Type.CLIENT && event.phase == TickEvent.Phase.START && !isGamePaused() && CitadelConstants.isAprilFools()) {
+            if(aprilFoolsTetrisGame != null){
+                if(Minecraft.getInstance().screen instanceof TitleScreen){
+                    aprilFoolsTetrisGame.tick();
+                }else{
+                    aprilFoolsTetrisGame.reset();
+                }
+            }
         }
     }
 
