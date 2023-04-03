@@ -3,7 +3,7 @@ package com.github.alexthe666.citadel.client.game;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -313,7 +313,7 @@ public class Tetris {
                 poseStack.pushPose();
                 poseStack.translate((int) (screen.width * 0.5F), (int) (screen.height * 0.5F), 150);
                 poseStack.scale(3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F);
-                poseStack.mulPose(Vector3f.ZP.rotationDegrees((float) Math.sin(hue * Math.PI) * 10));
+                poseStack.mulPose(Axis.ZP.rotationDegrees((float) Math.sin(hue * Math.PI) * 10));
                 GuiComponent.drawCenteredString(poseStack, Minecraft.getInstance().font, "GAME OVER", 0, 0, rainbow);
                 poseStack.popPose();
             }

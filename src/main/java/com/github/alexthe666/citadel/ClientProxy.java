@@ -182,7 +182,7 @@ public class ClientProxy extends ServerProxy {
         if(CitadelConstants.isAprilFools() && aprilFoolsTetrisGame != null){
             event.setResult(Event.Result.ALLOW);
             float hue = (System.currentTimeMillis() % 6000) / 6000f;
-            event.getPoseStack().mulPose(Vector3f.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 10));
+            event.getPoseStack().mulPose(Axis.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 10));
             if(!aprilFoolsTetrisGame.isStarted()){
                 event.setSplashText("Psst... press 'T' ;)");
             }else{
