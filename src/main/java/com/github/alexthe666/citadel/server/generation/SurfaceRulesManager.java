@@ -2,7 +2,6 @@ package com.github.alexthe666.citadel.server.generation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.Holder;
@@ -57,22 +56,14 @@ public class SurfaceRulesManager {
         CAVE_REGISTRY.add(rule);
     }
 
-
-    private static boolean sameNoiseGenSettings(NoiseGeneratorSettings settings, ResourceKey<NoiseGeneratorSettings> key) {
-        return Objects.equals(settings, BuiltinRegistries.NOISE_GENERATOR_SETTINGS.get(key));
-    }
-
-    private static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, List<SurfaceRules.RuleSource> toMerge) {
+    public static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, List<SurfaceRules.RuleSource> toMerge) {
         ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
         builder.addAll(toMerge);
         builder.add(prev);
         return SurfaceRules.sequence(builder.build().toArray((size) -> new SurfaceRules.RuleSource[size]));
     }
 
-
-    public static SurfaceRules.RuleSource replaceRulesOf(Holder<NoiseGeneratorSettings> holder, LevelAccessor level) {
-        List<SurfaceRules.RuleSource> replaceWith = OVERWORLD_REGISTRY;
-        //TODO
-        return replaceWith == null ? holder.value().surfaceRule() : mergeRules(holder.get().surfaceRule(), replaceWith);
+    public static SurfaceRules.RuleSource mergeOverworldRules(SurfaceRules.RuleSource rulesIn) {
+        return mergeRules(rulesIn, OVERWORLD_REGISTRY);
     }
 }
