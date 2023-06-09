@@ -24,7 +24,7 @@
     "client.LevelRendererMixin",
     "client.LivingEntityRendererMixin",
     "client.SoundEngineMixin",
-    "client.TitleScreenMixin"
+    "client.SplashRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

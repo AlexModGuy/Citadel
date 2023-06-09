@@ -1,9 +1,7 @@
 package com.github.alexthe666.citadel.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.CommonComponents;
@@ -24,10 +22,7 @@ public class BookPageButton extends Button {
         this.bookGUI = bookGUI;
     }
 
-    public void renderWidget(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, bookGUI.getBookWidgetTexture());
+    public void renderWidget(GuiGraphics p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
         int lvt_5_1_ = 0;
         int lvt_6_1_ = 0;
         if (this.isHovered) {
@@ -36,19 +31,18 @@ public class BookPageButton extends Button {
         if (!this.isForward) {
             lvt_6_1_ += 13;
         }
-        int color = bookGUI.getWidgetColor();
-        int r = (color & 0xFF0000) >> 16;
-        int g = (color & 0xFF00) >> 8;
-        int b = (color & 0xFF);
-        BookBlit.setRGB(r, g, b, 255);
         drawNextArrow(p_230431_1_, this.getX(), this.getY(), lvt_5_1_, lvt_6_1_, 18, 12);
     }
 
-    public void drawNextArrow(PoseStack p_238474_1_, int p_238474_2_, int p_238474_3_, int p_238474_4_, int p_238474_5_, int p_238474_6_, int p_238474_7_) {
-        if(this.isHovered){
-            BookBlit.blit(p_238474_1_, p_238474_2_, p_238474_3_, 100, (float)p_238474_4_, (float)p_238474_5_, p_238474_6_, p_238474_7_, 256, 256);
-        }else{
-            blit(p_238474_1_, p_238474_2_, p_238474_3_, 100, (float)p_238474_4_, (float)p_238474_5_, p_238474_6_, p_238474_7_, 256, 256);
+    public void drawNextArrow(GuiGraphics p_238474_1_, int p_238474_2_, int p_238474_3_, int p_238474_4_, int p_238474_5_, int p_238474_6_, int p_238474_7_) {
+        if (this.isHovered) {
+            int color = bookGUI.getWidgetColor();
+            int r = (color & 0xFF0000) >> 16;
+            int g = (color & 0xFF00) >> 8;
+            int b = (color & 0xFF);
+            BookBlit.blitWithColor(p_238474_1_, bookGUI.getBookWidgetTexture(), p_238474_2_, p_238474_3_, 100, p_238474_4_, p_238474_5_, p_238474_6_, p_238474_7_, 256, 256, r, g, b, 255);
+        } else {
+            BookBlit.blitWithColor(p_238474_1_, bookGUI.getBookWidgetTexture(), p_238474_2_, p_238474_3_, 100, p_238474_4_, p_238474_5_, p_238474_6_, p_238474_7_, 256, 256, 255, 255, 255, 255);
         }
     }
 

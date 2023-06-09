@@ -21,24 +21,24 @@ public interface ICustomCollisions {
      */
     static Vec3 getAllowedMovementForEntity(Entity entity, Vec3 vecIN) {
         AABB aabb = entity.getBoundingBox();
-        List<VoxelShape> list = entity.level.getEntityCollisions(entity, aabb.expandTowards(vecIN));
-        Vec3 vec3 = vecIN.lengthSqr() == 0.0D ? vecIN : collideBoundingBox2(entity, vecIN, aabb, entity.level, list);
+        List<VoxelShape> list = entity.level().getEntityCollisions(entity, aabb.expandTowards(vecIN));
+        Vec3 vec3 = vecIN.lengthSqr() == 0.0D ? vecIN : collideBoundingBox2(entity, vecIN, aabb, entity.level(), list);
         boolean flag = vecIN.x != vec3.x;
         boolean flag1 = vecIN.y != vec3.y;
         boolean flag2 = vecIN.z != vec3.z;
-        boolean flag3 = entity.isOnGround() || flag1 && vecIN.y < 0.0D;
+        boolean flag3 = entity.onGround() || flag1 && vecIN.y < 0.0D;
         if (entity.maxUpStep > 0.0F && flag3 && (flag || flag2)) {
-            Vec3 vec31 = collideBoundingBox2(entity, new Vec3(vecIN.x, (double)entity.maxUpStep, vecIN.z), aabb, entity.level, list);
-            Vec3 vec32 = collideBoundingBox2(entity, new Vec3(0.0D, (double)entity.maxUpStep, 0.0D), aabb.expandTowards(vecIN.x, 0.0D, vecIN.z), entity.level, list);
+            Vec3 vec31 = collideBoundingBox2(entity, new Vec3(vecIN.x, (double)entity.maxUpStep, vecIN.z), aabb, entity.level(), list);
+            Vec3 vec32 = collideBoundingBox2(entity, new Vec3(0.0D, (double)entity.maxUpStep, 0.0D), aabb.expandTowards(vecIN.x, 0.0D, vecIN.z), entity.level(), list);
             if (vec32.y < (double)entity.maxUpStep) {
-                Vec3 vec33 = collideBoundingBox2(entity, new Vec3(vecIN.x, 0.0D, vecIN.z), aabb.move(vec32), entity.level, list).add(vec32);
+                Vec3 vec33 = collideBoundingBox2(entity, new Vec3(vecIN.x, 0.0D, vecIN.z), aabb.move(vec32), entity.level(), list).add(vec32);
                 if (vec33.horizontalDistanceSqr() > vec31.horizontalDistanceSqr()) {
                     vec31 = vec33;
                 }
             }
 
             if (vec31.horizontalDistanceSqr() > vec3.horizontalDistanceSqr()) {
-                return vec31.add(collideBoundingBox2(entity, new Vec3(0.0D, -vec31.y + vecIN.y, 0.0D), aabb.move(vec31), entity.level, list));
+                return vec31.add(collideBoundingBox2(entity, new Vec3(0.0D, -vec31.y + vecIN.y, 0.0D), aabb.move(vec31), entity.level(), list));
             }
         }
 

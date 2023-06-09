@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -49,7 +50,7 @@ public class LinkButton extends Button {
 
 
     @Override
-    public void renderWidget(PoseStack poseStack, int guiX, int guiY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int guiX, int guiY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -62,31 +63,30 @@ public class LinkButton extends Button {
 
 
 
-        this.blit(poseStack, this.getX(), this.getY(), 0, 46 + i * 20, this.width / 2, this.height);
-        this.blit(poseStack, this.getX() + this.width / 2, this.getY(), 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
+        guiGraphics.blit(book.getBookButtonsTexture(), this.getX(), this.getY(), 0, 46 + i * 20, this.width / 2, this.height);
+        guiGraphics.blit(book.getBookButtonsTexture(), this.getX() + this.width / 2, this.getY(), 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
         if(this.isHovered){
             int color = book.getWidgetColor();
             int r = (color & 0xFF0000) >> 16;
             int g = (color & 0xFF00) >> 8;
             int b = (color & 0xFF);
-            BookBlit.setRGB(r, g, b, 255);
             i = 3;
-            BookBlit.blit(poseStack, this.getX(), this.getY(), 0, 46 + i * 20, this.width / 2, this.height, 256, 256);
-            BookBlit.blit(poseStack, this.getX() + this.width / 2, this.getY(), 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height, 256, 256);
+            BookBlit.blitWithColor(guiGraphics, book.getBookButtonsTexture(), this.getX(), this.getY(), 0, 46 + i * 20, this.width / 2, this.height, 256, 256, r, g, b, 255);
+            BookBlit.blitWithColor(guiGraphics, book.getBookButtonsTexture(), this.getX() + this.width / 2, this.getY(), 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height, 256, 256, r, g, b, 255);
         }
 
         int j = getFGColor();
         int itemTextOffset = previewStack.isEmpty() ? 0 : 8;
         if(!previewStack.isEmpty()){
             ItemRenderer itemRenderer =  Minecraft.getInstance().getItemRenderer();
-            itemRenderer.renderAndDecorateItem(poseStack, previewStack, this.getX() + 2, this.getY() + 1);
+            guiGraphics.renderItem(previewStack, this.getX() + 2, this.getY() + 1);
         }
-        drawTextOf(poseStack, font, this.getMessage(), this.getX() + itemTextOffset + this.width / 2, this.getY() + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        drawTextOf(guiGraphics, font, this.getMessage(), this.getX() + itemTextOffset + this.width / 2, this.getY() + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
     }
 
-    public static void drawTextOf(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
+    public static void drawTextOf(GuiGraphics guiGraphics, Font font, Component component, int x, int y, int color) {
         FormattedCharSequence formattedcharsequence = component.getVisualOrderText();
-        font.draw(poseStack, formattedcharsequence, (float)(x - font.width(formattedcharsequence) / 2), (float)y, color);
+        guiGraphics.drawString(font, formattedcharsequence, (float)(x - font.width(formattedcharsequence) / 2), (float)y, color, false);
     }
 
     @Override

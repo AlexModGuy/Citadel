@@ -1,20 +1,19 @@
 package com.github.alexthe666.citadel.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraftforge.eventbus.api.Event;
 
 public class EventRenderSplashText extends Event {
     private String splashText;
-    private PoseStack poseStack;
 
-    private TitleScreen titleScreen;
+    private GuiGraphics guiGraphics;
     private float partialTicks;
 
-    public EventRenderSplashText(String splashText, PoseStack poseStack, TitleScreen titleScreen, float partialTicks) {
+    public EventRenderSplashText(String splashText, GuiGraphics guiGraphics, float partialTicks) {
         this.splashText = splashText;
-        this.poseStack = poseStack;
-        this.titleScreen = titleScreen;
+        this.guiGraphics = guiGraphics;
         this.partialTicks = partialTicks;
     }
 
@@ -26,26 +25,21 @@ public class EventRenderSplashText extends Event {
         this.splashText = splashText;
     }
 
-    public PoseStack getPoseStack() {
-        return poseStack;
-    }
-
-    public TitleScreen getTitleScreen() {
-        return titleScreen;
-    }
-
     public float getPartialTicks() {
         return partialTicks;
     }
 
+    public GuiGraphics getGuiGraphics() {
+        return guiGraphics;
+    }
 
     @Event.HasResult
     public static class Pre extends EventRenderSplashText {
 
         private int splashTextColor;
 
-        public Pre(String splashText, PoseStack poseStack, TitleScreen titleScreen, float partialTicks, int splashTextColor) {
-            super(splashText, poseStack, titleScreen, partialTicks);
+        public Pre(String splashText, GuiGraphics guiGraphics, float partialTicks, int splashTextColor) {
+            super(splashText, guiGraphics, partialTicks);
             this.splashTextColor = splashTextColor;
         }
 
@@ -61,8 +55,8 @@ public class EventRenderSplashText extends Event {
     @Event.HasResult
     public static class Post extends EventRenderSplashText {
 
-        public Post(String splashText, PoseStack poseStack, TitleScreen titleScreen, float partialTicks) {
-            super(splashText, poseStack, titleScreen, partialTicks);
+        public Post(String splashText, GuiGraphics guiGraphics, float partialTicks) {
+            super(splashText, guiGraphics, partialTicks);
         }
     }
 

@@ -40,7 +40,7 @@ public class PropertiesMessage {
                 if (context.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
                     Citadel.PROXY.handlePropertiesPacket(message.propertyID, message.compound, message.entityID);
                 } else {
-                    Entity e = context.get().getSender().level.getEntity(message.entityID);
+                    Entity e = context.get().getSender().level().getEntity(message.entityID);
                     if (e instanceof LivingEntity && (message.propertyID.equals("CitadelPatreonConfig") || message.propertyID.equals("CitadelTagUpdate"))) {
                         CitadelEntityData.setCitadelTag((LivingEntity) e, message.compound);
 

@@ -11,6 +11,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.math.Axis;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import net.minecraft.Util;
@@ -92,10 +95,9 @@ public abstract class GuiBasicBook extends Screen {
         this.currentPageJSON = getRootPage();
     }
 
-    public static void drawTabulaModelOnScreen(PoseStack stack, TabulaModel model, ResourceLocation tex, int posX, int posY, float scale, boolean follow, double xRot, double yRot, double zRot, float mouseX, float mouseY) {
+    public static void drawTabulaModelOnScreen(GuiGraphics guiGraphics, TabulaModel model, ResourceLocation tex, int posX, int posY, float scale, boolean follow, double xRot, double yRot, double zRot, float mouseX, float mouseY) {
         float f = (float) Math.atan(mouseX / 40.0F);
         float f1 = (float) Math.atan(mouseY / 40.0F);
-        RenderSystem.applyModelViewMatrix();
         PoseStack matrixstack = new PoseStack();
         matrixstack.translate((float) posX, (float) posY, 120.0D);
         matrixstack.scale(scale, scale, scale);
@@ -121,11 +123,10 @@ public abstract class GuiBasicBook extends Screen {
             model.resetToDefaultPose();
             model.renderToBuffer(matrixstack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         });
-        RenderSystem.applyModelViewMatrix();
         Lighting.setupFor3DItems();
     }
 
-    public void drawEntityOnScreen(PoseStack stackIn, int posX, int posY, float scale, boolean follow, double xRot, double yRot, double zRot, float mouseX, float mouseY, Entity entity) {
+    public void drawEntityOnScreen(GuiGraphics guiGraphics, MultiBufferSource bufferSource, int posX, int posY, float zOff, float scale, boolean follow, double xRot, double yRot, double zRot, float mouseX, float mouseY, Entity entity) {
         float customYaw = posX - mouseX;
         float customPitch = posY - mouseY;
         float f = (float) Math.atan(customYaw / 40.0F);
@@ -147,36 +148,28 @@ public abstract class GuiBasicBook extends Screen {
             f1 = 0;
         }
 
-        PoseStack posestack = RenderSystem.getModelViewStack();
-        posestack.pushPose();
-        posestack.translate(posX, posY, 1050.0D);
-        posestack.scale(1.0F, 1.0F, -1.0F);
-        RenderSystem.applyModelViewMatrix();
-        PoseStack posestack1 = new PoseStack();
-        posestack1.translate(0.0D, 0.0D, 1000.0D);
-        posestack1.scale(scale, scale, scale);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(posX, posY, zOff);
+        guiGraphics.pose().mulPoseMatrix((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
         Quaternionf quaternion = Axis.ZP.rotationDegrees(180F);
         Quaternionf quaternion1 = Axis.XP.rotationDegrees(f1 * 20.0F);
         quaternion.mul(quaternion1);
         quaternion.mul(Axis.XN.rotationDegrees((float) xRot));
         quaternion.mul(Axis.YP.rotationDegrees((float) yRot));
         quaternion.mul(Axis.ZP.rotationDegrees((float) zRot));
-        posestack1.mulPose(quaternion);
+        guiGraphics.pose().mulPose(quaternion);
 
-        Vector3f light0 = Util.make(new Vector3f(1, -1.0F, -1.0F), Vector3f::normalize);
-        Vector3f light1 = Util.make(new Vector3f(-1, -1.0F, 1.0F), Vector3f::normalize);
+        Vector3f light0 = new Vector3f(1, -1.0F, -1.0F).normalize();
+        Vector3f light1 = new Vector3f(-1, 1.0F, 1.0F).normalize();
         RenderSystem.setShaderLights(light0, light1);
         EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         quaternion1.conjugate();
         entityrenderdispatcher.overrideCameraOrientation(quaternion1);
         entityrenderdispatcher.setRenderShadow(false);
-        MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
         RenderSystem.runAsFancy(() -> {
-            entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, posestack1, multibuffersource$buffersource, 15728880);
+            entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), bufferSource, 240);
         });
-        multibuffersource$buffersource.endBatch();
         entityrenderdispatcher.setRenderShadow(true);
-
         entity.setYRot(0);
         entity.setXRot(0);
         if (entity instanceof LivingEntity) {
@@ -185,9 +178,9 @@ public abstract class GuiBasicBook extends Screen {
             ((LivingEntity) entity).yHeadRot = 0;
         }
 
-
-        posestack.popPose();
-        RenderSystem.applyModelViewMatrix();
+        guiGraphics.flush();
+        entityrenderdispatcher.setRenderShadow(true);
+        guiGraphics.pose().popPose();
         Lighting.setupFor3DItems();
     }
 
@@ -271,49 +264,40 @@ public abstract class GuiBasicBook extends Screen {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int x, int y, float partialTicks) {
+    public void render(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
         this.mouseX = x;
         this.mouseY = y;
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        int color = getBindingColor();
-        int r = (color & 0xFF0000) >> 16;
-        int g = (color & 0xFF00) >> 8;
-        int b = (color & 0xFF);
-        this.renderBackground(matrixStack);
+        int bindingColor = getBindingColor();
+        int bindingR = bindingColor >> 16 & 255;
+        int bindingG = bindingColor >> 8 & 255;
+        int bindingB = bindingColor & 255;
+        this.renderBackground(guiGraphics);
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize + 128) / 2;
-        RenderSystem.enableBlend();
-        RenderSystem.setShaderTexture(0, getBookBindingTexture());
-        BookBlit.setRGB(r, g, b, 255);
-        BookBlit.blit(matrixStack, k, l, 0, 0, xSize, ySize, xSize, ySize);
-        RenderSystem.setShaderTexture(0, getBookPageTexture());
-        BookBlit.setRGB(255, 255, 255, 255);
-        BookBlit.blit(matrixStack, k, l, 0, 0, xSize, ySize, xSize, ySize);
+        BookBlit.blitWithColor(guiGraphics, getBookBindingTexture(), k, l, 0, 0, xSize, ySize, xSize, ySize, bindingR, bindingG, bindingB, 255);
+        BookBlit.blitWithColor(guiGraphics, getBookPageTexture(), k, l, 0, 0, xSize, ySize, xSize, ySize,  255, 255, 255, 255);
         if (internalPage == null || currentPageJSON != prevPageJSON || prevPageJSON == null) {
             internalPage = generatePage(currentPageJSON);
             if (internalPage != null) {
                 refreshSpacing();
             }
         }
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         if (internalPage != null) {
-            writePageText(matrixStack, x, y);
+            writePageText(guiGraphics, x, y);
         }
-        super.render(matrixStack, x, y, partialTicks);
+        super.render(guiGraphics, x, y, partialTicks);
         prevPageJSON = currentPageJSON;
         if (internalPage != null) {
-            matrixStack.pushPose();
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            renderOtherWidgets(matrixStack, x, y, internalPage);
-            matrixStack.popPose();
+            guiGraphics.pose().pushPose();
+            renderOtherWidgets(guiGraphics, x, y, internalPage);
+            guiGraphics.pose().popPose();
         }
         if (this.entityTooltip != null) {
-            matrixStack.pushPose();
-            matrixStack.translate(0, 0, 550);
-            renderTooltip(matrixStack, Minecraft.getInstance().font.split(Component.translatable(entityTooltip), Math.max(this.width / 2 - 43, 170)), x, y);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, 550);
+            guiGraphics.renderTooltip(font, Minecraft.getInstance().font.split(Component.translatable(entityTooltip), Math.max(this.width / 2 - 43, 170)), x, y);
             entityTooltip = null;
-            matrixStack.popPose();
+            guiGraphics.pose().popPose();
         }
     }
 
@@ -380,7 +364,7 @@ public abstract class GuiBasicBook extends Screen {
         }
     }
 
-    private void renderOtherWidgets(PoseStack matrixStack, int x, int y, BookPage page) {
+    private void renderOtherWidgets(GuiGraphics guiGraphics, int x, int y, BookPage page) {
         int color = getBindingColor();
         int r = (color & 0xFF0000) >> 16;
         int g = (color & 0xFF00) >> 8;
@@ -399,35 +383,22 @@ public abstract class GuiBasicBook extends Screen {
                     }
                     // yIndexesToSkip.put(imageData.getPage(), new Whitespace(imageData.getX(), imageData.getY(),(int) (imageData.getScale() * imageData.getWidth()), (int) (imageData.getScale() * imageData.getHeight() * 0.8F)));
                     float scale = (float) imageData.getScale();
-                    matrixStack.pushPose();
-                    matrixStack.translate(k + imageData.getX(), l + imageData.getY(), 0);
-                    matrixStack.scale(scale, scale, scale);
-                    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                    RenderSystem.setShaderTexture(0, tex);
-                    this.blit(matrixStack, 0, 0, imageData.getU(), imageData.getV(), imageData.getWidth(), imageData.getHeight());
-                    matrixStack.popPose();
+                    guiGraphics.pose().pushPose();
+                    guiGraphics.pose().translate(k + imageData.getX(), l + imageData.getY(), 0);
+                    guiGraphics.pose().scale(scale, scale, scale);
+                    guiGraphics.blit(tex, 0, 0, imageData.getU(), imageData.getV(), imageData.getWidth(), imageData.getHeight());
+                    guiGraphics.pose().popPose();
                 }
             }
         }
         for (RecipeData recipeData : recipes) {
             if (recipeData.getPage() == this.currentPageCounter) {
-                matrixStack.pushPose();
-                matrixStack.translate(k + recipeData.getX(), l + recipeData.getY(), 0);
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(k + recipeData.getX(), l + recipeData.getY(), 0);
                 float scale = (float) recipeData.getScale();
-                matrixStack.scale(scale, scale, scale);
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderTexture(0, getBookWidgetTexture());
-                this.blit(matrixStack, 0, 0, 0, 88, 116, 53);
-                matrixStack.popPose();
-            }
-        }
-        for (RecipeData recipeData : recipes) {
-            if (recipeData.getPage() == this.currentPageCounter) {
-                Recipe recipe = getRecipeByName(recipeData.getRecipe());
-                if (recipe != null) {
-                    PoseStack poseStack = RenderSystem.getModelViewStack();
-                    renderRecipe(poseStack, recipe, recipeData, k, l);
-                }
+                guiGraphics.pose().scale(scale, scale, scale);
+                guiGraphics.blit(getBookWidgetTexture(), 0, 0, 0, 88, 116, 53);
+                guiGraphics.pose().popPose();
             }
         }
 
@@ -453,7 +424,7 @@ public abstract class GuiBasicBook extends Screen {
 
                 if (model != null && texture != null) {
                     float scale = (float) tabulaRenderData.getScale();
-                    drawTabulaModelOnScreen(matrixStack, model, texture, k + tabulaRenderData.getX(), l + tabulaRenderData.getY(), 30 * scale, tabulaRenderData.isFollow_cursor(), tabulaRenderData.getRot_x(), tabulaRenderData.getRot_y(), tabulaRenderData.getRot_z(), mouseX, mouseY);
+                    drawTabulaModelOnScreen(guiGraphics, model, texture, k + tabulaRenderData.getX(), l + tabulaRenderData.getY(), 30 * scale, tabulaRenderData.isFollow_cursor(), tabulaRenderData.getRot_x(), tabulaRenderData.getRot_y(), tabulaRenderData.getRot_z(), mouseX, mouseY);
                 }
             }
         }
@@ -475,11 +446,18 @@ public abstract class GuiBasicBook extends Screen {
                             e.printStackTrace();
                         }
                     }
-                    drawEntityOnScreen(matrixStack, k + data.getX(), l + data.getY(), 30 * scale, data.isFollow_cursor(), data.getRot_x(), data.getRot_y(), data.getRot_z(), mouseX, mouseY, model);
+                    drawEntityOnScreen(guiGraphics, guiGraphics.bufferSource(), k + data.getX(), l + data.getY(), 1050F, 30 * scale, data.isFollow_cursor(), data.getRot_x(), data.getRot_y(), data.getRot_z(), mouseX, mouseY, model);
                 }
             }
         }
-
+        for (RecipeData recipeData : recipes) {
+            if (recipeData.getPage() == this.currentPageCounter) {
+                Recipe recipe = getRecipeByName(recipeData.getRecipe());
+                if (recipe != null) {
+                    renderRecipe(guiGraphics, recipe, recipeData, k, l);
+                }
+            }
+        }
         for (ItemRenderData itemRenderData : itemRenders) {
             if (itemRenderData.getPage() == this.currentPageCounter) {
                 Item item = getItemByRegistryName(itemRenderData.getItem());
@@ -495,21 +473,17 @@ public abstract class GuiBasicBook extends Screen {
                         }
                         stack.setTag(tag);
                     }
-                    matrixStack.pushPose();
-                    PoseStack poseStack = RenderSystem.getModelViewStack();
-                    poseStack.pushPose();
-                    poseStack.translate(k, l, 0);
-                    poseStack.scale(scale, scale, scale);
-                    this.itemRenderer.renderAndDecorateItem(new PoseStack(), stack, itemRenderData.getX(), itemRenderData.getY());
-                    poseStack.popPose();
-                    matrixStack.popPose();
-                    RenderSystem.applyModelViewMatrix();
+                    guiGraphics.pose().pushPose();
+                    guiGraphics.pose().translate(k, l, 0);
+                    guiGraphics.pose().scale(scale, scale, scale);
+                    guiGraphics.renderItem(stack, itemRenderData.getX(), itemRenderData.getY());
+                    guiGraphics.pose().popPose();
                 }
             }
         }
     }
 
-    protected void renderRecipe(PoseStack poseStack, Recipe recipe, RecipeData recipeData, int k, int l) {
+    protected void renderRecipe(GuiGraphics guiGraphics, Recipe recipe, RecipeData recipeData, int k, int l) {
         int playerTicks = Minecraft.getInstance().player.tickCount;
         float scale = (float) recipeData.getScale();
         NonNullList<Ingredient> ingredients = recipe instanceof SpecialRecipeInGuideBook ? ((SpecialRecipeInGuideBook)recipe).getDisplayIngredients() : recipe.getIngredients();
@@ -527,49 +501,49 @@ public abstract class GuiBasicBook extends Screen {
                 }
             }
             if (!stack.isEmpty()) {
-                poseStack.pushPose();
-                poseStack.translate(k, l, 32.0F);
-                poseStack.translate((int) (recipeData.getX() + (i % 3) * 20 * scale), (int) (recipeData.getY() + (i / 3) * 20 * scale), 0);
-                poseStack.scale(scale, scale, scale);
-                this.itemRenderer.renderAndDecorateItem(new PoseStack(), stack, 0, 0);
-                poseStack.popPose();
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(k, l, 32.0F);
+                guiGraphics.pose().translate((int) (recipeData.getX() + (i % 3) * 20 * scale), (int) (recipeData.getY() + (i / 3) * 20 * scale), 0);
+                guiGraphics.pose().scale(scale, scale, scale);
+                guiGraphics.renderItem(stack, 0, 0);
+                guiGraphics.pose().popPose();
             }
             displayedStacks.add(i, stack);
         }
-        poseStack.pushPose();
-        poseStack.translate(k, l, 32.0F);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(k, l, 32.0F);
         float finScale = scale * 1.5F;
-        poseStack.translate(recipeData.getX() + 70 * finScale, recipeData.getY() + 10 * finScale, 0);
-        poseStack.scale(finScale, finScale, finScale);
+        guiGraphics.pose().translate(recipeData.getX() + 70 * finScale, recipeData.getY() + 10 * finScale, 0);
+        guiGraphics.pose().scale(finScale, finScale, finScale);
         ItemStack result = recipe.getResultItem(Minecraft.getInstance().level.registryAccess());
         if(recipe instanceof SpecialRecipeInGuideBook){
             result = ((SpecialRecipeInGuideBook) recipe).getDisplayResultFor(displayedStacks);
         }
-        poseStack.translate(0.0F, 0.0F, 100.0F);
-        this.itemRenderer.renderAndDecorateItem(new PoseStack(), result, 0, 0);
-        poseStack.popPose();
+        guiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
+        guiGraphics.renderItem(result, 0, 0);
+        guiGraphics.pose().popPose();
     }
 
-    protected void writePageText(PoseStack matrixStack, int x, int y) {
+    protected void writePageText(GuiGraphics guiGraphics, int x, int y) {
         Font font = this.font;
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize + 128) / 2;
         for (LineData line : this.lines) {
             if (line.getPage() == this.currentPageCounter) {
-                font.draw(matrixStack, line.getText(), k + 10 + line.getxIndex(), l + 10 + line.getyIndex() * 12, getTextColor());
+                guiGraphics.drawString(font, line.getText(), k + 10 + line.getxIndex(), l + 10 + line.getyIndex() * 12, getTextColor(), false);
             }
         }
         if (this.currentPageCounter == 0 && !writtenTitle.isEmpty()) {
             String actualTitle = I18n.get(writtenTitle);
-            matrixStack.pushPose();
+            guiGraphics.pose().pushPose();
             float scale = 2F;
             if (font.width(actualTitle) > 80) {
                 scale = 2.0F - Mth.clamp((font.width(actualTitle) - 80) * 0.011F, 0, 1.95F);
             }
-            matrixStack.translate(k + 10, l + 10, 0);
-            matrixStack.scale(scale, scale, scale);
-            font.draw(matrixStack, actualTitle, 0, 0, getTitleColor());
-            matrixStack.popPose();
+            guiGraphics.pose().translate(k + 10, l + 10, 0);
+            guiGraphics.pose().scale(scale, scale, scale);
+            guiGraphics.drawString(font, actualTitle, 0, 0, getTitleColor(), false);
+            guiGraphics.pose().popPose();
         }
         this.buttonNextPage.visible = currentPageCounter < maxPagesFromPrinting;
         this.buttonPreviousPage.visible = currentPageCounter > 0 || !currentPageJSON.equals(this.getRootPage());

@@ -5,7 +5,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 
@@ -47,8 +46,6 @@ public class CustomCollisionsNodeProcessor extends WalkNodeEvaluator {
         BlockState blockstate = p_237238_0_.getBlockState(p_237238_1_);
         BlockPathTypes type = blockstate.getBlockPathType(p_237238_0_, p_237238_1_, null);
         if (type != null) return type;
-        Block block = blockstate.getBlock();
-        Material material = blockstate.getMaterial();
         if (blockstate.isAir()) {
             return BlockPathTypes.OPEN;
         } else if (blockstate.getBlock() == Blocks.BAMBOO) {

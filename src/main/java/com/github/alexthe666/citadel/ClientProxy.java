@@ -13,25 +13,18 @@ import com.github.alexthe666.citadel.client.gui.GuiCitadelPatreonConfig;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
 import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
-import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
-import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
-import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
-import com.github.alexthe666.citadel.client.video.Video;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.*;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -79,7 +72,6 @@ public class ClientProxy extends ServerProxy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         BlockEntityRenderers.register(Citadel.LECTERN_BE.get(), CitadelLecternRenderer::new);
         CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station"), new int[]{}));
         CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
@@ -119,7 +111,7 @@ public class ClientProxy extends ServerProxy {
             if(aprilFoolsTetrisGame == null){
                 aprilFoolsTetrisGame = new Tetris();
             }else{
-                aprilFoolsTetrisGame.render((TitleScreen) event.getScreen(), event.getPoseStack(), event.getPartialTick());
+                aprilFoolsTetrisGame.render((TitleScreen) event.getScreen(), event.getGuiGraphics(), event.getPartialTick());
             }
         }
     }
@@ -179,7 +171,7 @@ public class ClientProxy extends ServerProxy {
         if(CitadelConstants.isAprilFools() && aprilFoolsTetrisGame != null){
             event.setResult(Event.Result.ALLOW);
             float hue = (System.currentTimeMillis() % 6000) / 6000f;
-            event.getPoseStack().mulPose(Axis.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 360));
+            event.getGuiGraphics().pose().mulPose(Axis.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 360));
             if(!aprilFoolsTetrisGame.isStarted()){
                 event.setSplashText("Psst... press 'T' ;)");
             }else{
@@ -191,6 +183,15 @@ public class ClientProxy extends ServerProxy {
     }
 
     @SubscribeEvent
+    public void onKeyPressed(ScreenEvent.KeyPressed event) {
+        if(Minecraft.getInstance().screen instanceof TitleScreen && aprilFoolsTetrisGame != null && aprilFoolsTetrisGame.isStarted()){
+            if(event.getKeyCode() == InputConstants.KEY_LEFT || event.getKeyCode() == InputConstants.KEY_RIGHT || event.getKeyCode() == InputConstants.KEY_DOWN || event.getKeyCode() == InputConstants.KEY_UP){
+                event.setCanceled(true);
+            }
+        }
+    }
+
+        @SubscribeEvent
     public void clientTick(TickEvent.ClientTickEvent event) {
         if(event.phase == TickEvent.Phase.START && !isGamePaused()){
             ClientTickRateTracker.getForClient(Minecraft.getInstance()).masterTick();
@@ -260,9 +261,8 @@ public class ClientProxy extends ServerProxy {
 
         @Override
     public void handleAnimationPacket(int entityId, int index) {
-        Player player = Minecraft.getInstance().player;
-        if (player != null) {
-            IAnimatedEntity entity = (IAnimatedEntity) player.level.getEntity(entityId);
+        if (Minecraft.getInstance().level != null) {
+            IAnimatedEntity entity = (IAnimatedEntity) Minecraft.getInstance().level.getEntity(entityId);
             if (entity != null) {
                 if (index == -1) {
                     entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
@@ -276,11 +276,10 @@ public class ClientProxy extends ServerProxy {
 
     @Override
     public void handlePropertiesPacket(String propertyID, CompoundTag compound, int entityID) {
-        if(compound == null){
+        if(compound == null || Minecraft.getInstance().level == null){
             return;
         }
-        Player player = Minecraft.getInstance().player;
-        Entity entity = player.level.getEntity(entityID);
+        Entity entity = Minecraft.getInstance().level.getEntity(entityID);
         if ((propertyID.equals("CitadelPatreonConfig") || propertyID.equals("CitadelTagUpdate")) && entity instanceof LivingEntity) {
             CitadelEntityData.setCitadelTag((LivingEntity) entity, compound);
         }

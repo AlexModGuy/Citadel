@@ -11,6 +11,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -41,17 +43,17 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
     }
 
 
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrixStack);
-        drawCenteredString(matrixStack, this.font, this.title, this.width / 2, 20, 16777215);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics);
+        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 16777215);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
         int i = this.width / 2;
         int j = this.height / 6;
-        matrixStack.pushPose();
+        guiGraphics.pose().pushPose();
         ClientProxy.hideFollower = true;
         renderBackwardsEntity(i, j + 144, 60, 0, 0, Minecraft.getInstance().player);
         ClientProxy.hideFollower = false;
-        matrixStack.popPose();
+        guiGraphics.pose().popPose();
     }
 
     public static void renderBackwardsEntity(int x, int y, int size, float angleXComponent, float angleYComponent, LivingEntity entity) {

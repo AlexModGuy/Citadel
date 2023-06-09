@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
@@ -267,13 +267,13 @@ public class Tetris {
 
     }
 
-    public void render(TitleScreen screen, PoseStack poseStack, float partialTick) {
+    public void render(TitleScreen screen, GuiGraphics guiGraphics, float partialTick) {
         float scale = Math.min(screen.width / 15F, screen.height / (float) HEIGHT);
         float offsetX = screen.width / 2F - scale * 5F;
         float offsetY = scale * 0.5F;
         if (started) {
-            GuiComponent.fill(poseStack, (int) (screen.width * 0.05F), (int) (screen.height * 0.3F), (int) (screen.width * 0.05F) + 70, (int) (screen.height * 0.5F), -1873784752);
-            GuiComponent.fill(poseStack, (int) (screen.width * 0.7F), (int) (screen.height * 0.3F), (int) (screen.width * 0.7F) + 130, (int) (screen.height * 0.84F), -1873784752);
+            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.05F), (int) (screen.height * 0.3F), (int) (screen.width * 0.05F) + 70, (int) (screen.height * 0.5F),  -1873784752);
+            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.7F), (int) (screen.height * 0.3F), (int) (screen.width * 0.7F) + 130, (int) (screen.height * 0.84F),  -1873784752);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
@@ -298,24 +298,24 @@ public class Tetris {
             }
             float hue = (System.currentTimeMillis() % 6000) / 6000f;
             int rainbow = Color.HSBtoRGB(hue, 0.6f, 1);
-            poseStack.pushPose();
-            poseStack.scale(2, 2, 2);
-            GuiComponent.drawCenteredString(poseStack, Minecraft.getInstance().font, "SCORE", (int) (screen.width * 0.065F), (int) (screen.height * 0.175F), rainbow);
-            GuiComponent.drawCenteredString(poseStack, Minecraft.getInstance().font, "" + score, (int) (screen.width * 0.065F), (int) (screen.height * 0.175F) + 10, rainbow);
-            poseStack.popPose();
-            GuiComponent.drawString(poseStack, Minecraft.getInstance().font, "[LEFT ARROW] move left", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F), rainbow);
-            GuiComponent.drawString(poseStack, Minecraft.getInstance().font, "[RIGHT ARROW] move right", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 10, rainbow);
-            GuiComponent.drawString(poseStack, Minecraft.getInstance().font, "[UP ARROW] rotate", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 20, rainbow);
-            GuiComponent.drawString(poseStack, Minecraft.getInstance().font, "[DOWN ARROW] quick drop", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 30, rainbow);
-            GuiComponent.drawString(poseStack, Minecraft.getInstance().font, "[T] start over", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 50, rainbow);
-            GuiComponent.drawString(poseStack, Minecraft.getInstance().font, "Happy april fools from Citadel", 5, 5, rainbow);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(2, 2, 2);
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, "SCORE", (int) (screen.width * 0.065F), (int) (screen.height * 0.175F), rainbow);
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, "" + score, (int) (screen.width * 0.065F), (int) (screen.height * 0.175F) + 10, rainbow);
+            guiGraphics.pose().popPose();
+            guiGraphics.drawString(Minecraft.getInstance().font, "[LEFT ARROW] move left", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F), rainbow);
+            guiGraphics.drawString(Minecraft.getInstance().font, "[RIGHT ARROW] move right", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 10, rainbow);
+            guiGraphics.drawString(Minecraft.getInstance().font, "[UP ARROW] rotate", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 20, rainbow);
+            guiGraphics.drawString(Minecraft.getInstance().font, "[DOWN ARROW] quick drop", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 30, rainbow);
+            guiGraphics.drawString(Minecraft.getInstance().font, "[T] start over", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 50, rainbow);
+            guiGraphics.drawString(Minecraft.getInstance().font, "Happy april fools from Citadel", 5, 5, rainbow);
             if(gameOver){
-                poseStack.pushPose();
-                poseStack.translate((int) (screen.width * 0.5F), (int) (screen.height * 0.5F), 150);
-                poseStack.scale(3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F);
-                poseStack.mulPose(Axis.ZP.rotationDegrees((float) Math.sin(hue * Math.PI) * 10));
-                GuiComponent.drawCenteredString(poseStack, Minecraft.getInstance().font, "GAME OVER", 0, 0, rainbow);
-                poseStack.popPose();
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate((int) (screen.width * 0.5F), (int) (screen.height * 0.5F), 150);
+                guiGraphics.pose().scale(3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F);
+                guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees((float) Math.sin(hue * Math.PI) * 10));
+                guiGraphics.drawCenteredString(Minecraft.getInstance().font, "GAME OVER", 0, 0, rainbow);
+                guiGraphics.pose().popPose();
             }
         }
     }

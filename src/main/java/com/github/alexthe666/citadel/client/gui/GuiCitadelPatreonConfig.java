@@ -7,6 +7,7 @@ import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -65,10 +66,10 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
         return value;
     }
 
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrixStack);
-        drawCenteredString(matrixStack, this.font, this.title, this.width / 2, 20, 16777215);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics);
+        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 16777215);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     protected void init() {

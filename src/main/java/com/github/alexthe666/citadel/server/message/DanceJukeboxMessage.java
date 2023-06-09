@@ -48,7 +48,7 @@ public class DanceJukeboxMessage {
                 }
 
                 if (player != null) {
-                    Citadel.PROXY.handleJukeboxPacket(player.level, message.entityID, message.jukeBox, message.dance);
+                    Citadel.PROXY.handleJukeboxPacket(player.level(), message.entityID, message.jukeBox, message.dance);
 
                 }
             });

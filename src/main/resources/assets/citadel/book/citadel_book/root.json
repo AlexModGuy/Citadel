@@ -63,7 +63,16 @@
 
   ],
   "entity_renders": [
-
+    {
+      "entity": "minecraft:sniffer",
+      "x": 100,
+      "y": 105,
+      "page" : 1,
+      "scale": 0.45,
+      "rot_x": 30,
+      "rot_y": 225,
+      "rot_z": 0
+    }
   ],
   "entity_buttons": [
     {
