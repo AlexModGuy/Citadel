@@ -53,7 +53,7 @@ public class EntityLinkButton extends Button {
             model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
         }
 
-        guiGraphics.enableScissor(this.getX() + (int) f * 4, this.getY() + (int) f * 4, this.getX() + (int) f * 20, this.getY() + (int) f * 20);
+        guiGraphics.enableScissor(this.getX() + Math.round(f * 4), this.getY() + Math.round(f * 4), this.getX() + Math.round(f * 20), this.getY() + Math.round(f * 20));
         if (model != null) {
             model.tickCount = Minecraft.getInstance().player.tickCount;
             float renderScale = (float) (data.getEntityScale() * f * 10);

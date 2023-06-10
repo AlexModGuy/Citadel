@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 @Mixin(BiomeSource.class)
 public class BiomeSourceMixin implements ExpandedBiomeSource {
 
-
     @Shadow
     private Supplier<Set<Holder<Biome>>> possibleBiomes;
     private boolean expanded;

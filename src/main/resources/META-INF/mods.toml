@@ -4,7 +4,7 @@ license="GNU LESSER GENERAL PUBLIC LICENSE"
 issueTrackerURL="https://github.com/Alex-the-666/Citadel/issues" #optional
 [[mods]] #mandatory
 modId="citadel" #mandatory
-version="2.4.0" #mandatory
+version="2.4.1" #mandatory
 displayName="Citadel" #mandatory
 displayURL="https://github.com/Alex-the-666/Citadel" #optional
 logoFile="citadel.png" #optional
