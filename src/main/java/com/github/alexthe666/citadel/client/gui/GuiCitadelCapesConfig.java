@@ -112,7 +112,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
             this.minecraft.setScreen(this.lastScreen);
         }).size(200, 20).pos(i - 100, j+ 160).build();
         this.addRenderableWidget(doneButton);
-        Button changeCapeButton = Button.builder(getTypeText(), (p_213079_1_) -> {
+        button = Button.builder(getTypeText(), (p_213079_1_) -> {
             CitadelCapes.Cape nextCape = CitadelCapes.getNextCape(capeType, Minecraft.getInstance().player.getUUID());
             this.capeType = nextCape == null ? null : nextCape.getIdentifier();
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
@@ -129,7 +129,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
             Citadel.sendMSGToServer(new PropertiesMessage("CitadelCapesConfig", tag, Minecraft.getInstance().player.getId()));
             button.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
-        this.addRenderableWidget(changeCapeButton);
+        this.addRenderableWidget(button);
 
     }
 

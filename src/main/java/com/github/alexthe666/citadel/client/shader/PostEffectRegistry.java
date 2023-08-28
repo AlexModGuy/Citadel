@@ -29,17 +29,14 @@ public class PostEffectRegistry {
         postEffects.clear();
     }
 
-    public static void registerEffect(ResourceLocation resourceLocation){
+    public static void registerEffect(ResourceLocation resourceLocation) {
         registry.add(resourceLocation);
     }
 
-    public static void onInitializeOutline(){
-        for(PostEffect postEffect : postEffects.values()){
-            postEffect.close();
-        }
-        postEffects.clear();
+    public static void onInitializeOutline() {
+        clear();
         Minecraft minecraft = Minecraft.getInstance();
-        for(ResourceLocation resourceLocation : registry){
+        for (ResourceLocation resourceLocation : registry) {
             PostChain postChain;
             RenderTarget renderTarget;
             try {
@@ -60,56 +57,58 @@ public class PostEffectRegistry {
     }
 
     public static void resize(int x, int y) {
-        for(PostEffect postEffect : postEffects.values()){
+        for (PostEffect postEffect : postEffects.values()) {
             postEffect.resize(x, y);
         }
     }
 
-    public static PostChain getPostChainFor(ResourceLocation resourceLocation){
+    public static PostChain getPostChainFor(ResourceLocation resourceLocation) {
         PostEffect effect = postEffects.get(resourceLocation);
         return effect == null ? null : effect.getPostChain();
     }
 
-    public static RenderTarget getRenderTargetFor(ResourceLocation resourceLocation){
+    public static RenderTarget getRenderTargetFor(ResourceLocation resourceLocation) {
         PostEffect effect = postEffects.get(resourceLocation);
         return effect == null ? null : effect.getRenderTarget();
     }
 
-    public static void renderEffectForNextTick(ResourceLocation resourceLocation){
+    public static void renderEffectForNextTick(ResourceLocation resourceLocation) {
         PostEffect effect = postEffects.get(resourceLocation);
-        if(effect != null){
+        if (effect != null) {
             effect.setEnabled(true);
         }
     }
 
     public static void blitEffects() {
-        for(PostEffect postEffect : postEffects.values()) {
+        RenderSystem.enableBlend();
+        RenderSystem.enableDepthTest();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        for (PostEffect postEffect : postEffects.values()) {
             if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
-                RenderSystem.enableBlend();
-                RenderSystem.enableDepthTest();
-                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
                 postEffect.getRenderTarget().blitToScreen(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), false);
-                RenderSystem.disableBlend();
-                RenderSystem.defaultBlendFunc();
+                postEffect.setEnabled(false);
+                postEffect.getRenderTarget().clear(Minecraft.ON_OSX);
+                Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
             }
         }
+        RenderSystem.disableBlend();
+        RenderSystem.defaultBlendFunc();
     }
 
     public static void copyDepth(RenderTarget mainTarget) {
-        for(PostEffect postEffect : postEffects.values()) {
+        for (PostEffect postEffect : postEffects.values()) {
             if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
                 postEffect.getRenderTarget().clear(Minecraft.ON_OSX);
                 postEffect.getRenderTarget().copyDepthFrom(mainTarget);
-                mainTarget.bindWrite(false);
-                postEffect.setEnabled(false);
             }
         }
     }
 
     public static void processEffects(RenderTarget mainTarget, float f) {
-        for(PostEffect postEffect : postEffects.values()) {
+        for (PostEffect postEffect : postEffects.values()) {
             if (postEffect.isEnabled() && postEffect.postChain != null) {
                 postEffect.postChain.process(Minecraft.getInstance().getFrameTime());
+                mainTarget.bindWrite(false);
             }
         }
     }
@@ -142,13 +141,13 @@ public class PostEffectRegistry {
             this.enabled = enabled;
         }
 
-        public void close(){
+        public void close() {
             if (postChain != null) {
                 postChain.close();
             }
         }
 
-        public void resize(int x, int y){
+        public void resize(int x, int y) {
             if (postChain != null) {
                 postChain.resize(x, y);
             }

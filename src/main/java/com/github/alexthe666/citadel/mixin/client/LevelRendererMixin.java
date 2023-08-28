@@ -33,15 +33,16 @@ public class LevelRendererMixin {
 
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;initOutline()V",
             at = @At("TAIL"))
-    private void ac_initOutline(CallbackInfo ci) {
+    private void citadel_initOutline(CallbackInfo ci) {
         PostEffectRegistry.onInitializeOutline();
     }
 
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;resize(II)V",
             at = @At("TAIL"))
-    private void ac_resize(int x, int y, CallbackInfo ci) {
+    private void citadel_resize(int x, int y, CallbackInfo ci) {
         PostEffectRegistry.resize(x, y);
     }
+
 
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",
             at = @At(
@@ -49,7 +50,7 @@ public class LevelRendererMixin {
                     target = "Lnet/minecraft/client/renderer/RenderBuffers;bufferSource()Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;",
                     shift = At.Shift.BEFORE
             ))
-    private void ac_renderLevel_beforeEntities(PoseStack poseStack, float f, long l, boolean b, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+    private void citadel_renderLevel_beforeEntities(PoseStack poseStack, float f, long l, boolean b, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
         PostEffectRegistry.copyDepth(this.minecraft.getMainRenderTarget());
     }
 
@@ -59,7 +60,7 @@ public class LevelRendererMixin {
                     target = "Lnet/minecraft/client/renderer/OutlineBufferSource;endOutlineBatch()V",
                     shift = At.Shift.BEFORE
             ))
-    private void ac_renderLevel_process(PoseStack poseStack, float f, long l, boolean b, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+    private void citadel_renderLevel_process(PoseStack poseStack, float f, long l, boolean b, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
         PostEffectRegistry.processEffects(this.minecraft.getMainRenderTarget(), f);
     }
 
@@ -67,12 +68,9 @@ public class LevelRendererMixin {
             at = @At(
                     value = "TAIL"
             ))
-    private void ac_renderLevel_end(PoseStack poseStack, float f, long l, boolean b, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+    private void citadel_renderLevel_end(PoseStack poseStack, float f, long l, boolean b, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
         PostEffectRegistry.blitEffects();
     }
-
-
-
 
     @Redirect(
             method = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",
