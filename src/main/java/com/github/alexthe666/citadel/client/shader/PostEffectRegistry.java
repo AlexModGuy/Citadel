@@ -22,7 +22,6 @@ public class PostEffectRegistry {
     private static Map<ResourceLocation, PostEffect> postEffects = new HashMap<>();
 
     public static void clear(){
-        registry.clear();
         for(PostEffect postEffect : postEffects.values()){
             postEffect.close();
         }
