@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.server.tick;
 
+import com.github.alexthe666.citadel.server.tick.modifier.SingleEntityTickRateModifier;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifier;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifierType;
 import net.minecraft.nbt.CompoundTag;
@@ -81,6 +82,11 @@ public abstract class TickRateTracker {
         for (TickRateModifier modifier : tickRateModifierList) {
             if (modifier.getType().isLocal() && modifier.appliesTo(entity.level, entity.getX(), entity.getY(), entity.getZ())) {
                 f *= modifier.getTickRateMultiplier();
+            }
+            if (modifier.getType().isLocal() && modifier instanceof SingleEntityTickRateModifier singleEntityTickRateModifier) {
+                if (singleEntityTickRateModifier.isEntityValid(entity.level, entity)) {
+                    f *= modifier.getTickRateMultiplier();
+                }
             }
         }
         return f;

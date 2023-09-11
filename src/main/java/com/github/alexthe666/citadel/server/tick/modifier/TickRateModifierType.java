@@ -4,7 +4,8 @@ public enum TickRateModifierType {
     GLOBAL(GlobalTickRateModifier.class, false, 0),
     CELESTIAL(CelestialTickRateModifier.class, false, 1),
     LOCAL_POSITION(LocalPositionTickRateModifier.class, true, 2),
-    LOCAL_ENTITY(LocalEntityTickRateModifier.class, true, 3);
+    LOCAL_ENTITY(LocalEntityTickRateModifier.class, true, 3),
+    SINGLE_ENTITY(SingleEntityTickRateModifier.class, true, 4);
 
     private Class<? extends TickRateModifier> clazz;
     private boolean local;
