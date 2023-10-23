@@ -1,8 +1,9 @@
 package com.github.alexthe666.citadel.server.event;
 
 import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -23,8 +24,9 @@ public class EventReplaceBiome extends Event {
     private int z;
 
     private long worldSeed;
+    private ResourceKey<Level> worldDimension;
 
-    public EventReplaceBiome(ExpandedBiomeSource biomeSource, Holder<Biome> biomeIn, int x, int y, int z, float continentalness, float erosion, float temperature, float humidity, float weirdness, float depth, long worldSeed) {
+    public EventReplaceBiome(ExpandedBiomeSource biomeSource, Holder<Biome> biomeIn, int x, int y, int z, float continentalness, float erosion, float temperature, float humidity, float weirdness, float depth, long worldSeed, ResourceKey<Level> worldDimension) {
         this.biomeSource = biomeSource;
         this.biomeToGenerate = biomeIn;
         this.continentalness = continentalness;
@@ -34,6 +36,7 @@ public class EventReplaceBiome extends Event {
         this.weirdness = weirdness;
         this.depth = depth;
         this.worldSeed = worldSeed;
+        this.worldDimension = worldDimension;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -115,4 +118,9 @@ public class EventReplaceBiome extends Event {
     public long getWorldSeed(){
         return worldSeed;
     }
+
+    public ResourceKey<Level> getWorldDimension() {
+        return worldDimension;
+    }
+
 }

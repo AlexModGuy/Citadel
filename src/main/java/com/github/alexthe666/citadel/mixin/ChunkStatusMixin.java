@@ -32,6 +32,7 @@ public class ChunkStatusMixin {
     private void citadel_fillFromNoise(Executor p_283276_, ServerLevel serverLevel, ChunkGenerator chunkGenerator, StructureTemplateManager p_281305_, ThreadedLevelLightEngine p_282570_, Function<ChunkAccess, CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>> p_283114_, List<ChunkAccess> p_282723_, CallbackInfoReturnable<CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>> cir) {
         if(chunkGenerator.getBiomeSource() instanceof IMultiNoiseBiomeSourceAccessor multiNoiseBiomeSourceAccessor){
             multiNoiseBiomeSourceAccessor.setLastSampledSeed(serverLevel.getSeed());
+            multiNoiseBiomeSourceAccessor.setLastSampledDimension(serverLevel.dimension());
         }
     }
 }

@@ -31,7 +31,6 @@ public abstract class MinecraftServerMixin implements ModifiableTickRateServer {
 
     private void masterTick() {
         masterMs += 50L;
-
     }
 
     @ModifyConstant(
