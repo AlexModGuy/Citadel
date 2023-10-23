@@ -126,7 +126,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
                 }
                 CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
             }
-            Citadel.sendMSGToServer(new PropertiesMessage("CitadelCapesConfig", tag, Minecraft.getInstance().player.getId()));
+            Citadel.sendMSGToServer(new PropertiesMessage("CitadelTagUpdate", tag, Minecraft.getInstance().player.getId()));
             button.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
         this.addRenderableWidget(button);
