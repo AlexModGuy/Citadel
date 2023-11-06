@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 public class BiomeSourceMixin implements ExpandedBiomeSource {
 
     @Shadow
-    private Supplier<Set<Holder<Biome>>> possibleBiomes;
+    public Supplier<Set<Holder<Biome>>> possibleBiomes;
     private boolean expanded;
     private Map<ResourceKey<Biome>, Holder<Biome>> map = new HashMap<>();
 

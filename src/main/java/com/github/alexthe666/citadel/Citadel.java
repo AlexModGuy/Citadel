@@ -181,7 +181,7 @@ public class Citadel {
 
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onServerAboutToStart(ServerAboutToStartEvent event) {
         RegistryAccess registryAccess = event.getServer().registryAccess();
         VillageHouseManager.addAllHouses(registryAccess);
