@@ -41,7 +41,7 @@ public class MultiNoiseBiomeSourceMixin implements IMultiNoiseBiomeSourceAccesso
         float f3 = Climate.unquantizeCoord(targetPoint.humidity());
         float f4 = Climate.unquantizeCoord(targetPoint.weirdness());
         float f5 = Climate.unquantizeCoord(targetPoint.depth());
-        EventReplaceBiome event = new EventReplaceBiome((ExpandedBiomeSource) this, cir.getReturnValue(), x, y, z, f, f1, f2, f3, f4, f5, lastSampledWorldSeed, lastSampledDimension);
+        EventReplaceBiome event = new EventReplaceBiome((ExpandedBiomeSource) this, cir.getReturnValue(), x, y, z, f, f1, f2, f3, f4, f5, lastSampledWorldSeed, lastSampledDimension, sampler);
         MinecraftForge.EVENT_BUS.post(event);
         if (event.getResult() == Event.Result.ALLOW) {
             cir.setReturnValue(event.getBiomeToGenerate());

@@ -5,6 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Climate;
 import net.minecraftforge.eventbus.api.Event;
 
 @Event.HasResult
@@ -25,8 +26,9 @@ public class EventReplaceBiome extends Event {
 
     private long worldSeed;
     private ResourceKey<Level> worldDimension;
+    private Climate.Sampler climateSampler;
 
-    public EventReplaceBiome(ExpandedBiomeSource biomeSource, Holder<Biome> biomeIn, int x, int y, int z, float continentalness, float erosion, float temperature, float humidity, float weirdness, float depth, long worldSeed, ResourceKey<Level> worldDimension) {
+    public EventReplaceBiome(ExpandedBiomeSource biomeSource, Holder<Biome> biomeIn, int x, int y, int z, float continentalness, float erosion, float temperature, float humidity, float weirdness, float depth, long worldSeed, ResourceKey<Level> worldDimension, Climate.Sampler climateSampler) {
         this.biomeSource = biomeSource;
         this.biomeToGenerate = biomeIn;
         this.continentalness = continentalness;
@@ -40,6 +42,7 @@ public class EventReplaceBiome extends Event {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.climateSampler = climateSampler;
     }
 
     public Holder<Biome> getBiomeToGenerate() {
@@ -121,6 +124,10 @@ public class EventReplaceBiome extends Event {
 
     public ResourceKey<Level> getWorldDimension() {
         return worldDimension;
+    }
+
+    public Climate.Sampler getClimateSampler() {
+        return climateSampler;
     }
 
 }
