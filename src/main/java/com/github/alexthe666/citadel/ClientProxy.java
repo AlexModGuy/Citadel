@@ -17,6 +17,8 @@ import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
+import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.Pathfinding;
+import com.github.alexthe666.citadel.client.render.pathfinding.WorldEventContext;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.*;
@@ -41,10 +43,8 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.awt.*;
 import java.io.IOException;
@@ -135,6 +135,13 @@ public class ClientProxy extends ServerProxy {
                     renderer.render(matrixStackIn, event.getMultiBufferSource(), event.getPackedLight(), event.getPartialTick(), event.getEntity(), distance, speed, height);
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void renderWorldLastEvent(RenderLevelStageEvent event) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES && Pathfinding.isDebug()) {
+            WorldEventContext.INSTANCE.renderWorldLastEvent(event);
         }
     }
 

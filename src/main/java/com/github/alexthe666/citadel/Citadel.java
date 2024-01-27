@@ -13,10 +13,7 @@ import com.github.alexthe666.citadel.server.block.LecternBooks;
 import com.github.alexthe666.citadel.server.generation.SpawnProbabilityModifier;
 import com.github.alexthe666.citadel.server.generation.SurfaceRulesManager;
 import com.github.alexthe666.citadel.server.generation.VillageHouseManager;
-import com.github.alexthe666.citadel.server.message.AnimationMessage;
-import com.github.alexthe666.citadel.server.message.DanceJukeboxMessage;
-import com.github.alexthe666.citadel.server.message.PropertiesMessage;
-import com.github.alexthe666.citadel.server.message.SyncClientTickRateMessage;
+import com.github.alexthe666.citadel.server.message.*;
 import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
 import com.github.alexthe666.citadel.server.world.ExpandedBiomes;
 import com.github.alexthe666.citadel.web.WebHelper;
@@ -141,6 +138,8 @@ public class Citadel {
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, AnimationMessage.class, AnimationMessage::write, AnimationMessage::read, AnimationMessage.Handler::handle);
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, SyncClientTickRateMessage.class, SyncClientTickRateMessage::write, SyncClientTickRateMessage::read, SyncClientTickRateMessage.Handler::handle);
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, DanceJukeboxMessage.class, DanceJukeboxMessage::write, DanceJukeboxMessage::read, DanceJukeboxMessage.Handler::handle);
+        NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSyncPath.class, MessageSyncPath::write, MessageSyncPath::read, MessageSyncPath.Handler::handle);
+        NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSyncPathReached.class, MessageSyncPathReached::write, MessageSyncPathReached::read, MessageSyncPathReached.Handler::handle);
         BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
         if (urlContents != null) {
             try {
