@@ -76,6 +76,8 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
     private double swimSpeedFactor = 1.0;
 
+    public boolean overrideDefaultDimensions = false;
+
     private float width = 1;
 
     private float height = 1;
@@ -98,6 +100,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
     public AdvancedPathNavigate(final Mob entity, final Level world, MovementType type) {
         this(entity, world, type, 1, 1);
+        overrideDefaultDimensions = false;
     }
 
     public AdvancedPathNavigate(final Mob entity, final Level world, MovementType type, float width, float height) {
@@ -128,6 +131,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
         this.width = width;
         this.height = height;
         this.stuckHandler = stuckHandler;
+        overrideDefaultDimensions = true;
     }
 
     @Override
@@ -247,9 +251,15 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
     @Override
     public void tick() {
-        nodeEvaluator.entityWidth = Mth.floor(width + 1.0F);
-        nodeEvaluator.entityHeight = Mth.floor(height + 1.0F);
-        nodeEvaluator.entityDepth = Mth.floor(width + 1.0F);
+        if(overrideDefaultDimensions){
+            nodeEvaluator.entityWidth = Mth.floor(width + 1.0F);
+            nodeEvaluator.entityHeight = Mth.floor(height + 1.0F);
+            nodeEvaluator.entityDepth = Mth.floor(width + 1.0F);
+        }else{
+            nodeEvaluator.entityWidth = Mth.floor(ourEntity.getBbWidth() + 1.0F);
+            nodeEvaluator.entityHeight = Mth.floor(ourEntity.getBbHeight() + 1.0F);
+            nodeEvaluator.entityDepth = Mth.floor(ourEntity.getBbWidth() + 1.0F);
+        }
         if (desiredPosTimeout > 0) {
             if (desiredPosTimeout-- <= 0) {
                 desiredPos = null;

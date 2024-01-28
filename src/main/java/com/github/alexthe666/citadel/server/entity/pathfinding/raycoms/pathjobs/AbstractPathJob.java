@@ -126,6 +126,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
     private int minY;
     private double maxJumpHeight = MAX_JUMP_HEIGHT;
 
+    private int maxNavigableGroundDist = 1;
+
     /**
      * AbstractPathJob constructor.
      *
@@ -180,6 +182,9 @@ public abstract class AbstractPathJob implements Callable<Path> {
         if (entity instanceof IPassabilityNavigator) {
             passabilityNavigator = (IPassabilityNavigator) entity;
             maxRange = passabilityNavigator.maxSearchNodes();
+        }
+        if(entity instanceof ITallWalker tallWalker){
+            maxNavigableGroundDist = tallWalker.getMaxNavigableDistanceToGround();
         }
         maxJumpHeight = (float) Math.floor(entity.maxUpStep() - 0.2F) + 1.3F;
         this.entity = new WeakReference<>(entity);
@@ -1015,24 +1020,26 @@ public abstract class AbstractPathJob implements Callable<Path> {
         }
 
         //  Do we have something to stand on in the target space?
-        final BlockState below = world.getBlockState(pos.below());
-        if (pathingOptions.isFlying()) {
-            final SurfaceType flyability = isFlyable(below, pos, parent);
-            if (flyability == SurfaceType.FLYABLE) {
-                return pos.getY();
-            } else if (flyability == SurfaceType.NOT_PASSABLE) {
-                return -1;
-            }
-        } else {
-            final SurfaceType walkability = isWalkableSurface(below, pos);
-            if (walkability == SurfaceType.WALKABLE) {
-                //  Level path
-                return pos.getY();
-            } else if (walkability == SurfaceType.NOT_PASSABLE) {
-                return -1;
+        int i = 0;
+        BlockState below = null;
+        SurfaceType lastSurfaceType = null;
+        while(i < maxNavigableGroundDist){
+            i++;
+            below = world.getBlockState(pos.below(i));
+            if (pathingOptions.isFlying()) {
+                lastSurfaceType = isFlyable(below, pos, parent);
+                if (lastSurfaceType == SurfaceType.FLYABLE) {
+                    return pos.getY();
+                }
+            } else {
+                lastSurfaceType = isWalkableSurface(below, pos);
+                if (lastSurfaceType == SurfaceType.WALKABLE) {
+                    //  Level path
+                    return pos.getY();
+                }
             }
         }
-        return handleNotStanding(parent, pos, below);
+        return lastSurfaceType != SurfaceType.NOT_PASSABLE && below != null ? handleNotStanding(parent, pos, below) : -1;
     }
 
     private int handleNotStanding(@Nullable final MNode parent, final BlockPos pos, final BlockState below) {
