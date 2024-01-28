@@ -335,7 +335,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
             bs = down;
             down = world.getBlockState(pos.below());
 
-            if (pos.getY() < 0) {
+            if (pos.getY() < world.getMinBuildHeight()) {
                 return entity.blockPosition();
             }
         }
