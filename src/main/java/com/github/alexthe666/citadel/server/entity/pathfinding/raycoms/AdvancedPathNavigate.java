@@ -324,10 +324,11 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
             pathResult = null;
         }
         // Make sure the entity isn't sleeping, tamed or chained when checking if it's stuck
-        if (this.mob instanceof TamableAnimal) {
-            if (this.mob instanceof IAdvancedPathingMob advancedPathingMob && advancedPathingMob.stopTickingPathing()) {
-                return;
-            }
+        if (this.mob instanceof TamableAnimal tamableAnimal && tamableAnimal.isInSittingPose()) {
+            return;
+        }
+        if (this.mob instanceof IAdvancedPathingMob advancedPathingMob && advancedPathingMob.stopTickingPathing()) {
+            return;
         }
 
         stuckHandler.checkStuck(this);

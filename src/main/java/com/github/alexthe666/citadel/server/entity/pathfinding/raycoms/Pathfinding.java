@@ -10,8 +10,6 @@ import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.*;
 
 
@@ -37,7 +35,7 @@ public final class Pathfinding {
      */
     public static ThreadPoolExecutor getExecutor() {
         if (executor == null) {
-            executor = new ThreadPoolExecutor(1, PathfindingConstants.pathfindingThreads, 10, TimeUnit.SECONDS, jobQueue, new IafThreadFactory());
+            executor = new ThreadPoolExecutor(1, PathfindingConstants.pathfindingThreads, 10, TimeUnit.SECONDS, jobQueue, new CitadelThreadFactory());
         }
         return executor;
     }
@@ -45,7 +43,7 @@ public final class Pathfinding {
     /**
      * Ice and Fire specific thread factory.
      */
-    public static class IafThreadFactory implements ThreadFactory {
+    public static class CitadelThreadFactory implements ThreadFactory {
         /**
          * Ongoing thread IDs.
          */
@@ -64,14 +62,14 @@ public final class Pathfinding {
                     throw new RuntimeException(String.format("Couldn't join threads within timeout range. Tried joining '%s' on '%s'", Thread.currentThread().getName(), workqueue.name()));
                 }).join();
             }
-            final Thread thread = new Thread(runnable, "Ice and Fire Pathfinding Worker #" + (id++));
+            final Thread thread = new Thread(runnable, "Citadel Pathfinding Worker #" + (id++));
             thread.setDaemon(true);
             thread.setPriority(Thread.MAX_PRIORITY);
             if (thread.getContextClassLoader() != classLoader) {
-                Citadel.LOGGER.info("Corrected CCL of new Ice and Fire Pathfinding Thread, was: " + thread.getContextClassLoader().toString());
+                Citadel.LOGGER.info("Corrected CCL of new Citadel Pathfinding Thread, was: " + thread.getContextClassLoader().toString());
                 thread.setContextClassLoader(classLoader);
             }
-            thread.setUncaughtExceptionHandler((thread1, throwable) -> Citadel.LOGGER.error("Ice and Fire Pathfinding Thread errored! ", throwable));
+            thread.setUncaughtExceptionHandler((thread1, throwable) -> Citadel.LOGGER.error("Citadel Pathfinding Thread errored! ", throwable));
             return thread;
         }
     }

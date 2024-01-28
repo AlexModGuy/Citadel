@@ -140,7 +140,7 @@ public class ClientProxy extends ServerProxy {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderLevelStageEvent event) {
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES && Pathfinding.isDebug()) {
+        if (Pathfinding.isDebug()) {
             WorldEventContext.INSTANCE.renderWorldLastEvent(event);
         }
     }
