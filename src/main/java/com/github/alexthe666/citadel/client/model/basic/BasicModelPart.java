@@ -3,6 +3,7 @@ package com.github.alexthe666.citadel.client.model.basic;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.util.RandomSource;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -189,8 +190,8 @@ public class BasicModelPart {
         return this;
     }
 
-    public BasicModelPart.ModelBox getRandomCube(Random randomIn) {
-        return this.cubeList.get(randomIn.nextInt(this.cubeList.size()));
+    public BasicModelPart.ModelBox getRandomCube(RandomSource randomIn) {
+        return this.cubeList.size() > 0 ? this.cubeList.get(randomIn.nextInt(this.cubeList.size())) : null;
     }
 
     @OnlyIn(Dist.CLIENT)
