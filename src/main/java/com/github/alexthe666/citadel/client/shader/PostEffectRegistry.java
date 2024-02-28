@@ -5,7 +5,9 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.resources.ResourceLocation;
 
@@ -61,11 +63,6 @@ public class PostEffectRegistry {
         }
     }
 
-    public static PostChain getPostChainFor(ResourceLocation resourceLocation) {
-        PostEffect effect = postEffects.get(resourceLocation);
-        return effect == null ? null : effect.getPostChain();
-    }
-
     public static RenderTarget getRenderTargetFor(ResourceLocation resourceLocation) {
         PostEffect effect = postEffects.get(resourceLocation);
         return effect == null ? null : effect.getRenderTarget();
@@ -83,22 +80,22 @@ public class PostEffectRegistry {
         RenderSystem.enableDepthTest();
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         for (PostEffect postEffect : postEffects.values()) {
-            if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
+            if (postEffect.postChain != null && postEffect.isEnabled()) {
                 postEffect.getRenderTarget().blitToScreen(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), false);
-                postEffect.setEnabled(false);
                 postEffect.getRenderTarget().clear(Minecraft.ON_OSX);
                 Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
+                postEffect.setEnabled(false);
             }
         }
         RenderSystem.disableBlend();
         RenderSystem.defaultBlendFunc();
     }
 
-    public static void copyDepth(RenderTarget mainTarget) {
+    public static void clearAndBindWrite(RenderTarget mainTarget) {
         for (PostEffect postEffect : postEffects.values()) {
-            if (postEffect.getPostChain() != null && postEffect.isEnabled()) {
+            if (postEffect.isEnabled() && postEffect.postChain != null) {
                 postEffect.getRenderTarget().clear(Minecraft.ON_OSX);
-                postEffect.getRenderTarget().copyDepthFrom(mainTarget);
+                mainTarget.bindWrite(false);
             }
         }
     }
@@ -111,7 +108,6 @@ public class PostEffectRegistry {
             }
         }
     }
-
 
     private static class PostEffect {
         private PostChain postChain;

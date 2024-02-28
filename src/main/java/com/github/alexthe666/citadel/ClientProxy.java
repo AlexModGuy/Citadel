@@ -13,6 +13,8 @@ import com.github.alexthe666.citadel.client.gui.GuiCitadelPatreonConfig;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
 import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
+import com.github.alexthe666.citadel.client.shader.CitadelInternalShaders;
+import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
@@ -27,6 +29,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.*;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -43,8 +46,10 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.awt.*;
 import java.io.IOException;
@@ -61,21 +66,27 @@ public class ClientProxy extends ServerProxy {
     private Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
     private ItemStack lastHoveredItem = null;
     private Tetris aprilFoolsTetrisGame = null;
+    public static final ResourceLocation RAINBOW_AURA_POST_SHADER = new ResourceLocation("citadel:shaders/post/rainbow_aura.json");
 
     public ClientProxy() {
         super();
     }
 
     public void onClientInit() {
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         try {
             CITADEL_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/citadel/models/citadel_model"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        bus.addListener(this::registerShaders);
         BlockEntityRenderers.register(Citadel.LECTERN_BE.get(), CitadelLecternRenderer::new);
         CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station"), new int[]{}));
         CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
         CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
+        if(CitadelConstants.debugShaders()){
+            PostEffectRegistry.registerEffect(RAINBOW_AURA_POST_SHADER);
+        }
     }
 
 
@@ -142,6 +153,14 @@ public class ClientProxy extends ServerProxy {
     public void renderWorldLastEvent(RenderLevelStageEvent event) {
         if (Pathfinding.isDebug()) {
             WorldEventContext.INSTANCE.renderWorldLastEvent(event);
+        }
+    }
+
+    private void registerShaders(final RegisterShadersEvent e) {
+        try {
+            e.registerShader(new ShaderInstance(e.getResourceProvider(), new ResourceLocation("citadel:rendertype_rainbow_aura"), DefaultVertexFormat.POSITION_COLOR_TEX), CitadelInternalShaders::setRenderTypeRainbowAura);
+        }catch (Exception exception){
+            exception.printStackTrace();
         }
     }
 

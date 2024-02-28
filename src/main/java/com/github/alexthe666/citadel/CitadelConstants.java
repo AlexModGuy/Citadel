@@ -23,4 +23,7 @@ public class CitadelConstants {
         return aprilFools && ServerConfig.aprilFools;
     }
 
+    public static boolean debugShaders(){
+        return false;
+    }
 }

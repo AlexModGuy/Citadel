@@ -51,7 +51,7 @@ public class LevelRendererMixin {
                     shift = At.Shift.BEFORE
             ))
     private void citadel_renderLevel_beforeEntities(PoseStack poseStack, float f, long l, boolean b, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
-        PostEffectRegistry.copyDepth(this.minecraft.getMainRenderTarget());
+        PostEffectRegistry.clearAndBindWrite(this.minecraft.getMainRenderTarget());
     }
 
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",
@@ -97,8 +97,8 @@ public class LevelRendererMixin {
         //default implementation does not lerp the time of day
         float lerpBy = Citadel.PROXY.isGamePaused() ? 0F : partialTicks;
         float lerpedDayTime = (instance.dimensionType().fixedTime().orElse(instance.dayTime()) + lerpBy) / 24000.0F;
-        double d0 = Mth.frac((double)lerpedDayTime - 0.25D);
+        double d0 = Mth.frac((double) lerpedDayTime - 0.25D);
         double d1 = 0.5D - Math.cos(d0 * Math.PI) / 2.0D;
-        return (float)(d0 * 2.0D + d1) / 3.0F;
+        return (float) (d0 * 2.0D + d1) / 3.0F;
     }
 }
