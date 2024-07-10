@@ -17,3 +17,5 @@ description='''A shared code library for many of Alexthe666's mods. Code used fr
     versionRange="[47.0.34,)"
     ordering="NONE"
     side="BOTH"
+[[mixins]]
+config = "citadel.mixins.json"
