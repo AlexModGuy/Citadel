@@ -100,7 +100,6 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
     public AdvancedPathNavigate(final Mob entity, final Level world, MovementType type) {
         this(entity, world, type, 1, 1);
-        overrideDefaultDimensions = false;
     }
 
     public AdvancedPathNavigate(final Mob entity, final Level world, MovementType type, float width, float height) {
@@ -131,7 +130,6 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
         this.width = width;
         this.height = height;
         this.stuckHandler = stuckHandler;
-        overrideDefaultDimensions = true;
     }
 
     @Override
@@ -720,7 +718,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
             }
         }
 
-        this.maxDistanceToWaypoint = Math.max(1.2F, this.mob.getBbWidth());
+        this.maxDistanceToWaypoint = calculateMaxDistanceToWaypoint();
         boolean wentAhead = false;
         boolean isTracking = AbstractPathJob.trackingMap.containsValue(ourEntity.getUUID());
 
@@ -790,6 +788,10 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
             AbstractPathJob.synchToClient(reached, ourEntity);
             reached.clear();
         }
+    }
+
+    protected float calculateMaxDistanceToWaypoint() {
+        return this.mob.getBbWidth() > 0.75F ? this.mob.getBbWidth() / 2.0F : 0.75F - this.mob.getBbWidth() / 2.0F;
     }
 
     /**
@@ -900,6 +902,4 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
     public static boolean isEntityBlockLoaded(final LevelAccessor world, final BlockPos pos) {
         return WorldChunkUtil.isEntityBlockLoaded(world, pos);
     }
-
-
 }

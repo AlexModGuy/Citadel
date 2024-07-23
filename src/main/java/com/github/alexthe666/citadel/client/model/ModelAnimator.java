@@ -161,7 +161,8 @@ public class ModelAnimator {
                     box.rotationPointZ += transform.getOffsetZ();
                 }
             } else {
-                float tick = (animationTick - this.prevTempTick + Minecraft.getInstance().getFrameTime()) / (this.tempTick - this.prevTempTick);
+                float frameTime = Minecraft.getInstance().isPaused() ? 0.0F : Minecraft.getInstance().getFrameTime();
+                float tick = (animationTick - this.prevTempTick + frameTime) / (this.tempTick - this.prevTempTick);
                 float inc = Mth.sin((float) (tick * Math.PI / 2.0F)), dec = 1.0F - inc;
                 for (AdvancedModelBox box : this.prevTransformMap.keySet()) {
                     Transform transform = this.prevTransformMap.get(box);

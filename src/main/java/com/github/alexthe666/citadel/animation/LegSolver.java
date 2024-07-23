@@ -88,7 +88,8 @@ public class LegSolver {
             if(shape.isEmpty()){
                 return 1.0F;
             }
-            Optional<Vec3> closest = shape.closestPointTo(position);
+            Vec3 vec3 = new Vec3(position.x % 1.0D, 1.0D, position.z % 1.0D);
+            Optional<Vec3> closest = shape.closestPointTo(vec3);
             if(closest.isEmpty()){
                 return 1.0F;
             }else{
@@ -96,6 +97,7 @@ public class LegSolver {
                 return position.y < 0.0 ? closestY : 1.0F - closestY;
             }
         }
+
         protected float getFallSpeed() {
             return 0.25F;
         }
