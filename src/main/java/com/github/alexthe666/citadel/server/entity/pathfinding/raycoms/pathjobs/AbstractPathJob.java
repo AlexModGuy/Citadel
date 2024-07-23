@@ -668,7 +668,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
         }
 
         // Walk downwards MNode if passable
-        if ((isPassableBBFull(currentNode.pos.below(), currentNode.parent) && (!currentNode.isSwimming() && isLiquid(world.getBlockState(currentNode.pos.below()))))) {
+        if ((isPassable(currentNode.pos.below(), currentNode.parent) && (!currentNode.isSwimming() && isLiquid(world.getBlockState(currentNode.pos.below()))))) {
             walk(currentNode, BLOCKPOS_DOWN);
         }
 
@@ -1020,7 +1020,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
         //  Now check the block we want to move to
         final BlockState target = world.getBlockState(pos);
-        if (parent != null && !isPassableBBFull(pos, parent)) {
+        if (parent != null && !isPassableBB(parent.pos, pos, parent)) {
             return handleTargetNotPassable(parent, pos, target);
         }
 
@@ -1214,7 +1214,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
             localPos = pos.above();
         }
 
-        if (parent == null || !isPassableBBFull(pos.above(), parent)) {
+        if (parent == null || !isPassableBB(parent.pos, pos.above(), parent)) {
             final VoxelShape bb1 = world.getBlockState(pos.below()).getBlockSupportShape(world, pos.below());
             final VoxelShape bb2 = world.getBlockState(pos.above()).getBlockSupportShape(world, pos.above());
             if ((pos.above().getY() + getStartY(bb2, 1)) - (pos.below().getY() + getEndY(bb1, 0)) < 2) {
@@ -1353,6 +1353,21 @@ public abstract class AbstractPathJob implements Callable<Path> {
                     if (!isPassable(pos.offset(i, j, k), parent)) {
                         return false;
                     }
+                }
+            }
+        }
+        return true;
+    }
+
+    protected boolean isPassableBB(final BlockPos parentPos, final BlockPos pos, MNode parent) {
+        Direction facingDir = getXZFacing(parentPos, pos);
+        if (facingDir == Direction.DOWN || facingDir == Direction.UP)
+            return false;
+        facingDir = facingDir.getClockWise();
+        for (int i = entitySizeXZStart; i <= entitySizeXZEnd; i++) {
+            for (int j = 0; j < entitySizeY; j++) {
+                if (!isPassable(pos.relative(facingDir, i).above(j), parent)) {
+                    return false;
                 }
             }
         }

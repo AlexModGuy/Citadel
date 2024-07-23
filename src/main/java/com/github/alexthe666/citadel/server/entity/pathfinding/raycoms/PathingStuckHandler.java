@@ -29,96 +29,96 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * The distance at which we consider a target to arrive
      */
-    private static final double MIN_TARGET_DIST = 3;
+    protected static final double MIN_TARGET_DIST = 3;
 
     /**
      * All directions.
      */
-    private final List<Direction> directions = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
+    protected final List<Direction> directions = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
 
     /**
      * Constants related to tp.
      */
-    private static final int MIN_TP_DELAY    = 120 * 20;
-    private static final int MIN_DIST_FOR_TP = 10;
+    protected static final int MIN_TP_DELAY    = 120 * 20;
+    protected static final int MIN_DIST_FOR_TP = 10;
 
     /**
      * Amount of path steps allowed to teleport on stuck, 0 = disabled
      */
-    private int teleportRange = 0;
+    protected int teleportRange = 0;
 
     /**
      * Max timeout per block to go, default = 5sec per block
      */
-    private int timePerBlockDistance = 100;
+    protected int timePerBlockDistance = 100;
 
     /**
      * The current stucklevel, determines actions taken
      */
-    private int stuckLevel = 0;
+    protected int stuckLevel = 0;
 
     /**
      * Global timeout counter, used to determine when we're completly stuck
      */
-    private int globalTimeout = 0;
+    protected int globalTimeout = 0;
 
     /**
      * The previously desired go to position of the entity
      */
-    private BlockPos prevDestination = BlockPos.ZERO;
+    protected BlockPos prevDestination = BlockPos.ZERO;
 
     /**
      * Whether breaking blocks is enabled
      */
-    private boolean canBreakBlocks = false;
+    protected boolean canBreakBlocks = false;
 
     /**
      * Whether placing ladders is enabled
      */
-    private boolean canPlaceLadders = false;
+    protected boolean canPlaceLadders = false;
 
     /**
      * Whether leaf bridges are enabled
      */
-    private boolean canBuildLeafBridges = false;
+    protected boolean canBuildLeafBridges = false;
 
     /**
      * Whether teleport to goal at full stuck is enabled
      */
-    private boolean canTeleportGoal = false;
+    protected boolean canTeleportGoal = false;
 
     /**
      * Whether take damage on stuck is enabled
      */
-    private boolean takeDamageOnCompleteStuck = false;
-    private float   damagePct                 = 0.2f;
+    protected boolean takeDamageOnCompleteStuck = false;
+    protected float   damagePct                 = 0.2f;
 
     /**
      * BLock break range on complete stuck
      */
-    private int completeStuckBlockBreakRange = 0;
+    protected int completeStuckBlockBreakRange = 0;
 
     /**
      * Temporary comparison variables to compare with last update
      */
-    private boolean hadPath         = false;
-    private int     lastPathIndex   = -1;
-    private int     progressedNodes = 0;
+    protected boolean hadPath         = false;
+    protected int     lastPathIndex   = -1;
+    protected int     progressedNodes = 0;
 
     /**
      * Delay before taking unstuck actions in ticks, default 60 seconds
      */
-    private int delayBeforeActions       = 60 * 20;
-    private int delayToNextUnstuckAction = delayBeforeActions;
+    protected int delayBeforeActions       = 60 * 20;
+    protected int delayToNextUnstuckAction = delayBeforeActions;
 
     /**
      * The start position of moving away unstuck
      */
-    private BlockPos moveAwayStartPos = BlockPos.ZERO;
+    protected BlockPos moveAwayStartPos = BlockPos.ZERO;
 
-    private final Random rand = new Random();
+    protected final Random rand = new Random();
 
-    private PathingStuckHandler()
+    protected PathingStuckHandler()
     {
     }
 
@@ -208,7 +208,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Resets global stuck timers
      */
-    private void resetGlobalStuckTimers()
+    protected void resetGlobalStuckTimers()
     {
         globalTimeout = 0;
         prevDestination = BlockPos.ZERO;
@@ -218,7 +218,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Final action when completly stuck before resetting stuck handler and path
      */
-    private void completeStuckAction(final AbstractAdvancedPathNavigate navigator) {
+    public void completeStuckAction(final AbstractAdvancedPathNavigate navigator) {
         final BlockPos desired = navigator.getDesiredPos();
         final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
@@ -256,7 +256,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Tries unstuck options depending on the level
      */
-    private void tryUnstuck(final AbstractAdvancedPathNavigate navigator)
+    public void tryUnstuck(final AbstractAdvancedPathNavigate navigator)
     {
         if (delayToNextUnstuckAction-- > 0)
         {
@@ -326,7 +326,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Random chance to decrease to a previous level of stuck
      */
-    private void chanceStuckLevel()
+    protected void chanceStuckLevel()
     {
         stuckLevel++;
         // 20 % to decrease to the previous level again
@@ -339,7 +339,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Resets timers
      */
-    private void resetStuckTimers()
+    protected void resetStuckTimers()
     {
         delayToNextUnstuckAction = delayBeforeActions;
         lastPathIndex = -1;
@@ -355,7 +355,7 @@ public class PathingStuckHandler implements IStuckHandler
      * @param start  the position the entity is at.
      * @param facing the direction the goal is in.
      */
-    private void breakBlocksAhead(final Level world, final BlockPos start, final Direction facing) {
+    public void breakBlocksAhead(final Level world, final BlockPos start, final Direction facing) {
         // Above entity
         if (!world.isEmptyBlock(start.above(3))) {
             setAirIfPossible(world, start.above(3));
@@ -380,7 +380,7 @@ public class PathingStuckHandler implements IStuckHandler
      * @param world the world the block is in.
      * @param pos   the pos the block is at.
      */
-    private void setAirIfPossible(final Level world, final BlockPos pos) {
+    protected void setAirIfPossible(final Level world, final BlockPos pos) {
         final Block blockAtPos = world.getBlockState(pos).getBlock();
         world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
     }
@@ -390,7 +390,7 @@ public class PathingStuckHandler implements IStuckHandler
      *
      * @param navigator navigator to use
      */
-    private void placeLadders(final AbstractAdvancedPathNavigate navigator) {
+    protected void placeLadders(final AbstractAdvancedPathNavigate navigator) {
         final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
@@ -410,7 +410,7 @@ public class PathingStuckHandler implements IStuckHandler
      *
      * @param navigator navigator to use
      */
-    private void placeLeaves(final AbstractAdvancedPathNavigate navigator) {
+    protected void placeLeaves(final AbstractAdvancedPathNavigate navigator) {
         final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
@@ -438,7 +438,7 @@ public class PathingStuckHandler implements IStuckHandler
      *
      * @param navigator navigator to use
      */
-    private void breakBlocks(final AbstractAdvancedPathNavigate navigator) {
+    public void breakBlocks(final AbstractAdvancedPathNavigate navigator) {
         final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
@@ -453,7 +453,7 @@ public class PathingStuckHandler implements IStuckHandler
      * @param world world to use
      * @param pos   position to set
      */
-    private void tryPlaceLadderAt(final Level world, final BlockPos pos) {
+    protected void tryPlaceLadderAt(final Level world, final BlockPos pos) {
         final BlockState state = world.getBlockState(pos);
         if (state.getBlock() != Blocks.LADDER && !state.canOcclude() && world.getFluidState(pos).isEmpty()) {
             for (final Direction dir : directions) {
