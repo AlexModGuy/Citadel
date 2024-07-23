@@ -1108,7 +1108,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
             return -1;
         }*/
         //  Check for headroom in the target space
-        if (!isPassable(pos.above(2), false, parent)) {
+        if (!isPassable(pos.above(2), parent)) {
             final VoxelShape bb1 = world.getBlockState(pos).getBlockSupportShape(world, pos);
             final VoxelShape bb2 = world.getBlockState(pos.above(2)).getBlockSupportShape(world, pos.above(2));
             if ((pos.above(2).getY() + getStartY(bb2, 1)) - (pos.getY() + getEndY(bb1, 0)) < 2) {
@@ -1117,7 +1117,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
         }
 
         //  Check for jump room from the origin space
-        if (!isPassable(parent.pos.above(2), false, parent)) {
+        if (!isPassable(parent.pos.above(2), parent)) {
             final VoxelShape bb1 = world.getBlockState(pos).getBlockSupportShape(world, pos);
             final VoxelShape bb2 = world.getBlockState(parent.pos.above(2)).getBlockSupportShape(world, parent.pos.above(2));
             if ((parent.pos.above(2).getY() + getStartY(bb2, 1)) - (pos.getY() + getEndY(bb1, 0)) < 2) {
@@ -1228,7 +1228,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
                 return false;
             }
 
-            return isLiquid(hereState) && !isPassable(pos, false, parent);
+            return isLiquid(hereState) && !isPassable(pos, parent);
         }
         return false;
     }
