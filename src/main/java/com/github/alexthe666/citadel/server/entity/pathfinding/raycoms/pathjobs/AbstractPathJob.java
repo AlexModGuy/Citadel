@@ -102,7 +102,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
     IPassabilityNavigator passabilityNavigator;
     //  May be faster, but can produce strange results
     private boolean allowJumpPointSearchTypeWalk;
-    private float entitySizeXZ = 0.5F;
+    private int entitySizeXZStart = 0;
+    private int entitySizeXZEnd = 1;
     private int entitySizeY = 1;
     /**
      * The cost values for certain nodes.
@@ -455,10 +456,18 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
     public void setEntitySizes(LivingEntity entity) {
         if (entity instanceof ICustomSizeNavigator) {
-            entitySizeXZ = ((ICustomSizeNavigator) entity).getXZNavSize();
+            entitySizeXZStart = -(int) ((ICustomSizeNavigator) entity).getXZNavSize();
+            entitySizeXZEnd = (int) ((ICustomSizeNavigator) entity).getXZNavSize();
             entitySizeY = ((ICustomSizeNavigator) entity).getYNavSize();
         } else {
-            entitySizeXZ = (float)Math.ceil(entity.getBbWidth()) * 0.5F;
+            float bbWidth = entity.getBbWidth();
+            if (bbWidth <= 1.0F) {
+                entitySizeXZStart = 0;
+                entitySizeXZEnd = 1;
+            } else {
+                entitySizeXZStart = -(int) Math.floor(entity.getBbWidth() / 2.0F);
+                entitySizeXZEnd = (int) Math.floor(entity.getBbWidth() / 2.0F);
+            }
             entitySizeY = Mth.ceil(entity.getBbHeight());
         }
         //TODO:
@@ -659,8 +668,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
         }
 
         // Walk downwards MNode if passable
-        if ((isPassableBBFull(currentNode.pos.below(), currentNode.parent) && (!currentNode.isSwimming() && isLiquid(world.getBlockState(currentNode.pos.below()))))
-                || currentNode.parent != null && isPassableBBDown(currentNode.parent.pos, currentNode.pos.below(), currentNode.parent)) {
+        if ((isPassableBBFull(currentNode.pos.below(), currentNode.parent) && (!currentNode.isSwimming() && isLiquid(world.getBlockState(currentNode.pos.below()))))) {
             walk(currentNode, BLOCKPOS_DOWN);
         }
 
@@ -1012,7 +1020,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
         //  Now check the block we want to move to
         final BlockState target = world.getBlockState(pos);
-        if (parent != null && !isPassableBB(parent.pos, pos, parent)) {
+        if (parent != null && !isPassableBBFull(pos, parent)) {
             return handleTargetNotPassable(parent, pos, target);
         }
 
@@ -1206,7 +1214,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
             localPos = pos.above();
         }
 
-        if (parent == null || !isPassableBB(parent.pos, pos.above(), parent)) {
+        if (parent == null || !isPassableBBFull(pos.above(), parent)) {
             final VoxelShape bb1 = world.getBlockState(pos.below()).getBlockSupportShape(world, pos.below());
             final VoxelShape bb2 = world.getBlockState(pos.above()).getBlockSupportShape(world, pos.above());
             if ((pos.above().getY() + getStartY(bb2, 1)) - (pos.below().getY() + getEndY(bb1, 0)) < 2) {
@@ -1330,7 +1338,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
             return false;
         }
         if ((shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1)) {
-            if (passabilityNavigator != null && passabilityNavigator.isBlockExplicitlyPassable(state, pos, pos)){
+            if (passabilityNavigator != null && passabilityNavigator.isBlockExplicitlyPassable(state, pos, pos)) {
                 return isPassable(state, pos, parent);
             }
             return true;
@@ -1339,27 +1347,12 @@ public abstract class AbstractPathJob implements Callable<Path> {
     }
 
     protected boolean isPassableBBFull(final BlockPos pos, MNode parent) {
-        for (int i = (int) Math.ceil(-entitySizeXZ); i < (int) Math.ceil(entitySizeXZ); i++) {
+        for (int i = entitySizeXZStart; i <= entitySizeXZEnd; i++) {
             for (int j = 0; j < entitySizeY; j++) {
-                for (int k = -(int) Math.ceil(-entitySizeXZ); k < (int) Math.ceil(entitySizeXZ); k++) {
+                for (int k = entitySizeXZStart; k <= entitySizeXZEnd; k++) {
                     if (!isPassable(pos.offset(i, j, k), parent)) {
                         return false;
                     }
-                }
-            }
-        }
-        return true;
-    }
-
-    protected boolean isPassableBB(final BlockPos parentPos, final BlockPos pos, MNode parent) {
-        Direction facingDir = getXZFacing(parentPos, pos);
-        if (facingDir == Direction.DOWN || facingDir == Direction.UP)
-            return false;
-        facingDir = facingDir.getClockWise();
-        for (int i = (int) Math.ceil(-entitySizeXZ); i < (int) Math.ceil(entitySizeXZ); i++) {
-            for (int j = 0; j < entitySizeY; j++) {
-                if (!isPassable(pos.relative(facingDir, i).above(j), parent)) {
-                    return false;
                 }
             }
         }
@@ -1374,7 +1367,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
         if (facingDir == Direction.DOWN || facingDir == Direction.UP)
             return false;
         facingDir = facingDir.getClockWise();
-        for (int i = (int) Math.ceil(-entitySizeXZ); i < (int) Math.ceil(entitySizeXZ); i++) {
+        for (int i = entitySizeXZStart; i <= entitySizeXZEnd; i++) {
             for (int j = 0; j < entitySizeY; j++) {
                 if (!isPassable(pos.relative(facingDir, i).above(j), parent) || pos.getY() <= parentPos.getY()) {
                     return false;
