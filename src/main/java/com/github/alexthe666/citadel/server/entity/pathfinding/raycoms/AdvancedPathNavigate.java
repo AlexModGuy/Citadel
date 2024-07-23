@@ -304,7 +304,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
                 this.followThePath();
             } else if (this.path != null && !this.path.isDone()) {
                 Vec3 vector3d = this.getTempMobPos();
-                Vec3 vector3d1 = this.path.getNextEntityPos(this.mob);
+                Vec3 vector3d1 = this.getEntityPosAtNode(this.path.getNextNodeIndex());
                 if (vector3d.y > vector3d1.y && !this.mob.onGround() && Mth.floor(vector3d.x) == Mth.floor(vector3d1.x) && Mth.floor(vector3d.z) == Mth.floor(vector3d1.z)) {
                     this.path.advance();
                 }
@@ -312,7 +312,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
             DebugPackets.sendPathFindingPacket(this.level, this.mob, this.path, this.maxDistanceToWaypoint);
             if (!this.isDone()) {
-                Vec3 vector3d2 = this.path.getNextEntityPos(this.mob);
+                Vec3 vector3d2 = this.getEntityPosAtNode(this.path.getNextNodeIndex());
                 BlockPos blockpos = BlockPos.containing(vector3d2);
                 if (isEntityBlockLoaded(this.level, blockpos)) {
                     this.mob.getMoveControl()
@@ -614,7 +614,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
     }
 
     private boolean handlePathPointOnLadder(final PathPointExtended pEx) {
-        Vec3 vec3 = this.getPath().getNextEntityPos(this.ourEntity);
+        Vec3 vec3 = this.getEntityPosAtNode(this.path.getNextNodeIndex());
         final BlockPos entityPos = new BlockPos(this.ourEntity.blockPosition());
         if (vec3.distanceToSqr(ourEntity.getX(), vec3.y, ourEntity.getZ()) < 0.6 && Math.abs(vec3.y - entityPos.getY()) <= 2.0) {
             //This way he is less nervous and gets up the ladder
@@ -677,7 +677,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
         this.getPath().setNextNodeIndex(oldIndex);
 
-        Vec3 vec3d = this.getPath().getNextEntityPos(this.ourEntity);
+        Vec3 vec3d = this.getEntityPosAtNode(path.getNextNodeIndex());
 
         if (vec3d.distanceToSqr(new Vec3(ourEntity.getX(), vec3d.y, ourEntity.getZ())) < 0.1
             && Math.abs(ourEntity.getY() - vec3d.y) < 0.5) {
@@ -686,7 +686,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
                 return true;
             }
 
-            vec3d = this.getPath().getNextEntityPos(this.ourEntity);
+            vec3d = this.getEntityPosAtNode(path.getNextNodeIndex());
         }
 
         this.ourEntity.getMoveControl().setWantedPosition(vec3d.x, vec3d.y, vec3d.z, getSpeedFactor());
@@ -728,7 +728,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
         final HashSet<BlockPos> reached = new HashSet<>();
         // Look at multiple points, incase we're too fast
         for (int i = this.path.getNextNodeIndex(); i < Math.min(this.path.getNodeCount(), this.path.getNextNodeIndex() + 4); i++) {
-            Vec3 next = this.path.getEntityPosAtNode(this.mob, i);
+            Vec3 next = this.getEntityPosAtNode(i);
             if (Math.abs(this.mob.getX() - next.x) < (double) this.maxDistanceToWaypoint - Math.abs(this.mob.getY() - (next.y)) * 0.1
                 && Math.abs(this.mob.getZ() - next.z) < (double) this.maxDistanceToWaypoint - Math.abs(this.mob.getY() - (next.y)) * 0.1 &&
                     (Math.abs(this.mob.getY() - next.y) <= Math.min(1.0F, Math.ceil(this.mob.getBbHeight() / 2.0F)) ||
@@ -763,8 +763,8 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
         }
 
         // Check some past nodes case we fell behind.
-        final Vec3 curr = this.path.getEntityPosAtNode(this.mob, curNode - 1);
-        final Vec3 next = this.path.getEntityPosAtNode(this.mob, curNode);
+        final Vec3 curr = this.getEntityPosAtNode(curNode - 1);
+        final Vec3 next = this.getEntityPosAtNode(curNode);
 
         final Vec3i currI = new Vec3i((int) Math.round(curr.x), (int) Math.round(curr.y), (int) Math.round(curr.z));
         final Vec3i nextI = new Vec3i((int) Math.round(next.x), (int) Math.round(next.y), (int) Math.round(next.z));
@@ -772,7 +772,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
         if (mob.blockPosition().closerThan(currI, 2.0) && mob.blockPosition().closerThan(nextI, 2.0)) {
             int currentIndex = curNode - 1;
             while (currentIndex > 0) {
-                final Vec3 tempoPos = this.path.getEntityPosAtNode(this.mob, currentIndex);
+                final Vec3 tempoPos = this.getEntityPosAtNode(currentIndex);
                 final Vec3i tempoPosI = new Vec3i((int) Math.round(tempoPos.x), (int) Math.round(tempoPos.y), (int) Math.round(tempoPos.z));
                 if (mob.blockPosition().closerThan(tempoPosI, 1.0)) {
                     this.path.setNextNodeIndex(currentIndex);
@@ -792,6 +792,17 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
     protected float calculateMaxDistanceToWaypoint() {
         return this.mob.getBbWidth() > 0.75F ? this.mob.getBbWidth() / 2.0F : 0.75F - this.mob.getBbWidth() / 2.0F;
+    }
+
+    public Vec3 getEntityPosAtNode(int index){
+        if(path == null){
+            return getTempMobPos();
+        }
+        Node node = path.getNode(index);
+        double d0 = (double)node.x + 0.5D;
+        double d1 = (double)node.y;
+        double d2 = (double)node.z + 0.5D;
+        return new Vec3(d0, d1, d2);
     }
 
     /**
