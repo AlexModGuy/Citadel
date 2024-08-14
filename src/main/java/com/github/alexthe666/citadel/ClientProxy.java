@@ -219,7 +219,7 @@ public class ClientProxy extends ServerProxy {
 
         @SubscribeEvent
     public void clientTick(TickEvent.ClientTickEvent event) {
-        if(event.phase == TickEvent.Phase.START && !isGamePaused()){
+        if(event.phase == TickEvent.Phase.START && !isGamePaused() && Minecraft.getInstance().isRunning() && Minecraft.getInstance().level != null && Minecraft.getInstance().player != null){
             ClientTickRateTracker.getForClient(Minecraft.getInstance()).masterTick();
             tickMouseOverAnimations();
         }

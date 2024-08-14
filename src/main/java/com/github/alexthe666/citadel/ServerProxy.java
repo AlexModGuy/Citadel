@@ -80,15 +80,19 @@ public class ServerProxy {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onServerTick(TickEvent.ServerTickEvent event) {
-        ServerTickRateTracker tickRateTracker = CitadelServerData.get(event.getServer()).getOrCreateTickRateTracker();
-        if (event.getServer() instanceof ModifiableTickRateServer modifiableServer && event.phase == TickEvent.Phase.START) {
-            long l = tickRateTracker.getServerTickLengthMs();
-            if (l == MinecraftServer.MS_PER_TICK) {
-                modifiableServer.resetGlobalTickLengthMs();
-            } else {
-                modifiableServer.setGlobalTickLengthMs(tickRateTracker.getServerTickLengthMs());
+        if(event.phase == TickEvent.Phase.START && event.getServer().isRunning()) {
+            ServerTickRateTracker tickRateTracker = CitadelServerData.get(event.getServer()).getOrCreateTickRateTracker();
+            if (event.getServer() instanceof ModifiableTickRateServer modifiableServer) {
+                long l = tickRateTracker.getServerTickLengthMs();
+                if (l == MinecraftServer.MS_PER_TICK) {
+                    modifiableServer.resetGlobalTickLengthMs();
+                } else {
+                    modifiableServer.setGlobalTickLengthMs(tickRateTracker.getServerTickLengthMs());
+                }
+                if (!event.getServer().isShutdown()) {
+                    tickRateTracker.masterTick();
+                }
             }
-            tickRateTracker.masterTick();
         }
     }
 

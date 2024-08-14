@@ -47,6 +47,9 @@ public class ClientTickRateTracker extends TickRateTracker {
 
     public float getClientTickRate(){
         float f = MS_PER_TICK;
+        if(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) {
+            return f;
+        }
         for(TickRateModifier modifier : tickRateModifierList){
             if(modifier.appliesTo(Minecraft.getInstance().level, Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ())){
                 f *= modifier.getTickRateMultiplier();
@@ -57,6 +60,9 @@ public class ClientTickRateTracker extends TickRateTracker {
 
     public float modifySoundPitch(SoundInstance soundInstance) {
         float f = 1.0F;
+        if(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null){
+            return f;
+        }
         for(TickRateModifier modifier : tickRateModifierList){
             if(modifier.appliesTo(Minecraft.getInstance().level, Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ())){
                 f /= modifier.getTickRateMultiplier();
