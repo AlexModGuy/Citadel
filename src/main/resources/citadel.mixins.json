@@ -5,13 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "citadel.refmap.json",
   "mixins": [
-    "BiomeSourceMixin",
     "ChunkGeneratorMixin",
-    "ChunkStatusMixin",
     "LevelMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
-    "MultiNoiseBiomeSourceMixin",
     "NoiseGeneratorSettingsMixin",
     "ServerLevelMixin",
     "SmithingMenuMixin"

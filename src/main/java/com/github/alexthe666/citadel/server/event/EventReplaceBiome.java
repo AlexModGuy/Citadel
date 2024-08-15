@@ -9,6 +9,7 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraftforge.eventbus.api.Event;
 
 @Event.HasResult
+@Deprecated(since = "2.6.0")
 public class EventReplaceBiome extends Event {
 
     public Holder<Biome> biomeToGenerate;

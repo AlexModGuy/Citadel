@@ -7,6 +7,7 @@ import net.minecraft.world.level.biome.Biome;
 import java.util.Map;
 import java.util.Set;
 
+@Deprecated(since = "2.6.0")
 public interface ExpandedBiomeSource {
 
     void setResourceKeyMap(Map<ResourceKey<Biome>, Holder<Biome>> map);

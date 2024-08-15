@@ -1,10 +1,10 @@
 package com.github.alexthe666.citadel.server.generation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 import net.minecraft.world.level.levelgen.SurfaceRules;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SurfaceRulesManager {
     private static final List<SurfaceRules.RuleSource> OVERWORLD_REGISTRY = new ArrayList();

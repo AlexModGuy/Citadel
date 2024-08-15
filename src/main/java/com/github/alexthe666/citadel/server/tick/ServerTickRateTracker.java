@@ -2,20 +2,16 @@ package com.github.alexthe666.citadel.server.tick;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.message.SyncClientTickRateMessage;
-import com.github.alexthe666.citadel.server.world.CitadelServerData;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifier;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifierType;
+import com.github.alexthe666.citadel.server.world.CitadelServerData;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerTickRateTracker extends TickRateTracker {
     public static final Logger LOGGER = LogManager.getLogger("citadel-server-tick");

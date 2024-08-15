@@ -1,8 +1,6 @@
 package com.github.alexthe666.citadel.client.event;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraftforge.eventbus.api.Event;
 
 public class EventRenderSplashText extends Event {

@@ -1,6 +1,5 @@
 package com.github.alexthe666.citadel.server.tick.modifier;
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;

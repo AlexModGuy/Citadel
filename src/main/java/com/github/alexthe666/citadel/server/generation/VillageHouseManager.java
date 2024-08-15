@@ -3,7 +3,6 @@ package com.github.alexthe666.citadel.server.generation;
 import com.github.alexthe666.citadel.Citadel;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;

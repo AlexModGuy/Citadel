@@ -7,7 +7,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CitadelServerData extends SavedData {
     private static Map<MinecraftServer, CitadelServerData> dataMap = new HashMap<>();

@@ -1,7 +1,6 @@
 package com.github.alexthe666.citadel.server.tick.modifier;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 public abstract class TickRateModifier {

@@ -4,7 +4,6 @@ package com.github.alexthe666.citadel.server.message;
 import com.github.alexthe666.citadel.client.render.pathfinding.PathfindingDebugRenderer;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.MNode;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 

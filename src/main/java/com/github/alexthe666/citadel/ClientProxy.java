@@ -2,16 +2,17 @@ package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
-import com.github.alexthe666.citadel.client.event.*;
+import com.github.alexthe666.citadel.client.event.EventRenderSplashText;
 import com.github.alexthe666.citadel.client.game.Tetris;
-import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
-import com.github.alexthe666.citadel.client.render.CitadelLecternRenderer;
-import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
-import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelBook;
+import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelPatreonConfig;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
+import com.github.alexthe666.citadel.client.render.CitadelLecternRenderer;
+import com.github.alexthe666.citadel.client.render.pathfinding.WorldEventContext;
+import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
+import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
 import com.github.alexthe666.citadel.client.shader.CitadelInternalShaders;
 import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
@@ -20,15 +21,18 @@ import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.Pathfinding;
-import com.github.alexthe666.citadel.client.render.pathfinding.WorldEventContext;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.*;
+import net.minecraft.client.gui.screens.BackupConfirmScreen;
+import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.client.gui.screens.SkinCustomizationScreen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.nbt.CompoundTag;
@@ -46,6 +50,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -127,11 +132,11 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void playerRender(RenderPlayerEvent.Post event) {
         PoseStack matrixStackIn = event.getPoseStack();
         String username = event.getEntity().getName().getString();
-        if (!event.getEntity().isModelPartShown(PlayerModelPart.CAPE)) {
+        if (!event.getEntity().isModelPartShown(PlayerModelPart.CAPE) || event.isCanceled() || event.getEntity().isSpectator()) {
             return;
         }
         if (Citadel.PATREONS.contains(username)) {
