@@ -12,12 +12,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ServerProxy {
@@ -87,7 +89,7 @@ public class ServerProxy {
                 return false;
             } else if (!tracker.hasNormalTickRate(entity)) {
                 EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
-                MinecraftForge.EVENT_BUS.post(event);
+                NeoForge.EVENT_BUS.post(event);
                 if (event.isCanceled()) {
                     return true;
                 } else {

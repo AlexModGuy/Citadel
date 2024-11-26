@@ -1,11 +1,10 @@
 package com.github.alexthe666.citadel.server.event;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
-@Cancelable
-public class EventChangeEntityTickRate extends Event {
+public class EventChangeEntityTickRate extends Event implements ICancellableEvent {
     private Entity entity;
     private float targetTickRate;
 
