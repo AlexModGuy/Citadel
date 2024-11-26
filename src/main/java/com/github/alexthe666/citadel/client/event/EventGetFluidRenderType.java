@@ -2,9 +2,9 @@ package com.github.alexthe666.citadel.client.event;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.Event;
 
 @OnlyIn(Dist.CLIENT)
 @Event.HasResult

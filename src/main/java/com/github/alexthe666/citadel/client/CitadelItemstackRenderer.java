@@ -28,7 +28,7 @@ import java.util.Random;
 
 public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
 
-    private static final ResourceLocation DEFAULT_ICON_TEXTURE = new ResourceLocation("citadel:textures/gui/book/icon_default.png");
+    private static final ResourceLocation DEFAULT_ICON_TEXTURE = ResourceLocation.parse("citadel:textures/gui/book/icon_default.png");
     private static final Map<String, ResourceLocation> LOADED_ICONS = new HashMap<>();
 
     private static List<MobEffect> mobEffectList = null;

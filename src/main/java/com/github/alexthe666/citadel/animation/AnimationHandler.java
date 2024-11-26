@@ -3,7 +3,7 @@ package com.github.alexthe666.citadel.animation;
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
@@ -40,14 +40,14 @@ public enum AnimationHandler {
         } else {
             if (entity.getAnimation() != IAnimatedEntity.NO_ANIMATION) {
                 if (entity.getAnimationTick() == 0) {
-                    AnimationEvent event = new AnimationEvent.Start<>(entity, entity.getAnimation());
-                    if (!MinecraftForge.EVENT_BUS.post(event)) {
+                    AnimationEvent.Start event = new AnimationEvent.Start<>(entity, entity.getAnimation());
+                    if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
                         this.sendAnimationMessage(entity, event.getAnimation());
                     }
                 }
                 if (entity.getAnimationTick() < entity.getAnimation().getDuration()) {
                     entity.setAnimationTick(entity.getAnimationTick() + 1);
-                    MinecraftForge.EVENT_BUS.post(new AnimationEvent.Tick<>(entity, entity.getAnimation(), entity.getAnimationTick()));
+                    NeoForge.EVENT_BUS.post(new AnimationEvent.Tick<>(entity, entity.getAnimation(), entity.getAnimationTick()));
                 }
                 if (entity.getAnimationTick() == entity.getAnimation().getDuration()) {
                     entity.setAnimationTick(0);
