@@ -58,4 +58,4 @@ plugins {
 }
 
 rootProject.name = 'Citadel'
-include("Common", "Progwml6 maven", "Jitpack", "Forge", "NeoForge")
+include("Common", "Forge", "NeoForge")
