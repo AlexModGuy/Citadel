@@ -2,7 +2,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'java-library'
-    id 'net.neoforged.gradle.userdev' version '7.0.43'
+    id 'net.neoforged.gradle.userdev' version '7.0.165'
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
     id 'com.gradleup.shadow' version '8.3.5'
 }
@@ -13,7 +13,7 @@ if (System.getenv('BUILD_NUMBER') != null) {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(19))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -156,7 +156,6 @@ tasks.named("test").configure {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
-    compileOnly project(":Common")
     //jaadec fork by yours truly to decode mp4 audio
     shade('com.github.AlexModGuy:JAADec:master-SNAPSHOT') {
         ['commons-logging', 'org.slf4j'].each {
@@ -171,26 +170,6 @@ dependencies {
         }
     }
 
-}
-
-// NeoGradle compiles the game, but we don't want to add our common code to the game's code
-Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>
-
-tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
-    source(project(":Common").sourceSets.main.allSource)
-}
-
-tasks.withType(Javadoc).matching(notNeoTask).configureEach {
-    source(project(":Common").sourceSets.main.allJava)
-}
-/*
-tasks.named("sourcesJar", Jar) {
-    from(project(":Common").sourceSets.main.allSource)
-}
- */
-
-tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
-    from project(":Common").sourceSets.main.resources
 }
 
 publishing {

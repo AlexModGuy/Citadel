@@ -1,61 +1,13 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        mavenLocal()
-
         maven {
-            url "https://plugins.gradle.org/m2/"
+            name = 'NeoForged'
+            url = 'https://maven.neoforged.net/releases'
         }
-
-        maven {
-            // location of the maven that hosts JEI files
-            name = "Progwml6 maven"
-            url = "https://dvs1.progwml6.com/files/maven/"
-        }
-
-        maven {
-            // location of a maven mirror for JEI files, as a fallback
-            name = "ModMaven"
-            url = "https://modmaven.k-4u.nl"
-        }
-
-        maven {
-            name = "CurseMaven"
-            url = "https://www.cursemaven.com"
-            content {
-                includeGroup "curse.maven"
-            }
-        }
-
-        maven {
-            name = 'Sponge Snapshots'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-        }
-
-        maven {
-            url 'https://jitpack.io'
-        }
-
-        maven {
-            name = 'Forge'
-            url = 'https://maven.minecraftforge.net/'
-        }
-
-        maven {
-            name = 'NeoForge'
-            url = 'https://maven.neoforged.net/releases/'
-        }
-
-        maven {
-            url 'https://maven.blamejared.com'
-        }
-
     }
 }
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }
-
-rootProject.name = 'Citadel'
-include("Common", "Forge", "NeoForge")
