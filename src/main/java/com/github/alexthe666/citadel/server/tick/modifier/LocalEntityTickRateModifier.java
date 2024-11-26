@@ -45,7 +45,7 @@ public class LocalEntityTickRateModifier extends LocalTickRateModifier {
 
     public boolean isEntityValid(Level level){
         Entity entity = level.getEntity(this.entityId);
-        return entity != null && entity.getType().equals(expectedEntityType) && entity.isAlive() && (!(entity instanceof IModifiesTime) || ((IModifiesTime)entity).isTimeModificationValid(this));
+        return entity != null && entity.isAddedToWorld() && entity.getType().equals(expectedEntityType) && entity.isAlive() && (!(entity instanceof IModifiesTime) || ((IModifiesTime)entity).isTimeModificationValid(this));
     }
 
     @Override
