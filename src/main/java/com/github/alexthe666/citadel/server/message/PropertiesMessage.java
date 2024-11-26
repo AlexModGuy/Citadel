@@ -9,11 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import java.util.function.Supplier;
 
 public class PropertiesMessage implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<PropertiesMessage> TYPE = new CustomPacketPayload.Type<PropertiesMessage>(ResourceLocation.fromNamespaceAndPath("citadel", "properties"));

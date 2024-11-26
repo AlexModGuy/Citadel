@@ -2,7 +2,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'java-library'
-    id 'net.neoforged.gradle.userdev' version '7.0.165'
+    id 'net.neoforged.gradle.userdev' version '7.0.171'
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
     id 'com.gradleup.shadow' version '8.3.5'
 }

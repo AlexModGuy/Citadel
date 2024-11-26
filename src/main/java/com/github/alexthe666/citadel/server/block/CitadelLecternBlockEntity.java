@@ -2,6 +2,7 @@ package com.github.alexthe666.citadel.server.block;
 
 import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -130,19 +131,21 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
         return this.hasBook() ? 1 : 0;
     }
 
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    @Override
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         if (tag.contains("Book", 10)) {
-            this.book = ItemStack.of(tag.getCompound("Book"));
+            this.book = ItemStack.parse(registries, tag.getCompound("Book")).orElse(ItemStack.EMPTY);
         } else {
             this.book = ItemStack.EMPTY;
         }
     }
 
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         if (!this.getBook().isEmpty()) {
-            tag.put("Book", this.getBook().save(new CompoundTag()));
+            tag.put("Book", this.getBook().save(registries));
         }
     }
 
@@ -158,8 +161,9 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
     }
 
     public Component getDisplayName() {

@@ -27,10 +27,10 @@ public interface ICustomCollisions {
         boolean flag1 = vecIN.y != vec3.y;
         boolean flag2 = vecIN.z != vec3.z;
         boolean flag3 = entity.onGround() || flag1 && vecIN.y < 0.0D;
-        if (entity.getStepHeight() > 0.0F && flag3 && (flag || flag2)) {
-            Vec3 vec31 = collideBoundingBox2(entity, new Vec3(vecIN.x, (double)entity.getStepHeight(), vecIN.z), aabb, entity.level(), list);
-            Vec3 vec32 = collideBoundingBox2(entity, new Vec3(0.0D, (double)entity.getStepHeight(), 0.0D), aabb.expandTowards(vecIN.x, 0.0D, vecIN.z), entity.level(), list);
-            if (vec32.y < (double)entity.getStepHeight()) {
+        if (entity.maxUpStep() > 0.0F && flag3 && (flag || flag2)) {
+            Vec3 vec31 = collideBoundingBox2(entity, new Vec3(vecIN.x, (double)entity.maxUpStep(), vecIN.z), aabb, entity.level(), list);
+            Vec3 vec32 = collideBoundingBox2(entity, new Vec3(0.0D, (double)entity.maxUpStep(), 0.0D), aabb.expandTowards(vecIN.x, 0.0D, vecIN.z), entity.level(), list);
+            if (vec32.y < (double)entity.maxUpStep()) {
                 Vec3 vec33 = collideBoundingBox2(entity, new Vec3(vecIN.x, 0.0D, vecIN.z), aabb.move(vec32), entity.level(), list).add(vec32);
                 if (vec33.horizontalDistanceSqr() > vec31.horizontalDistanceSqr()) {
                     vec31 = vec33;

@@ -5,9 +5,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.pathfinder.PathFinder;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 
 public class CustomCollisionsNavigator extends GroundPathNavigation {
@@ -106,7 +107,7 @@ public class CustomCollisionsNavigator extends GroundPathNavigation {
                     double d0 = (double) k + 0.5D - vec31.x;
                     double d1 = (double) l + 0.5D - vec31.z;
                     if (!(d0 * p_179683_8_ + d1 * p_179683_10_ < 0.0D)) {
-                        BlockPathTypes pathnodetype = this.nodeEvaluator.getBlockPathType(this.level, k, y - 1, l, this.mob);
+                        PathType pathnodetype = this.nodeEvaluator.getPathType(this.level, k, y - 1, l, this.mob);
                         mutable.set(k, y - 1, l);
                         if (!this.hasValidPathType(pathnodetype) || ((ICustomCollisions)mob).canPassThrough(mutable, level.getBlockState(mutable), null)) {
                             return false;
@@ -118,7 +119,7 @@ public class CustomCollisionsNavigator extends GroundPathNavigation {
                             return false;
                         }
 
-                        if (pathnodetype == BlockPathTypes.DAMAGE_FIRE || pathnodetype == BlockPathTypes.DANGER_FIRE || pathnodetype == BlockPathTypes.DAMAGE_OTHER) {
+                        if (pathnodetype == PathType.DAMAGE_FIRE || pathnodetype == PathType.DANGER_FIRE || pathnodetype == PathType.DAMAGE_OTHER) {
                             return false;
                         }
                     }
@@ -129,13 +130,13 @@ public class CustomCollisionsNavigator extends GroundPathNavigation {
         }
     }
 
-    protected boolean hasValidPathType(BlockPathTypes p_230287_1_) {
-        if (p_230287_1_ == BlockPathTypes.WATER) {
+    protected boolean hasValidPathType(PathType p_230287_1_) {
+        if (p_230287_1_ == PathType.WATER) {
             return false;
-        } else if (p_230287_1_ == BlockPathTypes.LAVA) {
+        } else if (p_230287_1_ == PathType.LAVA) {
             return false;
         } else {
-            return p_230287_1_ != BlockPathTypes.OPEN;
+            return p_230287_1_ != PathType.OPEN;
         }
     }
 }
