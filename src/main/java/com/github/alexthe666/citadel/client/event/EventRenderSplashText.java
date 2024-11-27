@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.client.event;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 public class EventRenderSplashText extends Event {
     private String splashText;
@@ -31,7 +31,6 @@ public class EventRenderSplashText extends Event {
         return guiGraphics;
     }
 
-    @Event.HasResult
     public static class Pre extends EventRenderSplashText {
 
         private int splashTextColor;
@@ -50,7 +49,6 @@ public class EventRenderSplashText extends Event {
         }
     }
 
-    @Event.HasResult
     public static class Post extends EventRenderSplashText {
 
         public Post(String splashText, GuiGraphics guiGraphics, float partialTicks) {

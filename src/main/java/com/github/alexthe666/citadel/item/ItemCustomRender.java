@@ -2,7 +2,7 @@ package com.github.alexthe666.citadel.item;
 
 import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 public class ItemCustomRender extends Item {
 

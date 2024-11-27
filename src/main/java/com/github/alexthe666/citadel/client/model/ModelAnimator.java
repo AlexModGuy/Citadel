@@ -5,8 +5,6 @@ import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.container.Transform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.HashMap;
 
@@ -14,7 +12,6 @@ import java.util.HashMap;
  * @author Alexthe666
  * @since 1.0.0
  */
-@OnlyIn(Dist.CLIENT)
 public class ModelAnimator {
     private int tempTick;
     private int prevTempTick;
@@ -161,7 +158,7 @@ public class ModelAnimator {
                     box.rotationPointZ += transform.getOffsetZ();
                 }
             } else {
-                float frameTime = Minecraft.getInstance().isPaused() ? 0.0F : Minecraft.getInstance().getFrameTime();
+                float frameTime = Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
                 float tick = (animationTick - this.prevTempTick + frameTime) / (this.tempTick - this.prevTempTick);
                 float inc = Mth.sin((float) (tick * Math.PI / 2.0F)), dec = 1.0F - inc;
                 for (AdvancedModelBox box : this.prevTransformMap.keySet()) {

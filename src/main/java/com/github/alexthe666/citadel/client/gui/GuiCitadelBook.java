@@ -3,10 +3,7 @@ package com.github.alexthe666.citadel.client.gui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class GuiCitadelBook extends GuiBasicBook {
 
     public GuiCitadelBook(ItemStack bookStack) {
@@ -20,7 +17,7 @@ public class GuiCitadelBook extends GuiBasicBook {
 
     @Override
     public ResourceLocation getRootPage() {
-        return new ResourceLocation("citadel:book/citadel_book/root.json");
+        return ResourceLocation.parse("citadel:book/citadel_book/root.json");
     }
 
     @Override

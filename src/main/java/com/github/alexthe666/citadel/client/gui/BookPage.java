@@ -4,9 +4,6 @@ import com.github.alexthe666.citadel.client.gui.data.*;
 import com.google.gson.*;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Type;
@@ -14,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 public class BookPage {
     public static final Gson GSON = (new GsonBuilder()).registerTypeAdapter(BookPage.class, new Deserializer()).create();
     public String translatableTitle = null;
@@ -97,7 +93,6 @@ public class BookPage {
         return title;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Deserializer implements JsonDeserializer<BookPage> {
 
         public BookPage deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {

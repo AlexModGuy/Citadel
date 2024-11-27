@@ -7,8 +7,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -17,7 +16,6 @@ import java.util.function.Function;
  * @author pau101
  * @since 1.0.0
  */
-@OnlyIn(Dist.CLIENT)
 public class VanillaTabulaModel implements UnbakedModel {
     private final TabulaModelContainer model;
     private final Material particle;
@@ -40,9 +38,8 @@ public class VanillaTabulaModel implements UnbakedModel {
 
     }
 
-    @org.jetbrains.annotations.Nullable
     @Override
-    public BakedModel bake(ModelBaker p_250133_, Function<Material, TextureAtlasSprite> p_119535_, ModelState p_119536_, ResourceLocation p_119537_) {
+    public @Nullable BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state) {
         return null;
     }
 

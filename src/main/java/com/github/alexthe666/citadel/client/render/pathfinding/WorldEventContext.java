@@ -7,7 +7,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 public class WorldEventContext {
     public static final WorldEventContext INSTANCE = new WorldEventContext();
@@ -34,7 +34,7 @@ public class WorldEventContext {
     {
         bufferSource = WorldRenderMacros.getBufferSource();
         poseStack = event.getPoseStack();
-        partialTicks = event.getPartialTick();
+        partialTicks = event.getPartialTick().getGameTimeDeltaTicks();
         clientLevel = Minecraft.getInstance().level;
         clientPlayer = Minecraft.getInstance().player;
         mainHandItem = clientPlayer.getMainHandItem();

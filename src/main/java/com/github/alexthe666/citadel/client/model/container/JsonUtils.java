@@ -3,12 +3,9 @@ package com.github.alexthe666.citadel.client.model.container;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
-
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Reader;
@@ -22,7 +19,6 @@ public class JsonUtils
         return !isJsonPrimitive(json, memberName) ? false : json.getAsJsonPrimitive(memberName).isString();
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static boolean isString(JsonElement json)
     {
         return !json.isJsonPrimitive() ? false : json.getAsJsonPrimitive().isString();
@@ -33,7 +29,6 @@ public class JsonUtils
         return !json.isJsonPrimitive() ? false : json.getAsJsonPrimitive().isNumber();
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static boolean isBoolean(JsonObject json, String memberName)
     {
         return !isJsonPrimitive(json, memberName) ? false : json.getAsJsonPrimitive(memberName).isBoolean();
@@ -114,7 +109,7 @@ public class JsonUtils
     @Nullable
     public static Item getByNameOrId(String id)
     {
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(id));
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id));
 
         if (item == null)
         {

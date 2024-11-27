@@ -1,14 +1,10 @@
 package com.github.alexthe666.citadel.client.model.container;
 
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
 /**
  * @author Alexthe666
  * @since 1.0.0
  */
-@OnlyIn(Dist.CLIENT)
 public class Transform {
     private float rotationX;
     private float rotationY;

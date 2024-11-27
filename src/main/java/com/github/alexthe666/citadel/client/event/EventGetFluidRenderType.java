@@ -7,7 +7,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.Event;
 
 @OnlyIn(Dist.CLIENT)
-@Event.HasResult
 public class EventGetFluidRenderType extends Event {
     private FluidState fluidState;
     private RenderType renderType;

@@ -2,6 +2,7 @@ package com.github.alexthe666.citadel.client.tick;
 
 import com.github.alexthe666.citadel.server.tick.TickRateTracker;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifier;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -19,7 +20,7 @@ public class ClientTickRateTracker extends TickRateTracker {
 
     public Minecraft client;
 
-    private static float MS_PER_TICK = 50f;
+    private static float MS_PER_TICK = 50F;
 
     public ClientTickRateTracker(Minecraft client) {
         this.client = client;
@@ -42,7 +43,10 @@ public class ClientTickRateTracker extends TickRateTracker {
 
     public void masterTick(){
         super.masterTick();
-        client.timer.msPerTick = getClientTickRate();
+        if(client.getTimer() instanceof DeltaTracker.Timer timer){
+            timer.msPerTick = getClientTickRate();
+
+        }
     }
 
     public float getClientTickRate(){

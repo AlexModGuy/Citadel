@@ -7,8 +7,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -18,7 +16,6 @@ import org.joml.Vector4f;
  * @since 1.9.0
  * Duplicate of ModelPart class which is not final
  */
-@OnlyIn(Dist.CLIENT)
 public class BasicModelPart {
     public float textureWidth = 64.0F;
     public float textureHeight = 32.0F;
@@ -118,18 +115,18 @@ public class BasicModelPart {
     }
 
     public void render(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn) {
-        this.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, -1);
     }
 
-    public void render(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    public void render(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, int color) {
         if (this.showModel) {
             if (!this.cubeList.isEmpty() || !this.childModels.isEmpty()) {
                 matrixStackIn.pushPose();
                 this.translateRotate(matrixStackIn);
-                this.doRender(matrixStackIn.last(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+                this.doRender(matrixStackIn.last(), bufferIn, packedLightIn, packedOverlayIn, color);
 
                 for(BasicModelPart BasicModelPart : this.childModels) {
-                    BasicModelPart.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+                    BasicModelPart.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, color);
                 }
 
                 matrixStackIn.popPose();
@@ -153,7 +150,7 @@ public class BasicModelPart {
 
     }
 
-    private void doRender(PoseStack.Pose matrixEntryIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    private void doRender(PoseStack.Pose matrixEntryIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, int color) {
         Matrix4f matrix4f = matrixEntryIn.pose();
         Matrix3f matrix3f = matrixEntryIn.normal();
 
@@ -164,7 +161,6 @@ public class BasicModelPart {
                 float f = vector3f.x();
                 float f1 = vector3f.y();
                 float f2 = vector3f.z();
-
                 for(int i = 0; i < 4; ++i) {
                     BasicModelPart.PositionTextureVertex BasicModelPart$positiontexturevertex = BasicModelPart$texturedquad.vertexPositions[i];
                     float f3 = BasicModelPart$positiontexturevertex.position.x() / 16.0F;
@@ -172,7 +168,7 @@ public class BasicModelPart {
                     float f5 = BasicModelPart$positiontexturevertex.position.z() / 16.0F;
                     Vector4f vector4f = new Vector4f(f3, f4, f5, 1.0F);
                     vector4f.mul(matrix4f);
-                    bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, BasicModelPart$positiontexturevertex.textureU, BasicModelPart$positiontexturevertex.textureV, packedOverlayIn, packedLightIn, f, f1, f2);
+                    bufferIn.addVertex(vector4f.x(), vector4f.y(), vector4f.z(), color, BasicModelPart$positiontexturevertex.textureU, BasicModelPart$positiontexturevertex.textureV, packedOverlayIn, packedLightIn, f, f1, f2);
                 }
             }
         }
@@ -192,7 +188,6 @@ public class BasicModelPart {
         return this.cubeList.size() > 0 ? this.cubeList.get(randomIn.nextInt(this.cubeList.size())) : null;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class ModelBox {
         private final BasicModelPart.TexturedQuad[] quads;
         public final float posX1;
@@ -251,7 +246,6 @@ public class BasicModelPart {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     static class PositionTextureVertex {
         public final Vector3f position;
         public final float textureU;
@@ -272,7 +266,6 @@ public class BasicModelPart {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     static class TexturedQuad {
         public final BasicModelPart.PositionTextureVertex[] vertexPositions;
         public final Vector3f normal;

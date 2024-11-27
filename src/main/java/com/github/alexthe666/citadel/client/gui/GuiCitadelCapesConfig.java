@@ -13,21 +13,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public class GuiCitadelCapesConfig extends OptionsSubScreen {
 
     @Nullable
@@ -43,7 +41,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
 
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 16777215);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         int i = this.width / 2;
@@ -58,10 +56,10 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
     public static void renderBackwardsEntity(int x, int y, int size, float angleXComponent, float angleYComponent, LivingEntity entity) {
         float f = angleXComponent;
         float f1 = angleYComponent;
-        PoseStack posestack = RenderSystem.getModelViewStack();
-        posestack.pushPose();
-        posestack.translate((double)x, (double)y, 1050.0D);
-        posestack.scale(1.0F, 1.0F, -1.0F);
+        Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
+        matrix4fStack.pushMatrix();
+        matrix4fStack.translate(x, y, 1050.0F);
+        matrix4fStack.scale(1.0F, 1.0F, -1.0F);
         RenderSystem.applyModelViewMatrix();
         PoseStack posestack1 = new PoseStack();
         posestack1.translate(0.0D, 0.0D, 1000.0D);
@@ -97,7 +95,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         entity.setXRot(f4);
         entity.yHeadRotO = f5;
         entity.yHeadRot = f6;
-        posestack.popPose();
+        matrix4fStack.popMatrix();
         RenderSystem.applyModelViewMatrix();
         Lighting.setupFor3DItems();
     }
@@ -129,6 +127,11 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
             button.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
         this.addRenderableWidget(button);
+
+    }
+
+    @Override
+    protected void addOptions() {
 
     }
 

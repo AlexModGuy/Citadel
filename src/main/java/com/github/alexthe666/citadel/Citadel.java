@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -33,6 +34,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
@@ -58,7 +60,7 @@ public class Citadel {
     public static final Logger LOGGER = LogManager.getLogger("citadel");
     private static final String PROTOCOL_VERSION = Integer.toString(1);
 
-    public static ServerProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public static ServerProxy PROXY = unsafeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static List<String> PATREONS = new ArrayList<>();
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, "citadel");
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(BuiltInRegistries.BLOCK, "citadel");
@@ -173,4 +175,15 @@ public class Citadel {
         VillageHouseManager.addAllHouses(registryAccess);
     }
 
+    private static <T> T unsafeRunForDist(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
+        switch (FMLEnvironment.dist)
+        {
+            case CLIENT:
+                return clientTarget.get().get();
+            case DEDICATED_SERVER:
+                return serverTarget.get().get();
+            default:
+                throw new IllegalArgumentException("UNSIDED?");
+        }
+    }
 }

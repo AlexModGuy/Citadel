@@ -120,7 +120,7 @@ public class ColorMappedTexture extends SimpleTexture {
 
         public ColorsMetadataSection fromJson(JsonObject json) {
 
-            return new ColorsMetadataSection(new ResourceLocation(GsonHelper.getAsString(json, "color_ramp")));
+            return new ColorsMetadataSection(ResourceLocation.parse(GsonHelper.getAsString(json, "color_ramp")));
         }
 
         public String getMetadataSectionName() {

@@ -8,8 +8,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectListIterator;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -21,7 +19,6 @@ import org.joml.Vector4f;
  * @author gegy1000
  * @since 1.0.0
  */
-@OnlyIn(Dist.CLIENT)
 public class AdvancedModelBox extends BasicModelPart {
     public float defaultRotationX, defaultRotationY, defaultRotationZ;
     public float defaultOffsetX, defaultOffsetY, defaultOffsetZ;
@@ -251,19 +248,19 @@ public class AdvancedModelBox extends BasicModelPart {
     }
 
     @Override
-    public void render(PoseStack p_228309_1_, VertexConsumer p_228309_2_, int p_228309_3_, int p_228309_4_, float p_228309_5_, float p_228309_6_, float p_228309_7_, float p_228309_8_) {
+    public void render(PoseStack p_228309_1_, VertexConsumer p_228309_2_, int p_228309_3_, int p_228309_4_, int color) {
         if (this.showModel) {
             if (!this.cubeList.isEmpty() || !this.childModels.isEmpty()) {
                 p_228309_1_.pushPose();
                 this.translateAndRotate(p_228309_1_);
-                this.doRender(p_228309_1_.last(), p_228309_2_, p_228309_3_, p_228309_4_, p_228309_5_, p_228309_6_, p_228309_7_, p_228309_8_);
+                this.doRender(p_228309_1_.last(), p_228309_2_, p_228309_3_, p_228309_4_, color);
                 ObjectListIterator var9 = this.childModels.iterator();
                 if(!scaleChildren){
                     p_228309_1_.scale(1F / Math.max(this.scaleX, 0.0001F), 1F / Math.max(this.scaleY, 0.0001F) , 1F / Math.max(this.scaleZ, 0.0001F));
                 }
                 while (var9.hasNext()) {
                     BasicModelPart lvt_10_1_ = (BasicModelPart) var9.next();
-                    lvt_10_1_.render(p_228309_1_, p_228309_2_, p_228309_3_, p_228309_4_, p_228309_5_, p_228309_6_, p_228309_7_, p_228309_8_);
+                    lvt_10_1_.render(p_228309_1_, p_228309_2_, p_228309_3_, p_228309_4_, color);
                 }
 
                 p_228309_1_.popPose();
@@ -271,7 +268,7 @@ public class AdvancedModelBox extends BasicModelPart {
         }
     }
 
-    private void doRender(PoseStack.Pose p_228306_1_, VertexConsumer p_228306_2_, int p_228306_3_, int p_228306_4_, float p_228306_5_, float p_228306_6_, float p_228306_7_, float p_228306_8_) {
+    private void doRender(PoseStack.Pose p_228306_1_, VertexConsumer p_228306_2_, int p_228306_3_, int p_228306_4_, int color) {
         Matrix4f lvt_9_1_ = p_228306_1_.pose();
         Matrix3f lvt_10_1_ = p_228306_1_.normal();
         ObjectListIterator var11 = this.cubeList.iterator();
@@ -296,7 +293,7 @@ public class AdvancedModelBox extends BasicModelPart {
                     float lvt_25_1_ = lvt_22_1_.position.z() / 16.0F;
                     Vector4f lvt_26_1_ = new Vector4f(lvt_23_1_, lvt_24_1_, lvt_25_1_, 1.0F);
                     lvt_26_1_.mul(lvt_9_1_);
-                    p_228306_2_.vertex(lvt_26_1_.x(), lvt_26_1_.y(), lvt_26_1_.z(), p_228306_5_, p_228306_6_, p_228306_7_, p_228306_8_, lvt_22_1_.textureU, lvt_22_1_.textureV, p_228306_4_, p_228306_3_, lvt_18_1_, lvt_19_1_, lvt_20_1_);
+                    p_228306_2_.addVertex(lvt_26_1_.x(), lvt_26_1_.y(), lvt_26_1_.z(), color, lvt_22_1_.textureU, lvt_22_1_.textureV, p_228306_4_, p_228306_3_, lvt_18_1_, lvt_19_1_, lvt_20_1_);
                 }
             }
         }

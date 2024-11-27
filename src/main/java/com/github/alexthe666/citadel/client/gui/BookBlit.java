@@ -32,16 +32,15 @@ public class BookBlit {
 
     private static void blitWithColor(GuiGraphics guiGraphics, ResourceLocation texture, int startX, int endX, int startY, int endY, int zLevel, float u0, float u1, float v0, float v1, int r, int g, int b, int a) {
         RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.enableBlend();
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
-        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-        bufferbuilder.vertex(matrix4f, (float)startX, (float)startY, (float)zLevel).color(r, g, b, a).uv(u0, v0).endVertex();
-        bufferbuilder.vertex(matrix4f, (float)startX, (float)endY, (float)zLevel).color(r, g, b, a).uv(u0, v1).endVertex();
-        bufferbuilder.vertex(matrix4f, (float)endX, (float)endY, (float)zLevel).color(r, g, b, a).uv(u1, v1).endVertex();
-        bufferbuilder.vertex(matrix4f, (float)endX, (float)startY, (float)zLevel).color(r, g, b, a).uv(u1, v0).endVertex();
-        BufferUploader.drawWithShader(bufferbuilder.end());
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferbuilder.addVertex(matrix4f, (float)startX, (float)startY, (float)zLevel).setUv(u0, v0).setColor(r, g, b, a);
+        bufferbuilder.addVertex(matrix4f, (float)startX, (float)endY, (float)zLevel).setUv(u0, v1).setColor(r, g, b, a);
+        bufferbuilder.addVertex(matrix4f, (float)endX, (float)endY, (float)zLevel).setUv(u1, v1).setColor(r, g, b, a);
+        bufferbuilder.addVertex(matrix4f, (float)endX, (float)startY, (float)zLevel).setUv(u1, v0).setColor(r, g, b, a);
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
         RenderSystem.disableBlend();
     }
 }

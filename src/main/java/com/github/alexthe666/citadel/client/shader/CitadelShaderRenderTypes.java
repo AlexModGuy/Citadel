@@ -27,7 +27,7 @@ public class CitadelShaderRenderTypes extends RenderType {
     }
 
     public static RenderType getRainbowAura(ResourceLocation locationIn) {
-        return create("rainbow_aura", DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
+        return create("rainbow_aura", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
                 .setShaderState(RENDERTYPE_RAINBOW_AURA_SHADER)
                 .setCullState(NO_CULL)
                 .setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false))

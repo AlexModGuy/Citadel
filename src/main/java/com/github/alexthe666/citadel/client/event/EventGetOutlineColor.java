@@ -1,12 +1,8 @@
 package com.github.alexthe666.citadel.client.event;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
-@OnlyIn(Dist.CLIENT)
-@Event.HasResult
 public class EventGetOutlineColor extends Event {
     private Entity entityIn;
     private int color;

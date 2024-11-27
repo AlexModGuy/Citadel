@@ -1,13 +1,10 @@
 package com.github.alexthe666.citadel.client.model;
 
 import net.minecraft.core.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector3f;
 
 public class TabulaModelRenderUtils {
 
-    @OnlyIn(Dist.CLIENT)
     static class PositionTextureVertex {
         public final Vector3f position;
         public final float textureU;
@@ -28,7 +25,6 @@ public class TabulaModelRenderUtils {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     static class TexturedQuad {
         public final TabulaModelRenderUtils.PositionTextureVertex[] vertexPositions;
         public final Vector3f normal;
@@ -59,7 +55,6 @@ public class TabulaModelRenderUtils {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class ModelBox {
         public final TabulaModelRenderUtils.TexturedQuad[] quads;
         public final float posX1;
