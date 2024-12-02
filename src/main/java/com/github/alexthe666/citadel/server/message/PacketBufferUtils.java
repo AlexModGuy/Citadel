@@ -131,18 +131,18 @@ public class PacketBufferUtils {
      *
      * @param to    The buffer to write to
      * @param stack The itemstack to write
-     */
+
     public static void writeItemStack(ByteBuf to, ItemStack stack) {
         FriendlyByteBuf pb = new FriendlyByteBuf(to);
-        pb.writeItem(stack);
-    }
+        pb.writeSt(stack);
+    } */
 
     /**
      * Read an {@link ItemStack} from the byte buffer provided. It uses the minecraft encoding.
      *
      * @param from The buffer to read from
      * @return The itemstack read
-     */
+
     public static ItemStack readItemStack(ByteBuf from) {
         FriendlyByteBuf pb = new FriendlyByteBuf(from);
         try {
@@ -151,7 +151,7 @@ public class PacketBufferUtils {
             // Unpossible?
             throw new RuntimeException(e);
         }
-    }
+    } */
 
     /**
      * Write an {@link CompoundTag} to the byte buffer. It uses the minecraft encoding.

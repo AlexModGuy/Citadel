@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ServerTickRateTracker extends TickRateTracker {
+    public static final int MS_PER_TICK = 50;
     public static final Logger LOGGER = LogManager.getLogger("citadel-server-tick");
 
     public MinecraftServer server;
@@ -44,7 +45,7 @@ public class ServerTickRateTracker extends TickRateTracker {
     }
 
     public int getServerTickLengthMs() {
-        int i = MinecraftServer.MS_PER_TICK;
+        int i = MS_PER_TICK;
         for (TickRateModifier modifier : tickRateModifierList) {
             if (modifier.getType() == TickRateModifierType.GLOBAL) {
                 i *= modifier.getTickRateMultiplier();

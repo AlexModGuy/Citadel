@@ -15,11 +15,11 @@ import java.util.function.Consumer;
 
 public class VillageHouseManager {
     public static final List<ResourceLocation> VILLAGE_REPLACEMENT_POOLS = List.of(
-            new ResourceLocation("minecraft:village/plains/houses"),
-            new ResourceLocation("minecraft:village/desert/houses"),
-            new ResourceLocation("minecraft:village/savanna/houses"),
-            new ResourceLocation("minecraft:village/snowy/houses"),
-            new ResourceLocation("minecraft:village/taiga/houses"));
+            ResourceLocation.parse("minecraft:village/plains/houses"),
+            ResourceLocation.parse("minecraft:village/desert/houses"),
+            ResourceLocation.parse("minecraft:village/savanna/houses"),
+            ResourceLocation.parse("minecraft:village/snowy/houses"),
+            ResourceLocation.parse("minecraft:village/taiga/houses"));
     private static final List<Pair<ResourceLocation, Consumer<StructureTemplatePool>>> REGISTRY = new ArrayList<>();
 
     public static void register(ResourceLocation pool, Consumer<StructureTemplatePool> addToPool) {

@@ -32,7 +32,7 @@ public abstract class LocalTickRateModifier extends TickRateModifier {
         this.range = tag.getDouble("Range");
         ResourceKey<Level> dimFromTag = Level.OVERWORLD;
         if(tag.contains("Dimension")){
-            dimFromTag = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString("dimension")));
+            dimFromTag = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(tag.getString("dimension")));
         }
         this.dimension = dimFromTag;
     }

@@ -4,17 +4,22 @@ package com.github.alexthe666.citadel.server.message;
 import com.github.alexthe666.citadel.client.render.pathfinding.PathfindingDebugRenderer;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.MNode;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 
 /**
  * Message to sync some path over to the client.
  */
-public class MessageSyncPath {
+public class SyncePathMessage implements CustomPacketPayload{
+
+    public static final CustomPacketPayload.Type<SyncePathMessage> TYPE = new CustomPacketPayload.Type<SyncePathMessage>(ResourceLocation.fromNamespaceAndPath("citadel", "sync_path"));
+    public static final StreamCodec<FriendlyByteBuf, SyncePathMessage> CODEC = StreamCodec.ofMember(SyncePathMessage::write, SyncePathMessage::read);
+
     /**
      * Set of visited nodes.
      */
@@ -33,7 +38,7 @@ public class MessageSyncPath {
     /**
      * Create a new path message with the filled pathpoints.
      */
-    public MessageSyncPath(final Set<MNode> lastDebugNodesVisited, final Set<MNode> lastDebugNodesNotVisited, final Set<MNode> lastDebugNodesPath) {
+    public SyncePathMessage(final Set<MNode> lastDebugNodesVisited, final Set<MNode> lastDebugNodesNotVisited, final Set<MNode> lastDebugNodesPath) {
         super();
         this.lastDebugNodesVisited = lastDebugNodesVisited;
         this.lastDebugNodesNotVisited = lastDebugNodesNotVisited;
@@ -57,7 +62,7 @@ public class MessageSyncPath {
         }
     }
 
-    public static MessageSyncPath read(final FriendlyByteBuf buf) {
+    public static SyncePathMessage read(final FriendlyByteBuf buf) {
         int size = buf.readInt();
 
         Set<MNode> lastDebugNodesVisited = new HashSet<>();
@@ -77,25 +82,21 @@ public class MessageSyncPath {
             lastDebugNodesPath.add(new MNode(buf));
         }
 
-        return new MessageSyncPath(lastDebugNodesVisited, lastDebugNodesNotVisited, lastDebugNodesPath);
+        return new SyncePathMessage(lastDebugNodesVisited, lastDebugNodesNotVisited, lastDebugNodesPath);
     }
 
-    public static class Handler {
-        public Handler() {
-        }
-
-        public static boolean handle(MessageSyncPath message, Supplier<NetworkEvent.Context> contextSupplier) {
-            contextSupplier.get().enqueueWork(() -> {
-                contextSupplier.get().setPacketHandled(true);
-
-                if (contextSupplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                    PathfindingDebugRenderer.lastDebugNodesVisited = message.lastDebugNodesVisited;
-                    PathfindingDebugRenderer.lastDebugNodesNotVisited = message.lastDebugNodesNotVisited;
-                    PathfindingDebugRenderer.lastDebugNodesPath = message.lastDebugNodesPath;
-                }
-            });
-            return true;
-        }
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
+    public static void handle(final SyncePathMessage message, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.flow().isClientbound()) {
+                PathfindingDebugRenderer.lastDebugNodesVisited = message.lastDebugNodesVisited;
+                PathfindingDebugRenderer.lastDebugNodesNotVisited = message.lastDebugNodesNotVisited;
+                PathfindingDebugRenderer.lastDebugNodesPath = message.lastDebugNodesPath;
+            }
+        });
+    }
 }

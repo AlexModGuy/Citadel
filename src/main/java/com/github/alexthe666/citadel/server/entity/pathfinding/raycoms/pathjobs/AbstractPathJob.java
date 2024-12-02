@@ -5,8 +5,8 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.*;
-import com.github.alexthe666.citadel.server.message.MessageSyncPath;
-import com.github.alexthe666.citadel.server.message.MessageSyncPathReached;
+import com.github.alexthe666.citadel.server.message.SyncePathMessage;
+import com.github.alexthe666.citadel.server.message.SyncPathReachedMessage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,9 +24,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -291,7 +291,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
         for (final Map.Entry<Player, UUID> entry : trackingMap.entrySet()) {
             if (entry.getValue().equals(mob.getUUID())) {
-                Citadel.sendNonLocal(new MessageSyncPathReached(reached), (ServerPlayer) entry.getKey());
+                Citadel.sendNonLocal(new SyncPathReachedMessage(reached), (ServerPlayer) entry.getKey());
             }
         }
     }
@@ -445,7 +445,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
             if (entry.getKey().isRemoved()) {
                 iter.remove();
             } else if (entry.getValue().equals(mob.getUUID())) {
-                Citadel.sendNonLocal(new MessageSyncPath(debugNodesVisited, debugNodesNotVisited, debugNodesPath), (ServerPlayer) entry.getKey());
+                Citadel.sendNonLocal(new SyncePathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath), (ServerPlayer) entry.getKey());
             }
         }
     }
@@ -1320,8 +1320,8 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
                 // TODO: I'd be cool if dragons could squash multiple snow layers when walking over them
                 if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.125 && !isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1)) {
-                    final BlockPathTypes pathType = block.getBlockPathType(world, pos, null);
-                    return pathType == null || pathType.getDanger() == null;
+                    final PathType pathType = block.getBlockPathType(world, pos, null);
+                    return pathType == null;
                 }
                 return false;
             }

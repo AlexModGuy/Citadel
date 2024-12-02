@@ -1,8 +1,12 @@
 package com.github.alexthe666.citadel.server.world;
 
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.entity.raid.Raids;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
@@ -25,11 +29,15 @@ public class CitadelServerData extends SavedData {
     }
 
 
+    public static SavedData.Factory<CitadelServerData> factory(MinecraftServer level) {
+        return new SavedData.Factory<>(() -> new CitadelServerData(level), (tag, provider) -> load(level, tag), null);
+    }
+    
     public static CitadelServerData get(MinecraftServer server) {
         CitadelServerData fromMap = dataMap.get(server);
         if(fromMap == null){
             DimensionDataStorage storage = server.getLevel(Level.OVERWORLD).getDataStorage();
-            CitadelServerData data = storage.computeIfAbsent((tag) -> load(server, tag), () -> new CitadelServerData(server), IDENTIFIER);
+            CitadelServerData data = storage.computeIfAbsent(factory(server), IDENTIFIER);
             if (data != null) {
                 data.setDirty();
             }
@@ -39,13 +47,6 @@ public class CitadelServerData extends SavedData {
         return fromMap;
     }
 
-    @Override
-    public CompoundTag save(CompoundTag tag) {
-        if(tickRateTracker != null){
-            tag.put("TickRateTracker", tickRateTracker.toTag());
-        }
-        return tag;
-    }
     public static CitadelServerData load(MinecraftServer server, CompoundTag tag) {
         CitadelServerData data = new CitadelServerData(server);
         if(tag.contains("TickRateTracker")){
@@ -63,4 +64,11 @@ public class CitadelServerData extends SavedData {
         return tickRateTracker;
     }
 
+    @Override
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+        if(tickRateTracker != null){
+            tag.put("TickRateTracker", tickRateTracker.toTag());
+        }
+        return tag;
+    }
 }

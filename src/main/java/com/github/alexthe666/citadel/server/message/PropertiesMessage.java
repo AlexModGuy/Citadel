@@ -41,7 +41,7 @@ public class PropertiesMessage implements CustomPacketPayload {
 
     public static void handle(final PropertiesMessage message, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.flow().isClientBound()) {
+            if (context.flow().isClientbound()) {
                 Citadel.PROXY.handlePropertiesPacket(message.propertyID, message.compound, message.entityID);
             } else {
                 Entity e = context.player().level().getEntity(message.entityID);

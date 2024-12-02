@@ -15,20 +15,20 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 public class CitadelEvents {
 
     private int updateTimer;
 
     @SubscribeEvent
-    public void onEntityUpdateDebug(LivingEvent.LivingTickEvent event) {
+    public void onEntityUpdateDebug(EntityTickEvent event) {
         if (CitadelConstants.DEBUG) {
-            if ((event.getEntity() instanceof Player)) {
-                CompoundTag tag = CitadelEntityData.getCitadelTag(event.getEntity());
+            if (event.getEntity() instanceof Player player) {
+                CompoundTag tag = CitadelEntityData.getCitadelTag(player);
                 tag.putInt("CitadelInt", tag.getInt("CitadelInt") + 1);
                 Citadel.LOGGER.debug("Citadel Data Tag tracker example: " + tag.getInt("CitadelInt"));
             }
