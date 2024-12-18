@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class CitadelConstants {
-    public static final boolean REMAPREFS = false;
+    public static final boolean REMAPREFS = true;
     public static final boolean DEBUG = false;
 
     private static boolean initDate = false;
