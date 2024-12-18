@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class GuiCitadelPatreonConfig extends OptionsSubScreen {
 
@@ -55,7 +56,7 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
             //heightSlider.isHovered = false;
         }
         CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
-        Citadel.sendMSGToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
+        PacketDistributor.sendToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
     }
 
     public static float roundTo(float value, int places) {
@@ -119,7 +120,7 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
                 tag.putString("CitadelFollowerType", followType);
                 CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
             }
-            Citadel.sendMSGToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
+            PacketDistributor.sendToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
             changeButton.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
         this.addRenderableWidget(changeButton);

@@ -21,6 +21,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
 
@@ -123,7 +124,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
                 }
                 CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
             }
-            Citadel.sendMSGToServer(new PropertiesMessage("CitadelTagUpdate", tag, Minecraft.getInstance().player.getId()));
+            PacketDistributor.sendToServer(new PropertiesMessage("CitadelTagUpdate", tag, Minecraft.getInstance().player.getId()));
             button.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
         this.addRenderableWidget(button);

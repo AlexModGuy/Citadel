@@ -16,6 +16,7 @@ import com.github.alexthe666.citadel.web.WebHelper;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -37,6 +38,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -96,20 +98,6 @@ public class Citadel {
         NeoForge.EVENT_BUS.register(new CitadelEvents());
     }
 
-    public static <MSG> void sendMSGToServer(MSG message) {
-        //NETWORK_WRAPPER.sendToServer(message);
-    }
-
-    public static <MSG> void sendMSGToAll(MSG message) {
-        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            sendNonLocal(message, player);
-        }
-    }
-
-    public static <MSG> void sendNonLocal(MSG msg, ServerPlayer player) {
-        //NETWORK_WRAPPER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
-    }
-
     private void setup(final FMLCommonSetupEvent event) {
         PROXY.onPreInit();
         LecternBooks.init();
@@ -152,7 +140,7 @@ public class Citadel {
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar("citadel");
+        final PayloadRegistrar registrar = event.registrar("citadel").versioned("2.7.0").optional();
         registrar.playToServer(PropertiesMessage.TYPE, PropertiesMessage.CODEC, PropertiesMessage::handle);
         registrar.playToServer(AnimationMessage.TYPE, AnimationMessage.CODEC, AnimationMessage::handle);
         registrar.playToServer(DanceJukeboxMessage.TYPE, DanceJukeboxMessage.CODEC, DanceJukeboxMessage::handle);

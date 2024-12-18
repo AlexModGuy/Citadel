@@ -28,3 +28,6 @@ type="required" #mandatory (Can be one of "required", "optional", "incompatible"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
+[[accessTransformers]]
+## The 'resources' directory represents the root output directory of the resources
+file="META-INF/accesstransformer.cfg"

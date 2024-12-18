@@ -29,6 +29,7 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -291,7 +292,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
         for (final Map.Entry<Player, UUID> entry : trackingMap.entrySet()) {
             if (entry.getValue().equals(mob.getUUID())) {
-                Citadel.sendNonLocal(new SyncPathReachedMessage(reached), (ServerPlayer) entry.getKey());
+                PacketDistributor.sendToPlayer((ServerPlayer) entry.getKey(), new SyncPathReachedMessage(reached));
             }
         }
     }
@@ -445,7 +446,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
             if (entry.getKey().isRemoved()) {
                 iter.remove();
             } else if (entry.getValue().equals(mob.getUUID())) {
-                Citadel.sendNonLocal(new SyncePathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath), (ServerPlayer) entry.getKey());
+                PacketDistributor.sendToPlayer( (ServerPlayer) entry.getKey(), new SyncePathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath));
             }
         }
     }

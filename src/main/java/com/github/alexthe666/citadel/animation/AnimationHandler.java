@@ -4,6 +4,7 @@ import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
@@ -25,7 +26,7 @@ public enum AnimationHandler {
             return;
         }
         entity.setAnimation(animation);
-        Citadel.sendMSGToAll(new AnimationMessage(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
+        PacketDistributor.sendToAllPlayers(new AnimationMessage(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
     }
 
     /**
