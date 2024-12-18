@@ -32,12 +32,14 @@ public class LevelRendererMixin {
     private Minecraft minecraft;
 
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;initOutline()V",
+            remap = CitadelConstants.REMAPREFS,
             at = @At("TAIL"))
     private void citadel_initOutline(CallbackInfo ci) {
         PostEffectRegistry.onInitializeOutline();
     }
 
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;resize(II)V",
+            remap = CitadelConstants.REMAPREFS,
             at = @At("TAIL"))
     private void citadel_resize(int x, int y, CallbackInfo ci) {
         PostEffectRegistry.resize(x, y);
@@ -45,6 +47,7 @@ public class LevelRendererMixin {
 
 
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",
+            remap = CitadelConstants.REMAPREFS,
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/renderer/RenderBuffers;bufferSource()Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;",
@@ -55,6 +58,7 @@ public class LevelRendererMixin {
     }
 
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",
+            remap = CitadelConstants.REMAPREFS,
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/renderer/OutlineBufferSource;endOutlineBatch()V",
@@ -65,6 +69,7 @@ public class LevelRendererMixin {
     }
 
     @Inject(method = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",
+            remap = CitadelConstants.REMAPREFS,
             at = @At(
                     value = "TAIL"
             ))

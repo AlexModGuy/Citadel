@@ -64,6 +64,7 @@ public class SplashRendererMixin {
 
     @ModifyConstant(
             method = {"Lnet/minecraft/client/gui/components/SplashRenderer;render(Lnet/minecraft/client/gui/GuiGraphics;ILnet/minecraft/client/gui/Font;I)V"},
+            remap = CitadelConstants.REMAPREFS,
             constant = @Constant(intValue = 16776960))
     private int citadel_splashTextColor(int value) {
         return splashTextColor == -1 ? value : splashTextColor;

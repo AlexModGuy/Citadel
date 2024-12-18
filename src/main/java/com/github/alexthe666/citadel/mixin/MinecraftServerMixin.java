@@ -35,6 +35,7 @@ public abstract class MinecraftServerMixin implements ModifiableTickRateServer {
 
     @ModifyConstant(
             method = {"Lnet/minecraft/server/MinecraftServer;runServer()V"},
+            remap = CitadelConstants.REMAPREFS,
             constant = @Constant(longValue = 50L),
             expect = 4)
     private long citadel_serverMsPerTick(long value) {
