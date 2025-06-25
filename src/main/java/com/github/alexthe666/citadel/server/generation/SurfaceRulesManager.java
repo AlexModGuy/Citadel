@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.server.generation;
 
+import com.github.alexthe666.citadel.Citadel;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.world.level.levelgen.RandomSupport;
 import net.minecraft.world.level.levelgen.SurfaceRules;
@@ -59,15 +60,30 @@ public class SurfaceRulesManager {
 
     public static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, List<SurfaceRules.RuleSource> toMerge) {
         ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
-        builder.addAll(toMerge);
+        toMerge.forEach(newRule -> builder.add(new CitadelSurfaceRuleWrapper(newRule)));
+        Citadel.LOGGER.info("added {} new surface rules", toMerge.size());
         builder.add(prev);
         return SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
     }
 
     public static SurfaceRules.RuleSource mergeOverworldRules(SurfaceRules.RuleSource rulesIn) {
-        return mergeRules(rulesIn, OVERWORLD_REGISTRY);
+        return mergeRules(stripPreviouslyAddedRulesFrom(rulesIn), OVERWORLD_REGISTRY);
     }
 
+    private static SurfaceRules.RuleSource stripPreviouslyAddedRulesFrom(SurfaceRules.RuleSource rulesIn){
+        if(rulesIn instanceof SurfaceRules.SequenceRuleSource sequence){
+            ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
+            // rebuild surface rules with all Citadel modifications removed.
+            sequence.sequence().stream().filter(ruleSource -> !(ruleSource instanceof CitadelSurfaceRuleWrapper)).forEach(builder::add);
+            ImmutableList<SurfaceRules.RuleSource> list = builder.build();
+            int j = sequence.sequence().size() - list.size();
+            Citadel.LOGGER.info("stripped {} rules from surface rules", j);
+            return SurfaceRules.sequence(list.toArray(SurfaceRules.RuleSource[]::new));
+        }
+        return rulesIn;
+    }
+
+    @Deprecated
     private static long calculateOverworldSeed() {
         // merge all overworld rules into one surface rule
         SurfaceRules.RuleSource overworldRules = SurfaceRules.sequence(OVERWORLD_REGISTRY.toArray(SurfaceRules.RuleSource[]::new));
@@ -78,6 +94,7 @@ public class SurfaceRulesManager {
     /**
        Used to avoid recursively adding the surface rules if they are identical
      */
+    @Deprecated
     public static long getOverworldRuleAdditionSeed() {
         return overworldRuleAdditionSeed;
     }

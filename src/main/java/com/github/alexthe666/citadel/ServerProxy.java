@@ -31,7 +31,7 @@ public class ServerProxy {
     }
 
     public void onPreInit() {
-        SurfaceRulesManager.registerOverworldSurfaceRule(SurfaceRules.isBiome(Biomes.BEACH), SurfaceRules.state(Blocks.COPPER_BLOCK.defaultBlockState()));
+        //SurfaceRulesManager.registerOverworldSurfaceRule(SurfaceRules.isBiome(Biomes.BEACH), SurfaceRules.state(Blocks.COPPER_BLOCK.defaultBlockState()));
     }
 
     public void handleAnimationPacket(int entityId, int index) {

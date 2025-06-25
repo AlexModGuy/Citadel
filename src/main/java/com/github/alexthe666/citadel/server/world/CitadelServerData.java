@@ -70,10 +70,12 @@ public class CitadelServerData extends SavedData {
         return tickRateTracker;
     }
 
+    @Deprecated
     public void onModifySurfaceRules(){
         surfaceRulesModificationSeed = SurfaceRulesManager.getOverworldRuleAdditionSeed();
     }
 
+    @Deprecated
     public boolean isUsingLatestSurfaceRules(){
         return surfaceRulesModificationSeed == SurfaceRulesManager.getOverworldRuleAdditionSeed();
     }
