@@ -2,9 +2,7 @@ package com.github.alexthe666.citadel.server.generation;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.world.level.levelgen.RandomSupport;
 import net.minecraft.world.level.levelgen.SurfaceRules;
-import net.minecraft.world.level.levelgen.Xoroshiro128PlusPlus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,25 +54,34 @@ public class SurfaceRulesManager {
         CAVE_REGISTRY.add(rule);
     }
 
-    public static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, List<SurfaceRules.RuleSource> toMerge) {
-        ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
-        toMerge.forEach(newRule -> builder.add(new CitadelSurfaceRuleWrapper(newRule)));
-        Citadel.LOGGER.info("added {} new surface rules", toMerge.size());
-        builder.add(prev);
-        return SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
-    }
-
     public static SurfaceRules.RuleSource mergeOverworldRules(SurfaceRules.RuleSource rulesIn) {
-        return mergeRules(stripPreviouslyAddedRulesFrom(rulesIn), OVERWORLD_REGISTRY);
+        return mergeRules(stripPreviouslyAddedRules(rulesIn), OVERWORLD_REGISTRY);
     }
 
-    private static SurfaceRules.RuleSource stripPreviouslyAddedRulesFrom(SurfaceRules.RuleSource rulesIn){
-        if(rulesIn instanceof SurfaceRules.SequenceRuleSource sequence){
+    private static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, List<SurfaceRules.RuleSource> toMerge) {
+        if (toMerge.isEmpty()) {
+            return prev;
+        } else {
+            ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
+            toMerge.forEach(newRule -> builder.add(new CitadelSurfaceRuleWrapper(newRule)));
+            if (prev instanceof SurfaceRules.SequenceRuleSource sequenceRuleSource) { // usual case
+                Citadel.LOGGER.info("added {} new surface rules to sequenced rule source", toMerge.size());
+                builder.addAll(sequenceRuleSource.sequence());
+            } else {
+                Citadel.LOGGER.info("added {} new surface rules to new rule source", toMerge.size());
+                builder.add(prev);
+            }
+            return SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
+        }
+    }
+
+    private static SurfaceRules.RuleSource stripPreviouslyAddedRules(SurfaceRules.RuleSource rulesIn) {
+        if (rulesIn instanceof SurfaceRules.SequenceRuleSource sequenceRuleSource) {
             ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
             // rebuild surface rules with all Citadel modifications removed.
-            sequence.sequence().stream().filter(ruleSource -> !(ruleSource instanceof CitadelSurfaceRuleWrapper)).forEach(builder::add);
+            sequenceRuleSource.sequence().stream().filter(ruleSource -> !(ruleSource instanceof CitadelSurfaceRuleWrapper)).forEach(builder::add);
             ImmutableList<SurfaceRules.RuleSource> list = builder.build();
-            int j = sequence.sequence().size() - list.size();
+            int j = sequenceRuleSource.sequence().size() - list.size();
             Citadel.LOGGER.info("stripped {} rules from surface rules", j);
             return SurfaceRules.sequence(list.toArray(SurfaceRules.RuleSource[]::new));
         }

@@ -1,6 +1,5 @@
 package com.github.alexthe666.citadel.server.world;
 
-import com.github.alexthe666.citadel.server.generation.SurfaceRulesManager;
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
