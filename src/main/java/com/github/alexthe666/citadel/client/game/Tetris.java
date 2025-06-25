@@ -208,11 +208,13 @@ public class Tetris {
         for (int tries = 0; tries < 5; tries++) {
             if (allRegisteredBlocks.length > 1) {
                 BlockState block = allRegisteredBlocks[random.nextInt(allRegisteredBlocks.length - 1)].defaultBlockState();
-                BakedModel blockModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(block);
-                if (!block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer() && blockModel.getRenderTypes(block, random, ModelData.EMPTY).contains(RenderType.solid())) {
-                    randomState = block;
-                    break;
-                }
+                try {
+                    BakedModel blockModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(block);
+                    if (blockModel != null && !block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer() && blockModel.getRenderTypes(block, random, ModelData.EMPTY).contains(RenderType.solid())) {
+                        randomState = block;
+                        break;
+                    }
+                } catch (Exception ignored){}
             }
         }
         nextShape = TetrominoShape.getRandom(random);
