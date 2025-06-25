@@ -14,7 +14,6 @@ public class SurfaceRulesManager {
     private static final List<SurfaceRules.RuleSource> NETHER_REGISTRY = new ArrayList();
     private static final List<SurfaceRules.RuleSource> END_REGISTRY = new ArrayList();
     private static final List<SurfaceRules.RuleSource> CAVE_REGISTRY = new ArrayList();
-    private static long overworldRuleAdditionSeed = 0;
 
     public SurfaceRulesManager() {
     }
@@ -25,7 +24,6 @@ public class SurfaceRulesManager {
 
     public static void registerOverworldSurfaceRule(SurfaceRules.RuleSource rule) {
         OVERWORLD_REGISTRY.add(rule);
-        overworldRuleAdditionSeed = calculateOverworldSeed();
     }
 
     @Deprecated
@@ -81,21 +79,5 @@ public class SurfaceRulesManager {
             return SurfaceRules.sequence(list.toArray(SurfaceRules.RuleSource[]::new));
         }
         return rulesIn;
-    }
-
-    @Deprecated
-    private static long calculateOverworldSeed() {
-        // merge all overworld rules into one surface rule
-        SurfaceRules.RuleSource overworldRules = SurfaceRules.sequence(OVERWORLD_REGISTRY.toArray(SurfaceRules.RuleSource[]::new));
-        // use the hash of the overworld seed to seed a random long
-        return new Xoroshiro128PlusPlus(RandomSupport.seedFromHashOf(overworldRules.toString())).nextLong();
-    }
-
-    /**
-       Used to avoid recursively adding the surface rules if they are identical
-     */
-    @Deprecated
-    public static long getOverworldRuleAdditionSeed() {
-        return overworldRuleAdditionSeed;
     }
 }

@@ -20,12 +20,9 @@ public class CitadelServerData extends SavedData {
 
     private ServerTickRateTracker tickRateTracker = null;
 
-    private long surfaceRulesModificationSeed;
-
     public CitadelServerData(MinecraftServer server) {
         super();
         this.server = server;
-        this.surfaceRulesModificationSeed = -1;
     }
 
     public CitadelServerData(MinecraftServer server, CompoundTag tag) {
@@ -35,7 +32,6 @@ public class CitadelServerData extends SavedData {
         }else{
             tickRateTracker = new ServerTickRateTracker(server);
         }
-        surfaceRulesModificationSeed = tag.getLong("SurfaceRulesModificationSeed");
     }
 
 
@@ -58,7 +54,6 @@ public class CitadelServerData extends SavedData {
         if(tickRateTracker != null){
             tag.put("TickRateTracker", tickRateTracker.toTag());
         }
-        tag.putLong("SurfaceRulesModificationSeed", surfaceRulesModificationSeed);
         return tag;
     }
 
@@ -68,15 +63,5 @@ public class CitadelServerData extends SavedData {
             tickRateTracker = new ServerTickRateTracker(server);
         }
         return tickRateTracker;
-    }
-
-    @Deprecated
-    public void onModifySurfaceRules(){
-        surfaceRulesModificationSeed = SurfaceRulesManager.getOverworldRuleAdditionSeed();
-    }
-
-    @Deprecated
-    public boolean isUsingLatestSurfaceRules(){
-        return surfaceRulesModificationSeed == SurfaceRulesManager.getOverworldRuleAdditionSeed();
     }
 }
