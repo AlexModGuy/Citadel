@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.server.world;
 
+import com.github.alexthe666.citadel.server.generation.SurfaceRulesManager;
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
@@ -15,13 +16,26 @@ public class CitadelServerData extends SavedData {
 
     private static final String IDENTIFIER = "citadel_world_data";
 
-    private MinecraftServer server;
+    private final MinecraftServer server;
 
     private ServerTickRateTracker tickRateTracker = null;
+
+    private long surfaceRulesModificationSeed;
 
     public CitadelServerData(MinecraftServer server) {
         super();
         this.server = server;
+        this.surfaceRulesModificationSeed = -1;
+    }
+
+    public CitadelServerData(MinecraftServer server, CompoundTag tag) {
+        this(server);
+        if(tag.contains("TickRateTracker")){
+            tickRateTracker = new ServerTickRateTracker(server, tag.getCompound("TickRateTracker"));
+        }else{
+            tickRateTracker = new ServerTickRateTracker(server);
+        }
+        surfaceRulesModificationSeed = tag.getLong("SurfaceRulesModificationSeed");
     }
 
 
@@ -29,7 +43,7 @@ public class CitadelServerData extends SavedData {
         CitadelServerData fromMap = dataMap.get(server);
         if(fromMap == null){
             DimensionDataStorage storage = server.getLevel(Level.OVERWORLD).getDataStorage();
-            CitadelServerData data = storage.computeIfAbsent((tag) -> load(server, tag), () -> new CitadelServerData(server), IDENTIFIER);
+            CitadelServerData data = storage.computeIfAbsent((tag) -> new CitadelServerData(server, tag), () -> new CitadelServerData(server), IDENTIFIER);
             if (data != null) {
                 data.setDirty();
             }
@@ -44,17 +58,10 @@ public class CitadelServerData extends SavedData {
         if(tickRateTracker != null){
             tag.put("TickRateTracker", tickRateTracker.toTag());
         }
+        tag.putLong("SurfaceRulesModificationSeed", surfaceRulesModificationSeed);
         return tag;
     }
-    public static CitadelServerData load(MinecraftServer server, CompoundTag tag) {
-        CitadelServerData data = new CitadelServerData(server);
-        if(tag.contains("TickRateTracker")){
-            data.tickRateTracker = new ServerTickRateTracker(server, tag.getCompound("TickRateTracker"));
-        }else{
-            data.tickRateTracker = new ServerTickRateTracker(server);
-        }
-        return data;
-    }
+
 
     public ServerTickRateTracker getOrCreateTickRateTracker(){
         if(tickRateTracker == null){
@@ -63,4 +70,11 @@ public class CitadelServerData extends SavedData {
         return tickRateTracker;
     }
 
+    public void onModifySurfaceRules(){
+        surfaceRulesModificationSeed = SurfaceRulesManager.getOverworldRuleAdditionSeed();
+    }
+
+    public boolean isUsingLatestSurfaceRules(){
+        return surfaceRulesModificationSeed == SurfaceRulesManager.getOverworldRuleAdditionSeed();
+    }
 }
