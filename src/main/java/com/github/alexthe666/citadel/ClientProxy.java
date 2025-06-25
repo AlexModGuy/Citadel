@@ -39,6 +39,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -55,6 +56,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.IOException;
@@ -66,9 +68,9 @@ import java.util.Map;
 public class ClientProxy extends ServerProxy {
     public static TabulaModel CITADEL_MODEL;
     public static boolean hideFollower = false;
-    private Map<ItemStack, Float> prevMouseOverProgresses = new HashMap<>();
+    private final Map<ItemStack, Float> prevMouseOverProgresses = new HashMap<>();
 
-    private Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
+    private final Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
     private ItemStack lastHoveredItem = null;
     private Tetris aprilFoolsTetrisGame = null;
     public static final ResourceLocation RAINBOW_AURA_POST_SHADER = new ResourceLocation("citadel:shaders/post/rainbow_aura.json");
@@ -89,7 +91,7 @@ public class ClientProxy extends ServerProxy {
         CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station"), new int[]{}));
         CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
         CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
-        if(CitadelConstants.debugShaders()){
+        if (CitadelConstants.debugShaders()) {
             PostEffectRegistry.registerEffect(RAINBOW_AURA_POST_SHADER);
         }
     }
@@ -98,35 +100,35 @@ public class ClientProxy extends ServerProxy {
     @SubscribeEvent
     public void screenOpen(ScreenEvent.Init event) {
         if (event.getScreen() instanceof SkinCustomizationScreen && Minecraft.getInstance().player != null) {
-           try{
-               String username = Minecraft.getInstance().player.getName().getString();
-               int height = -20;
-               if (Citadel.PATREONS.contains(username)) {
-                   Button button1 = Button.builder(Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
-                       Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(event.getScreen(), Minecraft.getInstance().options));
-                   }).size(200, 20).pos(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height).build();
-                   event.addListener(button1);
-                   height += 25;
-               }
-               if (!CitadelCapes.getCapesFor(Minecraft.getInstance().player.getUUID()).isEmpty()) {
-                   Button button2 = Button.builder(Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
-                       Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(event.getScreen(), Minecraft.getInstance().options));
-                   }).size(200, 20).pos(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height).build();
-                   event.addListener(button2);
-                   height += 25;
-               }
-           }catch (Exception e){
-               e.printStackTrace();
-           }
+            try {
+                String username = Minecraft.getInstance().player.getName().getString();
+                int height = -20;
+                if (Citadel.PATREONS.contains(username)) {
+                    Button button1 = Button.builder(Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                        Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(event.getScreen(), Minecraft.getInstance().options));
+                    }).size(200, 20).pos(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height).build();
+                    event.addListener(button1);
+                    height += 25;
+                }
+                if (!CitadelCapes.getCapesFor(Minecraft.getInstance().player.getUUID()).isEmpty()) {
+                    Button button2 = Button.builder(Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                        Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(event.getScreen(), Minecraft.getInstance().options));
+                    }).size(200, 20).pos(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height).build();
+                    event.addListener(button2);
+                    height += 25;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @SubscribeEvent
     public void screenRender(ScreenEvent.Render event) {
-        if(event.getScreen() instanceof TitleScreen && CitadelConstants.isAprilFools()) {
-            if(aprilFoolsTetrisGame == null){
+        if (event.getScreen() instanceof TitleScreen && CitadelConstants.isAprilFools()) {
+            if (aprilFoolsTetrisGame == null) {
                 aprilFoolsTetrisGame = new Tetris();
-            }else{
+            } else {
                 aprilFoolsTetrisGame.render((TitleScreen) event.getScreen(), event.getGuiGraphics(), event.getPartialTick());
             }
         }
@@ -140,7 +142,7 @@ public class ClientProxy extends ServerProxy {
             return;
         }
         if (Citadel.PATREONS.contains(username)) {
-            CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
+            CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(event.getEntity());
             String rendererName = tag.contains("CitadelFollowerType") ? tag.getString("CitadelFollowerType") : "citadel";
             if (!rendererName.equals("none") && !hideFollower) {
                 CitadelPatreonRenderer renderer = CitadelPatreonRenderer.get(rendererName);
@@ -164,7 +166,7 @@ public class ClientProxy extends ServerProxy {
     private void registerShaders(final RegisterShadersEvent e) {
         try {
             e.registerShader(new ShaderInstance(e.getResourceProvider(), new ResourceLocation("citadel:rendertype_rainbow_aura"), DefaultVertexFormat.POSITION_COLOR_TEX), CitadelInternalShaders::setRenderTypeRainbowAura);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
@@ -172,9 +174,8 @@ public class ClientProxy extends ServerProxy {
     @SubscribeEvent
     public void onOpenGui(ScreenEvent.Opening event) {
         if (ServerConfig.skipWarnings) {
-            try{
-                if (event.getScreen() instanceof BackupConfirmScreen) {
-                    BackupConfirmScreen confirmBackupScreen = (BackupConfirmScreen) event.getScreen();
+            try {
+                if (event.getScreen() instanceof BackupConfirmScreen confirmBackupScreen) {
                     String name = "";
                     MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
 
@@ -182,15 +183,14 @@ public class ClientProxy extends ServerProxy {
                         confirmBackupScreen.listener.proceed(false, true);
                     }
                 }
-                if (event.getScreen() instanceof ConfirmScreen) {
-                    ConfirmScreen confirmScreen = (ConfirmScreen) event.getScreen();
+                if (event.getScreen() instanceof ConfirmScreen confirmScreen) {
                     MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
                     String name = "";
                     if (confirmScreen.getTitle().equals(title)) {
                         confirmScreen.callback.accept(true);
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 Citadel.LOGGER.warn("Citadel couldn't skip world loadings");
                 e.printStackTrace();
             }
@@ -199,13 +199,13 @@ public class ClientProxy extends ServerProxy {
 
     @SubscribeEvent
     public void renderSplashTextBefore(EventRenderSplashText.Pre event) {
-        if(CitadelConstants.isAprilFools() && aprilFoolsTetrisGame != null){
+        if (CitadelConstants.isAprilFools() && aprilFoolsTetrisGame != null) {
             event.setResult(Event.Result.ALLOW);
             float hue = (System.currentTimeMillis() % 6000) / 6000f;
-            event.getGuiGraphics().pose().mulPose(Axis.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 360));
-            if(!aprilFoolsTetrisGame.isStarted()){
+            event.getGuiGraphics().pose().mulPose(Axis.ZP.rotationDegrees((float) Math.sin(hue * Math.PI) * 360));
+            if (!aprilFoolsTetrisGame.isStarted()) {
                 event.setSplashText("Psst... press 'T' ;)");
-            }else{
+            } else {
                 event.setSplashText("");
             }
             int rainbow = Color.HSBtoRGB(hue, 0.6f, 1);
@@ -215,24 +215,24 @@ public class ClientProxy extends ServerProxy {
 
     @SubscribeEvent
     public void onKeyPressed(ScreenEvent.KeyPressed event) {
-        if(Minecraft.getInstance().screen instanceof TitleScreen && aprilFoolsTetrisGame != null && aprilFoolsTetrisGame.isStarted()){
-            if(event.getKeyCode() == InputConstants.KEY_LEFT || event.getKeyCode() == InputConstants.KEY_RIGHT || event.getKeyCode() == InputConstants.KEY_DOWN || event.getKeyCode() == InputConstants.KEY_UP){
+        if (Minecraft.getInstance().screen instanceof TitleScreen && aprilFoolsTetrisGame != null && aprilFoolsTetrisGame.isStarted()) {
+            if (event.getKeyCode() == InputConstants.KEY_LEFT || event.getKeyCode() == InputConstants.KEY_RIGHT || event.getKeyCode() == InputConstants.KEY_DOWN || event.getKeyCode() == InputConstants.KEY_UP) {
                 event.setCanceled(true);
             }
         }
     }
 
-        @SubscribeEvent
+    @SubscribeEvent
     public void clientTick(TickEvent.ClientTickEvent event) {
-        if(event.phase == TickEvent.Phase.START && !isGamePaused() && Minecraft.getInstance().isRunning() && Minecraft.getInstance().level != null && Minecraft.getInstance().player != null){
+        if (event.phase == TickEvent.Phase.START && !isGamePaused() && Minecraft.getInstance().isRunning() && Minecraft.getInstance().level != null && Minecraft.getInstance().player != null) {
             ClientTickRateTracker.getForClient(Minecraft.getInstance()).masterTick();
             tickMouseOverAnimations();
         }
-        if(event.type == TickEvent.Type.CLIENT && event.phase == TickEvent.Phase.START && !isGamePaused() && CitadelConstants.isAprilFools()) {
-            if(aprilFoolsTetrisGame != null){
-                if(Minecraft.getInstance().screen instanceof TitleScreen){
+        if (event.type == TickEvent.Type.CLIENT && event.phase == TickEvent.Phase.START && !isGamePaused() && CitadelConstants.isAprilFools()) {
+            if (aprilFoolsTetrisGame != null) {
+                if (Minecraft.getInstance().screen instanceof TitleScreen) {
                     aprilFoolsTetrisGame.tick();
-                }else{
+                } else {
                     aprilFoolsTetrisGame.reset();
                 }
             }
@@ -244,7 +244,7 @@ public class ClientProxy extends ServerProxy {
         if (lastHoveredItem != null) {
             float prev = mouseOverProgresses.getOrDefault(lastHoveredItem, 0F);
             float maxTime = 5F;
-            if(lastHoveredItem.getItem() instanceof ItemWithHoverAnimation hoverOver){
+            if (lastHoveredItem.getItem() instanceof ItemWithHoverAnimation hoverOver) {
                 maxTime = hoverOver.getMaxHoverOverTime(lastHoveredItem);
             }
             if (prev < maxTime) {
@@ -279,18 +279,18 @@ public class ClientProxy extends ServerProxy {
     }
 
     @Override
-    public float getMouseOverProgress(ItemStack itemStack){
+    public float getMouseOverProgress(ItemStack itemStack) {
         float prev = prevMouseOverProgresses.getOrDefault(itemStack, 0F);
         float current = mouseOverProgresses.getOrDefault(itemStack, 0F);
         float lerped = prev + (current - prev) * Minecraft.getInstance().getFrameTime();
         float maxTime = 5F;
-        if(itemStack.getItem() instanceof ItemWithHoverAnimation hoverOver){
+        if (itemStack.getItem() instanceof ItemWithHoverAnimation hoverOver) {
             maxTime = hoverOver.getMaxHoverOverTime(itemStack);
         }
         return lerped / maxTime;
     }
 
-        @Override
+    @Override
     public void handleAnimationPacket(int entityId, int index) {
         if (Minecraft.getInstance().level != null) {
             IAnimatedEntity entity = (IAnimatedEntity) Minecraft.getInstance().level.getEntity(entityId);
@@ -307,7 +307,7 @@ public class ClientProxy extends ServerProxy {
 
     @Override
     public void handlePropertiesPacket(String propertyID, CompoundTag compound, int entityID) {
-        if(compound == null || Minecraft.getInstance().level == null){
+        if (compound == null || Minecraft.getInstance().level == null) {
             return;
         }
         Entity entity = Minecraft.getInstance().level.getEntity(entityID);
@@ -342,14 +342,14 @@ public class ClientProxy extends ServerProxy {
 
     public boolean canEntityTickClient(Level level, Entity entity) {
         ClientTickRateTracker tracker = ClientTickRateTracker.getForClient(Minecraft.getInstance());
-        if(tracker.isTickingHandled(entity)){
+        if (tracker.isTickingHandled(entity)) {
             return false;
-        }else if(!tracker.hasNormalTickRate(entity)){
+        } else if (!tracker.hasNormalTickRate(entity)) {
             EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
             MinecraftForge.EVENT_BUS.post(event);
-            if(event.isCanceled()){
+            if (event.isCanceled()) {
                 return true;
-            }else{
+            } else {
                 tracker.addTickBlockedEntity(entity);
                 return false;
             }
@@ -359,5 +359,11 @@ public class ClientProxy extends ServerProxy {
 
     @SubscribeEvent
     public void postRenderStage(RenderLevelStageEvent event) {
+    }
+
+    @Nullable
+    @Override
+    public MinecraftServer getMinecraftServer() {
+        return null;
     }
 }

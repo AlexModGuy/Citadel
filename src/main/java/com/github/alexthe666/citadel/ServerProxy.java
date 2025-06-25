@@ -2,7 +2,6 @@ package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.server.entity.IDancesToJukebox;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
-import com.github.alexthe666.citadel.server.generation.SurfaceRulesManager;
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
 import com.github.alexthe666.citadel.server.world.CitadelServerData;
 import com.github.alexthe666.citadel.server.world.ModifiableTickRateServer;
@@ -14,18 +13,17 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.Nullable;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ServerProxy {
 
+    private static MinecraftServer minecraftServer;
 
     public ServerProxy() {
     }
@@ -114,5 +112,14 @@ public class ServerProxy {
 
     public Player getClientSidePlayer() {
         return null;
+    }
+
+    @Nullable
+    public MinecraftServer getMinecraftServer() {
+        return minecraftServer;
+    }
+
+    public static void setMinecraftServer(MinecraftServer server) {
+        minecraftServer = server;
     }
 }

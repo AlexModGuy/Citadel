@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.mixin;
 
 import com.github.alexthe666.citadel.CitadelConstants;
-import com.github.alexthe666.citadel.server.world.CitadelServer;
+import com.github.alexthe666.citadel.ServerProxy;
 import com.github.alexthe666.citadel.server.world.ModifiableTickRateServer;
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.server.MinecraftServer;
@@ -30,7 +30,7 @@ public abstract class MinecraftServerMixin implements ModifiableTickRateServer {
             at = @At("TAIL")
     )
     private void citadel_init(Thread thread, LevelStorageSource.LevelStorageAccess levelStorageAccess, PackRepository packRepository, WorldStem worldStem, Proxy proxy, DataFixer dataFixer, Services services, ChunkProgressListenerFactory chunkProgressListenerFactory, CallbackInfo ci){
-        CitadelServer.setLastServer((MinecraftServer)(Object)(this));
+        ServerProxy.setMinecraftServer((MinecraftServer)(Object)(this));
     }
 
     @Inject(
