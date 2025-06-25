@@ -65,13 +65,15 @@ public class SurfaceRulesManager {
             ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
             toMerge.forEach(newRule -> builder.add(new CitadelSurfaceRuleWrapper(newRule)));
             if (prev instanceof SurfaceRules.SequenceRuleSource sequenceRuleSource) { // usual case
-                Citadel.LOGGER.info("added {} new surface rules to sequenced rule source", toMerge.size());
+                Citadel.LOGGER.info("added {} new surface rule(s) to sequenced rule source", toMerge.size());
                 builder.addAll(sequenceRuleSource.sequence());
             } else {
-                Citadel.LOGGER.info("added {} new surface rules to new rule source", toMerge.size());
+                Citadel.LOGGER.info("added {} new surface rule(s) to new rule source", toMerge.size());
                 builder.add(prev);
             }
-            return SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
+            SurfaceRules.RuleSource ruleSource = SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
+            Citadel.LOGGER.info("surface rule recursive depth: {}", calculateSurfaceRuleDepth(ruleSource, 0));
+            return ruleSource;
         }
     }
 
@@ -82,9 +84,26 @@ public class SurfaceRulesManager {
             sequenceRuleSource.sequence().stream().filter(ruleSource -> !(ruleSource instanceof CitadelSurfaceRuleWrapper)).forEach(builder::add);
             ImmutableList<SurfaceRules.RuleSource> list = builder.build();
             int j = sequenceRuleSource.sequence().size() - list.size();
-            Citadel.LOGGER.info("stripped {} rules from surface rules", j);
-            return SurfaceRules.sequence(list.toArray(SurfaceRules.RuleSource[]::new));
+            Citadel.LOGGER.info("stripped {} rule(s) from surface rules", j);
+            if (j > 0) {
+                return SurfaceRules.sequence(list.toArray(SurfaceRules.RuleSource[]::new));
+            }
         }
         return rulesIn;
+    }
+
+    private static int calculateSurfaceRuleDepth(SurfaceRules.RuleSource source, int depthIn){
+        if(source instanceof SurfaceRules.SequenceRuleSource sequenceRuleSource){
+            int j = depthIn;
+            for(SurfaceRules.RuleSource ruleSource : sequenceRuleSource.sequence()){
+                j = Math.max(calculateSurfaceRuleDepth(ruleSource, depthIn + 1), j);
+            }
+            return j;
+        }else if(source instanceof SurfaceRules.TestRuleSource testRuleSource){
+            depthIn = Math.max(calculateSurfaceRuleDepth(testRuleSource.thenRun(), depthIn + 1), depthIn);
+        }else if(source instanceof CitadelSurfaceRuleWrapper citadelSurfaceRuleWrapper){
+            depthIn = Math.max(calculateSurfaceRuleDepth(citadelSurfaceRuleWrapper.wrappedRule(), depthIn + 1), depthIn);
+        }
+        return depthIn;
     }
 }
