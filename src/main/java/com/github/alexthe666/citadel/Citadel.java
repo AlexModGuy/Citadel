@@ -37,10 +37,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -92,6 +89,7 @@ public class Citadel {
         bus.addListener(this::processIMC);
         bus.addListener(this::doClientStuff);
         bus.addListener(this::onModConfigEvent);
+        bus.addListener(this::loadComplete);
         ITEMS.register(bus);
         BLOCKS.register(bus);
         BLOCK_ENTITIES.register(bus);
@@ -133,7 +131,6 @@ public class Citadel {
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSyncPath.class, MessageSyncPath::write, MessageSyncPath::read, MessageSyncPath.Handler::handle);
         NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSyncPathReached.class, MessageSyncPathReached::write, MessageSyncPathReached::read, MessageSyncPathReached.Handler::handle);
         BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
-        event.enqueueWork(ModCompatBridge::setup);
         if (urlContents != null) {
             try {
                 String line;
@@ -144,6 +141,11 @@ public class Citadel {
                 LOGGER.warn("Failed to load patreon contributor perks");
             }
         } else LOGGER.warn("Failed to load patreon contributor perks");
+    }
+
+    @SubscribeEvent
+    public void loadComplete(FMLLoadCompleteEvent event) {
+        event.enqueueWork(ModCompatBridge::setup);
     }
 
     @SubscribeEvent

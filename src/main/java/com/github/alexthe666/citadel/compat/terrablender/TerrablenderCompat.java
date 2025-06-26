@@ -8,7 +8,8 @@ public class TerrablenderCompat {
     public static void setup(){
         SurfaceRules.RuleSource ruleSource = SurfaceRulesManager.getOverworldRules();
         if(ruleSource != null){
-            terrablender.api.SurfaceRuleManager.addSurfaceRules(terrablender.api.SurfaceRuleManager.RuleCategory.OVERWORLD, "citadel", ruleSource);
+            //Must use addToDefaultSurfaceRulesAtStage instead of addSurfaceRules since addSurfaceRules does not take into modifying all possible biomes
+            terrablender.api.SurfaceRuleManager.addToDefaultSurfaceRulesAtStage(terrablender.api.SurfaceRuleManager.RuleCategory.OVERWORLD, terrablender.api.SurfaceRuleManager.RuleStage.AFTER_BEDROCK, 1, ruleSource);
         }
     }
 }
