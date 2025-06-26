@@ -18,6 +18,11 @@ public record CitadelSurfaceRuleWrapper(SurfaceRules.RuleSource vanillaRules,
 
     @Override
     public SurfaceRules.SurfaceRule apply(SurfaceRules.Context context) {
+        if(vanillaRules == null){
+            return this.citadelRules.apply(context);
+        }else if(citadelRules == null){
+            return vanillaRules.apply(context);
+        }
         return new CitadelSurfaceRule(context, this.vanillaRules.apply(context), this.citadelRules.apply(context));
     }
 
