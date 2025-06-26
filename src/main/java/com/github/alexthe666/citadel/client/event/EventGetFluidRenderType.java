@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.Event;
 @OnlyIn(Dist.CLIENT)
 @Event.HasResult
 public class EventGetFluidRenderType extends Event {
-    private FluidState fluidState;
+    private final FluidState fluidState;
     private RenderType renderType;
 
     public EventGetFluidRenderType(FluidState fluidState, RenderType renderType) {

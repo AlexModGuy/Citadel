@@ -76,7 +76,7 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
             if (CitadelLecternBlockEntity.this.level.getBlockEntity(CitadelLecternBlockEntity.this.worldPosition) != CitadelLecternBlockEntity.this) {
                 return false;
             } else {
-                return p_59588_.distanceToSqr((double) CitadelLecternBlockEntity.this.worldPosition.getX() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getY() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getZ() + 0.5D) > 64.0D ? false : CitadelLecternBlockEntity.this.hasBook();
+                return !(p_59588_.distanceToSqr((double) CitadelLecternBlockEntity.this.worldPosition.getX() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getY() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getZ() + 0.5D) > 64.0D) && CitadelLecternBlockEntity.this.hasBook();
             }
         }
 
@@ -114,11 +114,11 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
     }
 
     public void setBook(ItemStack stack) {
-        this.setBook(stack, (Player) null);
+        this.setBook(stack, null);
     }
 
     void onBookItemRemove() {
-        LecternBlock.resetBookState((Entity)null, this.getLevel(), this.getBlockPos(), this.getBlockState(), false);
+        LecternBlock.resetBookState(null, this.getLevel(), this.getBlockPos(), this.getBlockState(), false);
     }
 
     public void setBook(ItemStack itemStack, @Nullable Player player) {

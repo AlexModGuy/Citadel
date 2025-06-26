@@ -24,10 +24,10 @@ public class ChunkGeneratorMixin {
             method = "Lnet/minecraft/world/level/chunk/ChunkGenerator;getMobsAt(Lnet/minecraft/core/Holder;Lnet/minecraft/world/level/StructureManager;Lnet/minecraft/world/entity/MobCategory;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/util/random/WeightedRandomList;")
     private void citadel_getMobsAt(Holder<Biome> biome, StructureManager structureManager, MobCategory mobCategory, BlockPos pos, CallbackInfoReturnable<WeightedRandomList<MobSpawnSettings.SpawnerData>> cir) {
         WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns = biome.value().getMobSettings().getMobs(mobCategory);
-        if(biomeSpawns != cir.getReturnValue()){
+        if (biomeSpawns != cir.getReturnValue()) {
             EventMergeStructureSpawns event = new EventMergeStructureSpawns(structureManager, pos, mobCategory, cir.getReturnValue(), biomeSpawns);
             MinecraftForge.EVENT_BUS.post(event);
-            if(event.getResult() == Event.Result.ALLOW){
+            if (event.getResult() == Event.Result.ALLOW) {
                 cir.setReturnValue(event.getStructureSpawns());
             }
         }

@@ -28,7 +28,7 @@ public class SpawnProbabilityModifier implements BiomeModifier {
         return SERIALIZER.get();
     }
 
-    public static Codec<SpawnProbabilityModifier> makeCodec(){
+    public static Codec<SpawnProbabilityModifier> makeCodec() {
         return Codec.unit(SpawnProbabilityModifier::new);
     }
 }

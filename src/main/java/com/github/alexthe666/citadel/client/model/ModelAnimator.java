@@ -20,8 +20,8 @@ public class ModelAnimator {
     private int prevTempTick;
     private boolean correctAnimation;
     private IAnimatedEntity entity;
-    private HashMap<AdvancedModelBox, Transform> transformMap;
-    private HashMap<AdvancedModelBox, Transform> prevTransformMap;
+    private final HashMap<AdvancedModelBox, Transform> transformMap;
+    private final HashMap<AdvancedModelBox, Transform> prevTransformMap;
 
     public ModelAnimator() {
         this.tempTick = 0;

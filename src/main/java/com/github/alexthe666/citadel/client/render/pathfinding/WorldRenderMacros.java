@@ -21,8 +21,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.LinkedList;
 import java.util.List;
 
-public class WorldRenderMacros extends UiRenderMacros
-{
+public class WorldRenderMacros extends UiRenderMacros {
     private static final int MAX_DEBUG_TEXT_RENDER_DIST_SQUARED = 8 * 8 * 16;
     public static final RenderType LINES = RenderTypes.LINES;
     public static final RenderType LINES_WITH_WIDTH = RenderTypes.LINES_WITH_WIDTH;
@@ -42,8 +41,7 @@ public class WorldRenderMacros extends UiRenderMacros
      *
      * @param bufferType type to put in
      */
-    public static void putBufferHead(final RenderType bufferType)
-    {
+    public static void putBufferHead(final RenderType bufferType) {
         buffers.addFirst(bufferType);
         bufferSource = null;
     }
@@ -53,8 +51,7 @@ public class WorldRenderMacros extends UiRenderMacros
      *
      * @param bufferType type to put in
      */
-    public static void putBufferTail(final RenderType bufferType)
-    {
+    public static void putBufferTail(final RenderType bufferType) {
         buffers.addLast(bufferType);
         bufferSource = null;
     }
@@ -65,8 +62,7 @@ public class WorldRenderMacros extends UiRenderMacros
      * @param bufferType type to put in
      * @param putBefore  search for type to put before
      */
-    public static void putBufferBefore(final RenderType bufferType, final RenderType putBefore)
-    {
+    public static void putBufferBefore(final RenderType bufferType, final RenderType putBefore) {
         buffers.add(Math.max(0, buffers.indexOf(putBefore)), bufferType);
         bufferSource = null;
     }
@@ -77,22 +73,17 @@ public class WorldRenderMacros extends UiRenderMacros
      * @param bufferType type to put in
      * @param putAfter   search for type to put after
      */
-    public static void putBufferAfter(final RenderType bufferType, final RenderType putAfter)
-    {
+    public static void putBufferAfter(final RenderType bufferType, final RenderType putAfter) {
         final int index = buffers.indexOf(putAfter);
-        if (index == -1)
-        {
+        if (index == -1) {
             buffers.add(bufferType);
-        }
-        else
-        {
+        } else {
             buffers.add(index + 1, bufferType);
         }
         bufferSource = null;
     }
 
-    static
-    {
+    static {
         putBufferTail(WorldRenderMacros.COLORED_TRIANGLES);
         putBufferTail(WorldRenderMacros.LINES);
         putBufferTail(WorldRenderMacros.LINES_WITH_WIDTH);
@@ -101,10 +92,8 @@ public class WorldRenderMacros extends UiRenderMacros
         putBufferTail(WorldRenderMacros.COLORED_TRIANGLES_NC_ND);
     }
 
-    public static MultiBufferSource.BufferSource getBufferSource()
-    {
-        if (bufferSource == null)
-        {
+    public static MultiBufferSource.BufferSource getBufferSource() {
+        if (bufferSource == null) {
             bufferSource = MultiBufferSource.immediateWithBuffers(Util.make(new Object2ObjectLinkedOpenHashMap<>(), map -> {
                 buffers.forEach(type -> map.put(type, new BufferBuilder(type.bufferSize())));
             }), Tesselator.getInstance().getBuilder());
@@ -122,8 +111,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                           final PoseStack ps,
                                           final BlockPos posA,
                                           final BlockPos posB,
-                                          final float lineWidth)
-    {
+                                          final float lineWidth) {
         renderLineBox(buffer.getBuffer(LINES_WITH_WIDTH), ps, posA, posB, 0x00, 0x00, 0x00, 0xff, lineWidth);
     }
 
@@ -137,8 +125,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                              final PoseStack ps,
                                              final BlockPos posA,
                                              final BlockPos posB,
-                                             final float lineWidth)
-    {
+                                             final float lineWidth) {
         renderLineBox(buffer.getBuffer(GLINT_LINES_WITH_WIDTH), ps, posA, posB, 0xff, 0x0, 0x0, 0xff, lineWidth);
     }
 
@@ -152,8 +139,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                           final PoseStack ps,
                                           final BlockPos posA,
                                           final BlockPos posB,
-                                          final float lineWidth)
-    {
+                                          final float lineWidth) {
         renderLineBox(buffer.getBuffer(LINES_WITH_WIDTH), ps, posA, posB, 0xff, 0xff, 0xff, 0xff, lineWidth);
     }
 
@@ -166,8 +152,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                       final PoseStack ps,
                                       final AABB aabb,
                                       final int argbColor,
-                                      final float lineWidth)
-    {
+                                      final float lineWidth) {
         renderLineAABB(buffer,
                 ps,
                 aabb,
@@ -190,8 +175,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                       final int green,
                                       final int blue,
                                       final int alpha,
-                                      final float lineWidth)
-    {
+                                      final float lineWidth) {
         renderLineBox(buffer,
                 ps,
                 (float) aabb.minX,
@@ -216,8 +200,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                      final PoseStack ps,
                                      final BlockPos pos,
                                      final int argbColor,
-                                     final float lineWidth)
-    {
+                                     final float lineWidth) {
         renderLineBox(buffer,
                 ps,
                 pos,
@@ -240,8 +223,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                      final BlockPos posA,
                                      final BlockPos posB,
                                      final int argbColor,
-                                     final float lineWidth)
-    {
+                                     final float lineWidth) {
         renderLineBox(buffer,
                 ps,
                 posA,
@@ -267,8 +249,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                      final int green,
                                      final int blue,
                                      final int alpha,
-                                     final float lineWidth)
-    {
+                                     final float lineWidth) {
         renderLineBox(buffer,
                 ps,
                 Math.min(posA.getX(), posB.getX()),
@@ -302,10 +283,8 @@ public class WorldRenderMacros extends UiRenderMacros
                                      final int green,
                                      final int blue,
                                      final int alpha,
-                                     final float lineWidth)
-    {
-        if (alpha == 0)
-        {
+                                     final float lineWidth) {
+        if (alpha == 0) {
             return;
         }
 
@@ -346,8 +325,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                              final float maxY2,
                                              final float maxZ2,
                                              final Matrix4f m,
-                                             final VertexConsumer buf)
-    {
+                                             final VertexConsumer buf) {
         // z plane
 
         buf.vertex(m, minX, minY, minZ).endVertex();
@@ -761,8 +739,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                  final PoseStack ps,
                                  final BlockPos posA,
                                  final BlockPos posB,
-                                 final int argbColor)
-    {
+                                 final int argbColor) {
         renderBox(buffer.getBuffer(COLORED_TRIANGLES),
                 ps,
                 posA,
@@ -780,10 +757,8 @@ public class WorldRenderMacros extends UiRenderMacros
                                  final int red,
                                  final int green,
                                  final int blue,
-                                 final int alpha)
-    {
-        if (alpha == 0)
-        {
+                                 final int alpha) {
+        if (alpha == 0) {
             return;
         }
 
@@ -810,8 +785,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                       final float maxY,
                                       final float maxZ,
                                       final Matrix4f m,
-                                      final VertexConsumer buf)
-    {
+                                      final VertexConsumer buf) {
         // z plane
 
         buf.vertex(m, minX, maxY, minZ).endVertex();
@@ -874,8 +848,7 @@ public class WorldRenderMacros extends UiRenderMacros
                                            final int z,
                                            final int w,
                                            final int h,
-                                           final int argbColor)
-    {
+                                           final int argbColor) {
         populateRectangle(x,
                 y,
                 z,
@@ -899,10 +872,8 @@ public class WorldRenderMacros extends UiRenderMacros
                                          final int blue,
                                          final int alpha,
                                          final VertexConsumer buffer,
-                                         final Matrix4f m)
-    {
-        if (alpha == 0)
-        {
+                                         final Matrix4f m) {
+        if (alpha == 0) {
             return;
         }
 
@@ -931,17 +902,14 @@ public class WorldRenderMacros extends UiRenderMacros
                                        final PoseStack matrixStack,
                                        final boolean forceWhite,
                                        final int mergeEveryXListElements,
-                                       final MultiBufferSource buffer)
-    {
-        if (mergeEveryXListElements < 1)
-        {
+                                       final MultiBufferSource buffer) {
+        if (mergeEveryXListElements < 1) {
             throw new IllegalArgumentException("mergeEveryXListElements is less than 1");
         }
 
         final EntityRenderDispatcher erm = Minecraft.getInstance().getEntityRenderDispatcher();
         final int cap = text.size();
-        if (cap > 0 && erm.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) <= MAX_DEBUG_TEXT_RENDER_DIST_SQUARED)
-        {
+        if (cap > 0 && erm.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) <= MAX_DEBUG_TEXT_RENDER_DIST_SQUARED) {
             final Font fontrenderer = Minecraft.getInstance().font;
 
             matrixStack.pushPose();
@@ -955,8 +923,7 @@ public class WorldRenderMacros extends UiRenderMacros
 
             final Matrix4f rawPosMatrix = matrixStack.last().pose();
 
-            for (int i = 0; i < cap; i += mergeEveryXListElements)
-            {
+            for (int i = 0; i < cap; i += mergeEveryXListElements) {
                 final MutableComponent renderText = Component.literal(
                         mergeEveryXListElements == 1 ? text.get(i) : text.subList(i, Math.min(i + mergeEveryXListElements, cap)).toString());
                 final float textCenterShift = (float) (-fontrenderer.width(renderText) / 2);
@@ -971,8 +938,7 @@ public class WorldRenderMacros extends UiRenderMacros
                         Font.DisplayMode.SEE_THROUGH,
                         alphaMask,
                         0x00f000f0);
-                if (!forceWhite)
-                {
+                if (!forceWhite) {
                     fontrenderer.drawInBatch(renderText, textCenterShift, 0, 0xffffffff, false, rawPosMatrix, buffer, Font.DisplayMode.NORMAL, 0, 0x00f000f0);
                 }
                 matrixStack.translate(0.0d, fontrenderer.lineHeight + 1, 0.0d);
@@ -982,8 +948,7 @@ public class WorldRenderMacros extends UiRenderMacros
         }
     }
 
-    private static final class RenderTypes extends RenderType
-    {
+    private static final class RenderTypes extends RenderType {
         private RenderTypes(final String nameIn,
                             final VertexFormat formatIn,
                             final VertexFormat.Mode drawModeIn,
@@ -991,8 +956,7 @@ public class WorldRenderMacros extends UiRenderMacros
                             final boolean useDelegateIn,
                             final boolean needsSortingIn,
                             final Runnable setupTaskIn,
-                            final Runnable clearTaskIn)
-        {
+                            final Runnable clearTaskIn) {
             super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
             throw new IllegalStateException();
         }
@@ -1118,12 +1082,10 @@ public class WorldRenderMacros extends UiRenderMacros
                         .createCompositeState(false));
     }
 
-    public static class AlwaysDepthTestStateShard extends DepthTestStateShard
-    {
+    public static class AlwaysDepthTestStateShard extends DepthTestStateShard {
         public static final DepthTestStateShard ALWAYS_DEPTH_TEST = new AlwaysDepthTestStateShard();
 
-        private AlwaysDepthTestStateShard()
-        {
+        private AlwaysDepthTestStateShard() {
             super("true_always", -1);
             setupState = () -> {
                 RenderSystem.enableDepthTest();

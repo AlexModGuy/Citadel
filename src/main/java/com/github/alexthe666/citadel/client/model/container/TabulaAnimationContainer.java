@@ -8,13 +8,14 @@ import java.util.Map;
  * @author gegy1000
  * @since 1.0.0
  */
+@Deprecated(since = "2.6.2")
 public class TabulaAnimationContainer {
     private String name;
     private String identifier;
 
     private boolean loops;
 
-    private Map<String, List<TabulaAnimationComponentContainer>> sets = new HashMap<>();
+    private final Map<String, List<TabulaAnimationComponentContainer>> sets = new HashMap<>();
 
     public String getName() {
         return this.name;

@@ -6,8 +6,8 @@ import net.minecraftforge.eventbus.api.Event;
 public class EventRenderSplashText extends Event {
     private String splashText;
 
-    private GuiGraphics guiGraphics;
-    private float partialTicks;
+    private final GuiGraphics guiGraphics;
+    private final float partialTicks;
 
     public EventRenderSplashText(String splashText, GuiGraphics guiGraphics, float partialTicks) {
         this.splashText = splashText;

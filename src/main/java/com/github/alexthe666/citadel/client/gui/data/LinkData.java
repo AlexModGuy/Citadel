@@ -12,7 +12,7 @@ public class LinkData {
     private String text;
     private int x;
     private int y;
-    private int page;
+    private final int page;
     private String item = null;
     private String item_tag = null;
 
@@ -67,9 +67,9 @@ public class LinkData {
     }
 
     public ItemStack getDisplayItem() {
-        if(item == null || item.isEmpty()){
+        if (item == null || item.isEmpty()) {
             return ItemStack.EMPTY;
-        }else{
+        } else {
             ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
             if (item_tag != null && !item_tag.isEmpty()) {
                 CompoundTag tag = null;

@@ -21,13 +21,13 @@ public class EventReplaceBiome extends Event {
     public float weirdness;
     public float depth;
 
-    private int x;
-    private int y;
-    private int z;
+    private final int x;
+    private final int y;
+    private final int z;
 
-    private long worldSeed;
-    private ResourceKey<Level> worldDimension;
-    private Climate.Sampler climateSampler;
+    private final long worldSeed;
+    private final ResourceKey<Level> worldDimension;
+    private final Climate.Sampler climateSampler;
 
     public EventReplaceBiome(ExpandedBiomeSource biomeSource, Holder<Biome> biomeIn, int x, int y, int z, float continentalness, float erosion, float temperature, float humidity, float weirdness, float depth, long worldSeed, ResourceKey<Level> worldDimension, Climate.Sampler climateSampler) {
         this.biomeSource = biomeSource;
@@ -99,27 +99,27 @@ public class EventReplaceBiome extends Event {
         return depth >= min && depth <= max;
     }
 
-    public ExpandedBiomeSource getBiomeSource(){
+    public ExpandedBiomeSource getBiomeSource() {
         return biomeSource;
     }
 
-    public void setBiomeToGenerate(Holder<Biome> biome){
+    public void setBiomeToGenerate(Holder<Biome> biome) {
         biomeToGenerate = biome;
     }
 
-    public int getX(){
+    public int getX() {
         return x;
     }
 
-    public int getY(){
+    public int getY() {
         return y;
     }
 
-    public int getZ(){
+    public int getZ() {
         return z;
     }
 
-    public long getWorldSeed(){
+    public long getWorldSeed() {
         return worldSeed;
     }
 

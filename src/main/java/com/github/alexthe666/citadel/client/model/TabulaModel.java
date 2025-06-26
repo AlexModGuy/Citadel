@@ -19,6 +19,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @OnlyIn(Dist.CLIENT)
+@Deprecated(since = "2.6.2")
 public class TabulaModel extends AdvancedEntityModel {
     protected Map<String, AdvancedModelBox> cubes = new HashMap<>();
     protected List<AdvancedModelBox> rootBoxes = new ArrayList<>();

@@ -9,7 +9,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class SyncClientTickRateMessage {
-    private CompoundTag compound;
+    private final CompoundTag compound;
 
     public SyncClientTickRateMessage(CompoundTag compound) {
         this.compound = compound;

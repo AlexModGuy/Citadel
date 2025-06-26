@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Deprecated(since = "2.6.2")
 public class SpawnBiomeData {
 
     private List<List<SpawnBiomeEntry>> biomes = new ArrayList<>();
@@ -79,12 +80,12 @@ public class SpawnBiomeData {
         }
 
         public boolean matches(@Nullable Holder<Biome> biomeHolder, ResourceLocation registryName) {
-            if(type.isDepreciated()){
+            if (type.isDepreciated()) {
                 Citadel.LOGGER.warn("biome config: BIOME_DICT and BIOME_CATEGORY are no longer valid in 1.19+. Please use BIOME_TAG instead.");
                 return false;
-            }else{
-                if(type == BiomeEntryType.BIOME_TAG){
-                    if(biomeHolder.getTagKeys().anyMatch((biomeTagKey -> biomeTagKey.location() != null && biomeTagKey.location().toString().equals(value)))){
+            } else {
+                if (type == BiomeEntryType.BIOME_TAG) {
+                    if (biomeHolder.getTagKeys().anyMatch((biomeTagKey -> biomeTagKey.location() != null && biomeTagKey.location().toString().equals(value)))) {
                         return !negate;
                     }
                     return negate;

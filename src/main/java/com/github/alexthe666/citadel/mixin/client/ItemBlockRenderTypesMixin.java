@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemBlockRenderTypes.class)
-public class ItemBlockRenderTypesMixin  {
+public class ItemBlockRenderTypesMixin {
 
 
     @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, cancellable = true,
@@ -21,7 +21,7 @@ public class ItemBlockRenderTypesMixin  {
     private static void citadel_getFluidRenderLayer(FluidState fluidState, CallbackInfoReturnable<RenderType> cir) {
         EventGetFluidRenderType event = new EventGetFluidRenderType(fluidState, cir.getReturnValue());
         MinecraftForge.EVENT_BUS.post(event);
-        if(event.getResult() == Event.Result.ALLOW){
+        if (event.getResult() == Event.Result.ALLOW) {
             cir.setReturnValue(event.getRenderType());
         }
     }

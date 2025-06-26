@@ -13,8 +13,8 @@ public class CitadelConstants {
 
     private static boolean aprilFools = false;
 
-    public static boolean isAprilFools(){
-        if(!initDate){
+    public static boolean isAprilFools() {
+        if (!initDate) {
             initDate = true;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
@@ -23,7 +23,7 @@ public class CitadelConstants {
         return aprilFools && ServerConfig.aprilFools;
     }
 
-    public static boolean debugShaders(){
+    public static boolean debugShaders() {
         return false;
     }
 }

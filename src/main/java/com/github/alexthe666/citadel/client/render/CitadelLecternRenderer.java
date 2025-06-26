@@ -18,9 +18,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class CitadelLecternRenderer implements BlockEntityRenderer<CitadelLecternBlockEntity> {
     private final BookModel bookModel;
-    public static final ResourceLocation BOOK_PAGE_TEXTURE =  new ResourceLocation("citadel:textures/entity/lectern_book_pages.png");
+    public static final ResourceLocation BOOK_PAGE_TEXTURE = new ResourceLocation("citadel:textures/entity/lectern_book_pages.png");
     public static final ResourceLocation BOOK_BINDING_TEXTURE = new ResourceLocation("citadel:textures/entity/lectern_book_binding.png");
     private static final LecternBooks.BookData EMPTY_BOOK_DATA = new LecternBooks.BookData(0XC58439, 0XF4E9BF);
+
     public CitadelLecternRenderer(BlockEntityRendererProvider.Context context) {
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
     }

@@ -22,7 +22,7 @@ public final class LegArticulator {
             float backAvg = avg(heightBackLeft, heightBackRight);
             float frontAvg = avg(heightFrontLeft, heightFrontRight);
             float bodyLength = Math.abs(avg(legs.backLeft.forward, legs.backRight.forward) - avg(legs.frontLeft.forward, legs.frontRight.forward));
-            float tilt = (float)(Mth.atan2((double)(bodyLength * sc), (double)(backAvg - frontAvg)) - 1.5707963267948966);
+            float tilt = (float) (Mth.atan2(bodyLength * sc, backAvg - frontAvg) - 1.5707963267948966);
             body.rotationPointY += 16.0F / sc * backAvg;
             body.rotateAngleX += tilt;
             lowerBody.rotateAngleX -= tilt;

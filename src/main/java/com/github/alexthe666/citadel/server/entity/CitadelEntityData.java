@@ -6,7 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 /**
  * @author Alexthe666
  * @since 1.7.0
- *
+ * <p>
  * CitadelTag is a datasynced tag for LivingEntity provided by citadel to be used by various mods.
  */
 public class CitadelEntityData {
@@ -22,7 +22,7 @@ public class CitadelEntityData {
     }
 
     public static void setCitadelTag(LivingEntity entity, CompoundTag tag) {
-        if(entity instanceof ICitadelDataEntity){
+        if (entity instanceof ICitadelDataEntity) {
             ((ICitadelDataEntity) entity).setCitadelEntityData(tag);
         }
     }

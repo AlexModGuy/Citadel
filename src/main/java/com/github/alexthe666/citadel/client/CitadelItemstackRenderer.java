@@ -63,20 +63,20 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             }
             matrixStack.pushPose();
             matrixStack.translate(0.5F, 0.5f, 0.5f);
-            if(stack.getTag() != null && stack.getTag().contains("DisplayShake") && stack.getTag().getBoolean("DisplayShake")) {
+            if (stack.getTag() != null && stack.getTag().contains("DisplayShake") && stack.getTag().getBoolean("DisplayShake")) {
                 matrixStack.translate((random.nextFloat() - 0.5F) * 0.1F, (random.nextFloat() - 0.5F) * 0.1F, (random.nextFloat() - 0.5F) * 0.1F);
             }
-            if(animateAnyways || stack.getTag() != null && stack.getTag().contains("DisplayBob") && stack.getTag().getBoolean("DisplayBob")){
+            if (animateAnyways || stack.getTag() != null && stack.getTag().contains("DisplayBob") && stack.getTag().getBoolean("DisplayBob")) {
                 matrixStack.translate(0, 0.05F + 0.1F * Mth.sin(0.3F * ticksExisted), 0);
             }
-            if(stack.getTag() != null && stack.getTag().contains("DisplaySpin") && stack.getTag().getBoolean("DisplaySpin")){
+            if (stack.getTag() != null && stack.getTag().contains("DisplaySpin") && stack.getTag().getBoolean("DisplaySpin")) {
                 matrixStack.mulPose(Axis.YP.rotationDegrees(6 * ticksExisted));
             }
-            if(animateAnyways || stack.getTag() != null && stack.getTag().contains("DisplayZoom") && stack.getTag().getBoolean("DisplayZoom")) {
+            if (animateAnyways || stack.getTag() != null && stack.getTag().contains("DisplayZoom") && stack.getTag().getBoolean("DisplayZoom")) {
                 float scale = (float) (1F + 0.15F * (Math.sin(ticksExisted * 0.3F) + 1F));
                 matrixStack.scale(scale, scale, scale);
             }
-            if(stack.getTag() != null && stack.getTag().contains("DisplayScale") && stack.getTag().getFloat("DisplayScale") != 1.0F){
+            if (stack.getTag() != null && stack.getTag().contains("DisplayScale") && stack.getTag().getFloat("DisplayScale") != 1.0F) {
                 float scale = stack.getTag().getFloat("DisplayScale");
                 matrixStack.scale(scale, scale, scale);
             }
@@ -87,14 +87,14 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.disableCull();
-           // RenderSystem.enableAlphaTest();
+            // RenderSystem.enableAlphaTest();
             RenderSystem.enableDepthTest();
             MobEffect effect;
             if (stack.getTag() != null && stack.getTag().contains("DisplayEffect")) {
                 String displayID = stack.getTag().getString("DisplayEffect");
                 effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(displayID));
             } else {
-                if(mobEffectList == null){
+                if (mobEffectList == null) {
                     mobEffectList = ForgeRegistries.MOB_EFFECTS.getValues().stream().toList();
                 }
                 int size = mobEffectList.size();
@@ -130,9 +130,9 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             ResourceLocation texture = DEFAULT_ICON_TEXTURE;
             if (stack.getTag() != null && stack.getTag().contains("IconLocation")) {
                 String iconLocationStr = stack.getTag().getString("IconLocation");
-                if(LOADED_ICONS.containsKey(iconLocationStr)){
+                if (LOADED_ICONS.containsKey(iconLocationStr)) {
                     texture = LOADED_ICONS.get(iconLocationStr);
-                }else{
+                } else {
                     texture = new ResourceLocation(iconLocationStr);
                     LOADED_ICONS.put(iconLocationStr, texture);
                 }

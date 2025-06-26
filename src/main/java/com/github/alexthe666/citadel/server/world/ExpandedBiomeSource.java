@@ -11,6 +11,8 @@ import java.util.Set;
 public interface ExpandedBiomeSource {
 
     void setResourceKeyMap(Map<ResourceKey<Biome>, Holder<Biome>> map);
+
     Map<ResourceKey<Biome>, Holder<Biome>> getResourceKeyMap();
+
     void expandBiomesWith(Set<Holder<Biome>> newGenBiomes);
 }

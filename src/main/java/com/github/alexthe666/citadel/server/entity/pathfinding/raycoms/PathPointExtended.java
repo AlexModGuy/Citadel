@@ -32,8 +32,7 @@ public class PathPointExtended extends Node {
      *
      * @param pos the position.
      */
-    public PathPointExtended(final BlockPos pos)
-    {
+    public PathPointExtended(final BlockPos pos) {
         super(pos.getX(), pos.getY(), pos.getZ());
     }
 
@@ -42,8 +41,7 @@ public class PathPointExtended extends Node {
      *
      * @return true if so.
      */
-    public boolean isOnLadder()
-    {
+    public boolean isOnLadder() {
         return onLadder;
     }
 
@@ -52,8 +50,7 @@ public class PathPointExtended extends Node {
      *
      * @param onLadder value to set.
      */
-    public void setOnLadder(final boolean onLadder)
-    {
+    public void setOnLadder(final boolean onLadder) {
         this.onLadder = onLadder;
     }
 
@@ -62,8 +59,7 @@ public class PathPointExtended extends Node {
      *
      * @return Direction.
      */
-    public Direction getLadderFacing()
-    {
+    public Direction getLadderFacing() {
         return ladderFacing;
     }
 
@@ -72,8 +68,7 @@ public class PathPointExtended extends Node {
      *
      * @param ladderFacing facing to set.
      */
-    public void setLadderFacing(final Direction ladderFacing)
-    {
+    public void setLadderFacing(final Direction ladderFacing) {
         this.ladderFacing = ladderFacing;
     }
 
@@ -82,24 +77,21 @@ public class PathPointExtended extends Node {
      *
      * @param isOnRails if on rails.
      */
-    public void setOnRails(final boolean isOnRails)
-    {
+    public void setOnRails(final boolean isOnRails) {
         this.onRails = isOnRails;
     }
 
     /**
      * Set the rails entry.
      */
-    public void setRailsEntry()
-    {
+    public void setRailsEntry() {
         this.railsEntry = true;
     }
 
     /**
      * Set the rails exit.
      */
-    public void setRailsExit()
-    {
+    public void setRailsExit() {
         this.railsExit = true;
     }
 
@@ -108,8 +100,7 @@ public class PathPointExtended extends Node {
      *
      * @return true if so.
      */
-    public boolean isOnRails()
-    {
+    public boolean isOnRails() {
         return onRails;
     }
 
@@ -118,8 +109,7 @@ public class PathPointExtended extends Node {
      *
      * @return true if so.
      */
-    public boolean isRailsEntry()
-    {
+    public boolean isRailsEntry() {
         return railsEntry;
     }
 
@@ -128,39 +118,32 @@ public class PathPointExtended extends Node {
      *
      * @return true if so.
      */
-    public boolean isRailsExit()
-    {
+    public boolean isRailsExit() {
         return railsExit;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o))
-        {
+        if (!super.equals(o)) {
             return false;
         }
 
         final PathPointExtended that = (PathPointExtended) o;
 
-        if (onLadder != that.onLadder)
-        {
+        if (onLadder != that.onLadder) {
             return false;
         }
         return ladderFacing == that.ladderFacing;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (onLadder ? 1 : 0);
         result = 31 * result + ladderFacing.hashCode();

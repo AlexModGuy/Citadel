@@ -90,7 +90,7 @@ public abstract class TickRateTracker {
         return getEntityTickLengthModifier(entity) == 1.0F;
     }
 
-    public boolean isTickingHandled(Entity entity){
+    public boolean isTickingHandled(Entity entity) {
         return specialTickRateEntities.contains(entity);
     }
 
@@ -100,7 +100,7 @@ public abstract class TickRateTracker {
         }
     }
 
-    protected void tickBlockedEntity(Entity entity){
+    protected void tickBlockedEntity(Entity entity) {
         tickEntityAtCustomRate(entity);
     }
 

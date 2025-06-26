@@ -12,15 +12,15 @@ public class LecternBooks {
 
     public static Map<ResourceLocation, BookData> BOOKS = new HashMap<>();
 
-    public static void init(){
+    public static void init() {
         BOOKS.put(Citadel.CITADEL_BOOK.getId(), new BookData(0X64A27B, 0XD6D6D6));
     }
 
-    public static boolean isLecternBook(ItemStack stack){
+    public static boolean isLecternBook(ItemStack stack) {
         return BOOKS.containsKey(ForgeRegistries.ITEMS.getKey(stack.getItem()));
     }
 
-    public static class BookData{
+    public static class BookData {
         int bindingColor;
         int pageColor;
 

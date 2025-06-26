@@ -12,9 +12,9 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class PropertiesMessage {
-    private String propertyID;
-    private CompoundTag compound;
-    private int entityID;
+    private final String propertyID;
+    private final CompoundTag compound;
+    private final int entityID;
 
     public PropertiesMessage(String propertyID, CompoundTag compound, int entityID) {
         this.propertyID = propertyID;

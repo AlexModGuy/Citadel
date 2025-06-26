@@ -7,6 +7,7 @@ import java.util.List;
  * @author gegy1000
  * @since 1.0.0
  */
+@Deprecated(since = "2.6.2")
 public class TabulaAnimationComponentContainer {
     private String name;
     private String identifier;
@@ -14,17 +15,17 @@ public class TabulaAnimationComponentContainer {
     private int startKey;
     private int length;
 
-    private double[] posChange = new double[3];
-    private double[] rotChange = new double[3];
-    private double[] scaleChange = new double[3];
+    private final double[] posChange = new double[3];
+    private final double[] rotChange = new double[3];
+    private final double[] scaleChange = new double[3];
     private double opacityChange;
 
-    private double[] posOffset = new double[3];
-    private double[] rotOffset = new double[3];
-    private double[] scaleOffset = new double[3];
+    private final double[] posOffset = new double[3];
+    private final double[] rotOffset = new double[3];
+    private final double[] scaleOffset = new double[3];
     private double opacityOffset;
 
-    private List<double[]> progressionCoords = new ArrayList<>();
+    private final List<double[]> progressionCoords = new ArrayList<>();
 
     private boolean hidden;
 

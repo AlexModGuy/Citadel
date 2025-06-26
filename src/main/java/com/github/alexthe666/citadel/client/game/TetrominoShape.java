@@ -13,7 +13,7 @@ public enum TetrominoShape {
     ZLEFT(new Vec3i(-1, -1, 0), new Vec3i(0, -1, 0), new Vec3i(0, 0, 0), new Vec3i(0, 1, 0)),
     ZRIGHT(new Vec3i(0, -1, 0), new Vec3i(1, -1, 0), new Vec3i(0, 0, 0), new Vec3i(-1, 0, 0)),
     T(new Vec3i(0, -1, 0), new Vec3i(1, 0, 0), new Vec3i(0, 0, 0), new Vec3i(0, 1, 0));
-    private List<Vec3i> relativePositions;
+    private final List<Vec3i> relativePositions;
 
     TetrominoShape(Vec3i... relativePositions) {
         this.relativePositions = List.of(relativePositions);

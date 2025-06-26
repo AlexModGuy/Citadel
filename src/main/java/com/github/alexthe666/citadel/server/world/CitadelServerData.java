@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CitadelServerData extends SavedData {
-    private static Map<MinecraftServer, CitadelServerData> dataMap = new HashMap<>();
+    private static final Map<MinecraftServer, CitadelServerData> dataMap = new HashMap<>();
 
     private static final String IDENTIFIER = "citadel_world_data";
 
@@ -26,9 +26,9 @@ public class CitadelServerData extends SavedData {
 
     public CitadelServerData(MinecraftServer server, CompoundTag tag) {
         this(server);
-        if(tag.contains("TickRateTracker")){
+        if (tag.contains("TickRateTracker")) {
             tickRateTracker = new ServerTickRateTracker(server, tag.getCompound("TickRateTracker"));
-        }else{
+        } else {
             tickRateTracker = new ServerTickRateTracker(server);
         }
     }
@@ -36,7 +36,7 @@ public class CitadelServerData extends SavedData {
 
     public static CitadelServerData get(MinecraftServer server) {
         CitadelServerData fromMap = dataMap.get(server);
-        if(fromMap == null){
+        if (fromMap == null) {
             DimensionDataStorage storage = server.getLevel(Level.OVERWORLD).getDataStorage();
             CitadelServerData data = storage.computeIfAbsent((tag) -> new CitadelServerData(server, tag), () -> new CitadelServerData(server), IDENTIFIER);
             if (data != null) {
@@ -50,15 +50,15 @@ public class CitadelServerData extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag tag) {
-        if(tickRateTracker != null){
+        if (tickRateTracker != null) {
             tag.put("TickRateTracker", tickRateTracker.toTag());
         }
         return tag;
     }
 
 
-    public ServerTickRateTracker getOrCreateTickRateTracker(){
-        if(tickRateTracker == null){
+    public ServerTickRateTracker getOrCreateTickRateTracker() {
+        if (tickRateTracker == null) {
             tickRateTracker = new ServerTickRateTracker(server);
         }
         return tickRateTracker;

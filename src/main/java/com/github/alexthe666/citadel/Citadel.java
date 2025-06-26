@@ -56,8 +56,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-;
-
 @Mod("citadel")
 public class Citadel {
     public static final Logger LOGGER = LogManager.getLogger("citadel");

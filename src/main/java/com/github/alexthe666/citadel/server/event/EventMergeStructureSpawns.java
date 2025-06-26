@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Event.HasResult
-public class EventMergeStructureSpawns extends Event{
+public class EventMergeStructureSpawns extends Event {
 
-    private StructureManager structureManager;
-    private BlockPos pos;
-    private MobCategory category;
+    private final StructureManager structureManager;
+    private final BlockPos pos;
+    private final MobCategory category;
     private WeightedRandomList<MobSpawnSettings.SpawnerData> structureSpawns;
-    private WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns;
+    private final WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns;
 
     public EventMergeStructureSpawns(StructureManager structureManager, BlockPos pos, MobCategory category, WeightedRandomList<MobSpawnSettings.SpawnerData> structureSpawns, WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns) {
         this.structureManager = structureManager;
@@ -37,11 +37,11 @@ public class EventMergeStructureSpawns extends Event{
         return pos;
     }
 
-    public MobCategory getCategory(){
+    public MobCategory getCategory() {
         return category;
     }
 
-    public boolean isStructureTagged(TagKey<Structure> tagKey){
+    public boolean isStructureTagged(TagKey<Structure> tagKey) {
         return structureManager.getStructureWithPieceAt(pos, tagKey).isValid();
     }
 
@@ -53,10 +53,10 @@ public class EventMergeStructureSpawns extends Event{
         structureSpawns = spawns;
     }
 
-    public void mergeSpawns(){
-        List<MobSpawnSettings.SpawnerData> list =  new ArrayList<>(biomeSpawns.unwrap());
-        for(MobSpawnSettings.SpawnerData structureSpawn : structureSpawns.unwrap()){
-            if(!list.contains(structureSpawn)){
+    public void mergeSpawns() {
+        List<MobSpawnSettings.SpawnerData> list = new ArrayList<>(biomeSpawns.unwrap());
+        for (MobSpawnSettings.SpawnerData structureSpawn : structureSpawns.unwrap()) {
+            if (!list.contains(structureSpawn)) {
                 list.add(structureSpawn);
             }
         }

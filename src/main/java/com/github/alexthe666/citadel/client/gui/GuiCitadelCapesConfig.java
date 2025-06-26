@@ -60,12 +60,12 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         float f1 = angleYComponent;
         PoseStack posestack = RenderSystem.getModelViewStack();
         posestack.pushPose();
-        posestack.translate((double)x, (double)y, 1050.0D);
+        posestack.translate(x, y, 1050.0D);
         posestack.scale(1.0F, 1.0F, -1.0F);
         RenderSystem.applyModelViewMatrix();
         PoseStack posestack1 = new PoseStack();
         posestack1.translate(0.0D, 0.0D, 1000.0D);
-        posestack1.scale((float)size, (float)size, (float)size);
+        posestack1.scale((float) size, (float) size, (float) size);
         Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
         Quaternionf quaternion1 = Axis.XP.rotationDegrees(f1 * 20.0F);
         quaternion.mul(quaternion1);
@@ -109,17 +109,17 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         int j = this.height / 6;
         Button doneButton = Button.builder(CommonComponents.GUI_DONE, (p_213079_1_) -> {
             this.minecraft.setScreen(this.lastScreen);
-        }).size(200, 20).pos(i - 100, j+ 160).build();
+        }).size(200, 20).pos(i - 100, j + 160).build();
         this.addRenderableWidget(doneButton);
         button = Button.builder(getTypeText(), (p_213079_1_) -> {
             CitadelCapes.Cape nextCape = CitadelCapes.getNextCape(capeType, Minecraft.getInstance().player.getUUID());
             this.capeType = nextCape == null ? null : nextCape.getIdentifier();
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
-            if(tag != null){
-                if(capeType == null){
+            if (tag != null) {
+                if (capeType == null) {
                     tag.putString("CitadelCapeType", "");
                     tag.putBoolean("CitadelCapeDisabled", true);
-                }else{
+                } else {
                     tag.putString("CitadelCapeType", capeType);
                     tag.putBoolean("CitadelCapeDisabled", false);
                 }
@@ -132,17 +132,17 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
 
     }
 
-    private Component getTypeText(){
+    private Component getTypeText() {
         Component suffix;
 
-        if(capeType == null){
+        if (capeType == null) {
             suffix = Component.translatable("citadel.gui.no_cape");
-        }else{
+        } else {
 
             CitadelCapes.Cape cape = CitadelCapes.getById(capeType);
-            if(cape == null){
+            if (cape == null) {
                 suffix = Component.translatable("citadel.gui.no_cape");
-            }else{
+            } else {
                 suffix = Component.translatable("cape." + cape.getIdentifier());
             }
         }

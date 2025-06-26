@@ -22,8 +22,7 @@ import org.joml.Quaternionf;
  * Our replacement for GuiComponent.
  * TODO: move to shared lib
  */
-public class UiRenderMacros
-{
+public class UiRenderMacros {
     public static final double HALF_BIAS = 0.5;
 
     public static void drawLineRectGradient(final PoseStack ps,
@@ -32,8 +31,7 @@ public class UiRenderMacros
                                             final int w,
                                             final int h,
                                             final int argbColorStart,
-                                            final int argbColorEnd)
-    {
+                                            final int argbColorEnd) {
         drawLineRectGradient(ps, x, y, w, h, argbColorStart, argbColorEnd, 1);
     }
 
@@ -44,8 +42,7 @@ public class UiRenderMacros
                                             final int h,
                                             final int argbColorStart,
                                             final int argbColorEnd,
-                                            final int lineWidth)
-    {
+                                            final int lineWidth) {
         drawLineRectGradient(ps,
                 x,
                 y,
@@ -75,20 +72,15 @@ public class UiRenderMacros
                                             final int blueEnd,
                                             final int alphaStart,
                                             final int alphaEnd,
-                                            final int lineWidth)
-    {
-        if (lineWidth < 1 || (alphaStart == 0 && alphaEnd == 0))
-        {
+                                            final int lineWidth) {
+        if (lineWidth < 1 || (alphaStart == 0 && alphaEnd == 0)) {
             return;
         }
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        if (alphaStart != 255 || alphaEnd != 255)
-        {
+        if (alphaStart != 255 || alphaEnd != 255) {
             RenderSystem.enableBlend();
-        }
-        else
-        {
+        } else {
             RenderSystem.disableBlend();
         }
 
@@ -115,8 +107,7 @@ public class UiRenderMacros
         RenderSystem.disableBlend();
     }
 
-    public static void drawLineRect(final PoseStack ps, final int x, final int y, final int w, final int h, final int argbColor)
-    {
+    public static void drawLineRect(final PoseStack ps, final int x, final int y, final int w, final int h, final int argbColor) {
         drawLineRect(ps, x, y, w, h, argbColor, 1);
     }
 
@@ -126,8 +117,7 @@ public class UiRenderMacros
                                     final int w,
                                     final int h,
                                     final int argbColor,
-                                    final int lineWidth)
-    {
+                                    final int lineWidth) {
         drawLineRect(ps,
                 x,
                 y,
@@ -149,20 +139,15 @@ public class UiRenderMacros
                                     final int green,
                                     final int blue,
                                     final int alpha,
-                                    final int lineWidth)
-    {
-        if (lineWidth < 1 || alpha == 0)
-        {
+                                    final int lineWidth) {
+        if (lineWidth < 1 || alpha == 0) {
             return;
         }
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        if (alpha != 255)
-        {
+        if (alpha != 255) {
             RenderSystem.enableBlend();
-        }
-        else
-        {
+        } else {
             RenderSystem.disableBlend();
         }
 
@@ -189,8 +174,7 @@ public class UiRenderMacros
         RenderSystem.disableBlend();
     }
 
-    public static void fill(final PoseStack ps, final int x, final int y, final int w, final int h, final int argbColor)
-    {
+    public static void fill(final PoseStack ps, final int x, final int y, final int w, final int h, final int argbColor) {
         fill(ps, x, y, w, h, (argbColor >> 16) & 0xff, (argbColor >> 8) & 0xff, argbColor & 0xff, (argbColor >> 24) & 0xff);
     }
 
@@ -202,20 +186,15 @@ public class UiRenderMacros
                             final int red,
                             final int green,
                             final int blue,
-                            final int alpha)
-    {
-        if (alpha == 0)
-        {
+                            final int alpha) {
+        if (alpha == 0) {
             return;
         }
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        if (alpha != 255)
-        {
+        if (alpha != 255) {
             RenderSystem.enableBlend();
-        }
-        else
-        {
+        } else {
             RenderSystem.disableBlend();
         }
 
@@ -238,8 +217,7 @@ public class UiRenderMacros
                                     final int w,
                                     final int h,
                                     final int argbColorStart,
-                                    final int argbColorEnd)
-    {
+                                    final int argbColorEnd) {
         fillGradient(ps,
                 x,
                 y,
@@ -267,20 +245,15 @@ public class UiRenderMacros
                                     final int blueStart,
                                     final int blueEnd,
                                     final int alphaStart,
-                                    final int alphaEnd)
-    {
-        if (alphaStart == 0 && alphaEnd == 0)
-        {
+                                    final int alphaEnd) {
+        if (alphaStart == 0 && alphaEnd == 0) {
             return;
         }
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        if (alphaStart != 255 || alphaEnd != 255)
-        {
+        if (alphaStart != 255 || alphaEnd != 255) {
             RenderSystem.enableBlend();
-        }
-        else
-        {
+        } else {
             RenderSystem.disableBlend();
         }
 
@@ -296,8 +269,7 @@ public class UiRenderMacros
         RenderSystem.disableBlend();
     }
 
-    public static void hLine(final PoseStack ps, final int x, final int xEnd, final int y, final int argbColor)
-    {
+    public static void hLine(final PoseStack ps, final int x, final int xEnd, final int y, final int argbColor) {
         line(ps, x, y, xEnd, y, (argbColor >> 16) & 0xff, (argbColor >> 8) & 0xff, argbColor & 0xff, (argbColor >> 24) & 0xff);
     }
 
@@ -308,13 +280,11 @@ public class UiRenderMacros
                              final int red,
                              final int green,
                              final int blue,
-                             final int alpha)
-    {
+                             final int alpha) {
         line(ps, x, y, xEnd, y, red, green, blue, alpha);
     }
 
-    public static void vLine(final PoseStack ps, final int x, final int y, final int yEnd, final int argbColor)
-    {
+    public static void vLine(final PoseStack ps, final int x, final int y, final int yEnd, final int argbColor) {
         line(ps, x, y, x, yEnd, (argbColor >> 16) & 0xff, (argbColor >> 8) & 0xff, argbColor & 0xff, (argbColor >> 24) & 0xff);
     }
 
@@ -325,13 +295,11 @@ public class UiRenderMacros
                              final int red,
                              final int green,
                              final int blue,
-                             final int alpha)
-    {
+                             final int alpha) {
         line(ps, x, y, x, yEnd, red, green, blue, alpha);
     }
 
-    public static void line(final PoseStack ps, final int x, final int y, final int xEnd, final int yEnd, final int argbColor)
-    {
+    public static void line(final PoseStack ps, final int x, final int y, final int xEnd, final int yEnd, final int argbColor) {
         line(ps, x, y, xEnd, yEnd, (argbColor >> 16) & 0xff, (argbColor >> 8) & 0xff, argbColor & 0xff, (argbColor >> 24) & 0xff);
     }
 
@@ -343,20 +311,15 @@ public class UiRenderMacros
                             final int red,
                             final int green,
                             final int blue,
-                            final int alpha)
-    {
-        if (alpha == 0)
-        {
+                            final int alpha) {
+        if (alpha == 0) {
             return;
         }
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        if (alpha != 255)
-        {
+        if (alpha != 255) {
             RenderSystem.enableBlend();
-        }
-        else
-        {
+        } else {
             RenderSystem.disableBlend();
         }
 
@@ -370,8 +333,7 @@ public class UiRenderMacros
         RenderSystem.disableBlend();
     }
 
-    public static void blit(final PoseStack ps, final ResourceLocation rl, final int x, final int y, final int w, final int h)
-    {
+    public static void blit(final PoseStack ps, final ResourceLocation rl, final int x, final int y, final int w, final int h) {
         blit(ps, rl, x, y, w, h, 0.0f, 0.0f, 1.0f, 1.0f);
     }
 
@@ -384,8 +346,7 @@ public class UiRenderMacros
                             final int u,
                             final int v,
                             final int mapW,
-                            final int mapH)
-    {
+                            final int mapH) {
         blit(ps, rl, x, y, w, h, (float) u / mapW, (float) v / mapH, (float) (u + w) / mapW, (float) (v + h) / mapH);
     }
 
@@ -400,8 +361,7 @@ public class UiRenderMacros
                             final int uW,
                             final int vH,
                             final int mapW,
-                            final int mapH)
-    {
+                            final int mapH) {
         blit(ps, rl, x, y, w, h, (float) u / mapW, (float) v / mapH, (float) (u + uW) / mapW, (float) (v + vH) / mapH);
     }
 
@@ -414,8 +374,7 @@ public class UiRenderMacros
                             final float uMin,
                             final float vMin,
                             final float uMax,
-                            final float vMax)
-    {
+                            final float vMax) {
         Minecraft.getInstance().getTextureManager().bindForSetup(rl);
         RenderSystem.setShaderTexture(0, rl);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -459,11 +418,9 @@ public class UiRenderMacros
                                          final int uWidth, final int vHeight,
                                          final int textureWidth, final int textureHeight,
                                          final int uRepeat, final int vRepeat,
-                                         final int repeatWidth, final int repeatHeight)
-    {
+                                         final int repeatWidth, final int repeatHeight) {
         if (uRepeat < 0 || vRepeat < 0 || uRepeat >= uWidth || vRepeat >= vHeight || repeatWidth < 1 || repeatHeight < 1
-                || repeatWidth > uWidth - uRepeat || repeatHeight > vHeight - vRepeat)
-        {
+                || repeatWidth > uWidth - uRepeat || repeatHeight > vHeight - vRepeat) {
             throw new IllegalArgumentException("Repeatable box is outside of texture box");
         }
 
@@ -475,16 +432,14 @@ public class UiRenderMacros
         buffer.begin(Mode.TRIANGLES, DefaultVertexFormat.POSITION_TEX);
 
         // main
-        for (int i = 0; i < repeatCountX; i++)
-        {
+        for (int i = 0; i < repeatCountX; i++) {
             final int uAdjust = i == 0 ? 0 : uRepeat;
             final int xStart = x + uAdjust + i * repeatWidth;
             final int w = Math.min(repeatWidth + uRepeat - uAdjust, width - (uWidth - uRepeat - repeatWidth));
             final float minU = (float) (u + uAdjust) / textureWidth;
             final float maxU = (float) (u + uAdjust + w) / textureWidth;
 
-            for (int j = 0; j < repeatCountY; j++)
-            {
+            for (int j = 0; j < repeatCountY; j++) {
                 final int vAdjust = j == 0 ? 0 : vRepeat;
                 final int yStart = y + vAdjust + j * repeatHeight;
                 final int h = Math.min(repeatHeight + vRepeat - vAdjust, height - (vHeight - vRepeat - repeatHeight));
@@ -505,8 +460,7 @@ public class UiRenderMacros
         final float restMaxV = (float) (v + vHeight) / textureHeight;
 
         // bot border
-        for (int i = 0; i < repeatCountX; i++)
-        {
+        for (int i = 0; i < repeatCountX; i++) {
             final int uAdjust = i == 0 ? 0 : uRepeat;
             final int xStart = x + uAdjust + i * repeatWidth;
             final int w = Math.min(repeatWidth + uRepeat - uAdjust, width - uLeft);
@@ -517,8 +471,7 @@ public class UiRenderMacros
         }
 
         // left border
-        for (int j = 0; j < repeatCountY; j++)
-        {
+        for (int j = 0; j < repeatCountY; j++) {
             final int vAdjust = j == 0 ? 0 : vRepeat;
             final int yStart = y + vAdjust + j * repeatHeight;
             final int h = Math.min(repeatHeight + vRepeat - vAdjust, height - vLeft);
@@ -547,8 +500,7 @@ public class UiRenderMacros
                                              final int red,
                                              final int green,
                                              final int blue,
-                                             final int alpha)
-    {
+                                             final int alpha) {
         buffer.vertex(m, x, y, 0).color(red, green, blue, alpha).endVertex();
         buffer.vertex(m, x, y + h, 0).color(red, green, blue, alpha).endVertex();
         buffer.vertex(m, x + w, y, 0).color(red, green, blue, alpha).endVertex();
@@ -570,8 +522,7 @@ public class UiRenderMacros
                                                      final int blueStart,
                                                      final int blueEnd,
                                                      final int alphaStart,
-                                                     final int alphaEnd)
-    {
+                                                     final int alphaEnd) {
         buffer.vertex(m, x, y, 0).color(redStart, greenStart, blueStart, alphaStart).endVertex();
         buffer.vertex(m, x, y + h, 0).color(redEnd, greenEnd, blueEnd, alphaEnd).endVertex();
         buffer.vertex(m, x + w, y, 0).color(redStart, greenStart, blueStart, alphaStart).endVertex();
@@ -589,8 +540,7 @@ public class UiRenderMacros
                                              final float uMin,
                                              final float uMax,
                                              final float vMin,
-                                             final float vMax)
-    {
+                                             final float vMax) {
         buffer.vertex(mat, xStart, yStart, 0).uv(uMin, vMin).endVertex();
         buffer.vertex(mat, xStart, yEnd, 0).uv(uMin, vMax).endVertex();
         buffer.vertex(mat, xEnd, yStart, 0).uv(uMax, vMin).endVertex();
@@ -601,22 +551,23 @@ public class UiRenderMacros
 
     /**
      * Render an entity on a GUI.
+     *
      * @param poseStack matrix
-     * @param x horizontal center position
-     * @param y vertical bottom position
-     * @param scale scaling factor
-     * @param headYaw adjusts look rotation
-     * @param yaw adjusts body rotation
-     * @param pitch adjusts look rotation
-     * @param entity the entity to render
+     * @param x         horizontal center position
+     * @param y         vertical bottom position
+     * @param scale     scaling factor
+     * @param headYaw   adjusts look rotation
+     * @param yaw       adjusts body rotation
+     * @param pitch     adjusts look rotation
+     * @param entity    the entity to render
      */
     public static void drawEntity(final PoseStack poseStack, final int x, final int y, final double scale,
-                                  final float headYaw, final float yaw, final float pitch, final Entity entity)
-    {
+                                  final float headYaw, final float yaw, final float pitch, final Entity entity) {
         // INLINE: vanilla from InventoryScreen
         final LivingEntity livingEntity = (entity instanceof LivingEntity) ? (LivingEntity) entity : null;
         final Minecraft mc = Minecraft.getInstance();
-        if (entity.level() == null) return; // this was entity.setLevel, not sure why cuz sus, dont care if entity has no level
+        if (entity.level() == null)
+            return; // this was entity.setLevel, not sure why cuz sus, dont care if entity has no level
         poseStack.pushPose();
         poseStack.translate((float) x, (float) y, 1050.0F);
         poseStack.scale(1.0F, 1.0F, -1.0F);
@@ -630,10 +581,9 @@ public class UiRenderMacros
         final float oldYawOffset = livingEntity == null ? 0F : livingEntity.yBodyRot;
         final float oldPrevYawHead = livingEntity == null ? 0F : livingEntity.yHeadRotO;
         final float oldYawHead = livingEntity == null ? 0F : livingEntity.yHeadRot;
-        entity.setYRot(180.0F + (float) headYaw);
+        entity.setYRot(180.0F + headYaw);
         entity.setXRot(-pitch);
-        if (livingEntity != null)
-        {
+        if (livingEntity != null) {
             livingEntity.yBodyRot = 180.0F + yaw;
             livingEntity.yHeadRot = entity.getYRot();
             livingEntity.yHeadRotO = entity.getYRot();
@@ -649,8 +599,7 @@ public class UiRenderMacros
         dispatcher.setRenderShadow(true);
         entity.setYRot(oldYaw);
         entity.setXRot(oldPitch);
-        if (livingEntity != null)
-        {
+        if (livingEntity != null) {
             livingEntity.yBodyRot = oldYawOffset;
             livingEntity.yHeadRotO = oldPrevYawHead;
             livingEntity.yHeadRot = oldYawHead;

@@ -86,7 +86,7 @@ public class CustomCollisionsNavigator extends GroundPathNavigation {
         for (BlockPos blockpos : BlockPos.betweenClosed(new BlockPos(x, y, z), new BlockPos(x + sizeX - 1, y + sizeY - 1, z + sizeZ - 1))) {
             double d0 = (double) blockpos.getX() + 0.5D - p_179692_7_.x;
             double d1 = (double) blockpos.getZ() + 0.5D - p_179692_7_.z;
-            if (!(d0 * p_179692_8_ + d1 * p_179692_10_ < 0.0D) && !this.level.getBlockState(blockpos).isPathfindable(this.level, blockpos, PathComputationType.LAND) || ((ICustomCollisions)mob).canPassThrough(blockpos, level.getBlockState(blockpos), null)) {
+            if (!(d0 * p_179692_8_ + d1 * p_179692_10_ < 0.0D) && !this.level.getBlockState(blockpos).isPathfindable(this.level, blockpos, PathComputationType.LAND) || ((ICustomCollisions) mob).canPassThrough(blockpos, level.getBlockState(blockpos), null)) {
                 return false;
             }
         }
@@ -108,7 +108,7 @@ public class CustomCollisionsNavigator extends GroundPathNavigation {
                     if (!(d0 * p_179683_8_ + d1 * p_179683_10_ < 0.0D)) {
                         BlockPathTypes pathnodetype = this.nodeEvaluator.getBlockPathType(this.level, k, y - 1, l, this.mob);
                         mutable.set(k, y - 1, l);
-                        if (!this.hasValidPathType(pathnodetype) || ((ICustomCollisions)mob).canPassThrough(mutable, level.getBlockState(mutable), null)) {
+                        if (!this.hasValidPathType(pathnodetype) || ((ICustomCollisions) mob).canPassThrough(mutable, level.getBlockState(mutable), null)) {
                             return false;
                         }
 

@@ -22,18 +22,18 @@ public abstract class CitadelPatreonRenderer {
 
     public static String getIdOfNext(String identifier) {
         Object[] ids = PATREON_RENDERER_MAP.keySet().toArray();
-        if(identifier.equals("none") && ids.length > 0){
-            return (String)ids[0];
+        if (identifier.equals("none") && ids.length > 0) {
+            return (String) ids[0];
         }
         for (int i = 0; i < ids.length - 1; i++) {
-           if(ids[i].equals(identifier)){
-               return (String)ids[i+1];
-           }
+            if (ids[i].equals(identifier)) {
+                return (String) ids[i + 1];
+            }
         }
         return "none";
     }
 
-    public static String getDefault(){
+    public static String getDefault() {
         return "citadel";
     }
 }

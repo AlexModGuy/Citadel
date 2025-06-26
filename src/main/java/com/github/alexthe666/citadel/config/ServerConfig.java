@@ -21,7 +21,7 @@ public class ServerConfig {
         this.aprilFoolsContent = buildBoolean(builder, "April Fools Content", "all", true, "True to if april fools content can display on april fools.");
     }
 
-    private static ForgeConfigSpec.BooleanValue buildBoolean(ForgeConfigSpec.Builder builder, String name, String catagory, boolean defaultValue, String comment){
+    private static ForgeConfigSpec.BooleanValue buildBoolean(ForgeConfigSpec.Builder builder, String name, String catagory, boolean defaultValue, String comment) {
         return builder.comment(comment).translation(name).define(name, defaultValue);
     }
 }

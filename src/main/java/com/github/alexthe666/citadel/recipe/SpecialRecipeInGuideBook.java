@@ -6,5 +6,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 public interface SpecialRecipeInGuideBook {
     NonNullList<Ingredient> getDisplayIngredients();
+
     ItemStack getDisplayResultFor(NonNullList<ItemStack> stacks);
 }

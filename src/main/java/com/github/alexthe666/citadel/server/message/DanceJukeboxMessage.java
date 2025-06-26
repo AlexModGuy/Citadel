@@ -42,7 +42,7 @@ public class DanceJukeboxMessage {
             context.get().setPacketHandled(true);
             context.get().enqueueWork(() -> {
                 Player player = context.get().getSender();
-                if(context.get().getDirection().getReceptionSide() == LogicalSide.CLIENT){
+                if (context.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
                     player = Citadel.PROXY.getClientSidePlayer();
                 }
 

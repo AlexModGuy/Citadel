@@ -55,10 +55,10 @@ public final class Pathfinding {
             ClassLoader classLoader;
             if (workqueue.isSameThread()) {
                 classLoader = Thread.currentThread().getContextClassLoader();
-            } else if (workqueue instanceof MinecraftServer server){
-               classLoader = server.getRunningThread().getContextClassLoader();
+            } else if (workqueue instanceof MinecraftServer server) {
+                classLoader = server.getRunningThread().getContextClassLoader();
             } else {
-                classLoader = CompletableFuture.supplyAsync(() -> Thread.currentThread().getContextClassLoader(), workqueue).orTimeout(10, TimeUnit.SECONDS).exceptionally((ex)-> {
+                classLoader = CompletableFuture.supplyAsync(() -> Thread.currentThread().getContextClassLoader(), workqueue).orTimeout(10, TimeUnit.SECONDS).exceptionally((ex) -> {
                     throw new RuntimeException(String.format("Couldn't join threads within timeout range. Tried joining '%s' on '%s'", Thread.currentThread().getName(), workqueue.name()));
                 }).join();
             }

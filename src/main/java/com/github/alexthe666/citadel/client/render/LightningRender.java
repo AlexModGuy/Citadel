@@ -85,7 +85,7 @@ public class LightningRender {
 
         private final LightningBoltData bolt;
         private final List<LightningBoltData.BoltQuads> renderQuads;
-        private Timestamp createdTimestamp;
+        private final Timestamp createdTimestamp;
 
         public BoltInstance(LightningBoltData bolt, Timestamp timestamp) {
             this.bolt = bolt;
@@ -110,8 +110,8 @@ public class LightningRender {
 
     public class Timestamp {
 
-        private long ticks;
-        private float partial;
+        private final long ticks;
+        private final float partial;
 
         public Timestamp() {
             this(0, 0);

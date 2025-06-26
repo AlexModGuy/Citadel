@@ -170,13 +170,11 @@ public class MNode implements Comparable<MNode> {
             return 1;
         }
 
-        if (heuristic < o.heuristic)
-        {
+        if (heuristic < o.heuristic) {
             return -1;
         }
 
-        if (heuristic > o.heuristic)
-        {
+        if (heuristic > o.heuristic) {
             return 1;
         }
 
@@ -185,8 +183,7 @@ public class MNode implements Comparable<MNode> {
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return hash;
     }
 
@@ -195,8 +192,8 @@ public class MNode implements Comparable<MNode> {
         if (o != null && o.getClass() == this.getClass()) {
             @Nullable final MNode other = (MNode) o;
             return pos.getX() == other.pos.getX()
-                && pos.getY() == other.pos.getY()
-                && pos.getZ() == other.pos.getZ();
+                    && pos.getY() == other.pos.getY()
+                    && pos.getZ() == other.pos.getZ();
         }
 
         return false;
@@ -207,8 +204,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @return true if so.
      */
-    public boolean isClosed()
-    {
+    public boolean isClosed() {
         return closed;
     }
 
@@ -217,8 +213,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @return true if so.
      */
-    public boolean isLadder()
-    {
+    public boolean isLadder() {
         return ladder;
     }
 
@@ -227,16 +222,14 @@ public class MNode implements Comparable<MNode> {
      *
      * @return true if so.
      */
-    public boolean isSwimming()
-    {
+    public boolean isSwimming() {
         return swimming;
     }
 
     /**
      * Sets the node as closed.
      */
-    public void setClosed()
-    {
+    public void setClosed() {
         closed = true;
     }
 
@@ -245,8 +238,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @return the amount.
      */
-    public int getCounterVisited()
-    {
+    public int getCounterVisited() {
         return counterVisited;
     }
 
@@ -255,8 +247,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @param counterVisited amount to set.
      */
-    public void setCounterVisited(final int counterVisited)
-    {
+    public void setCounterVisited(final int counterVisited) {
         this.counterVisited = counterVisited;
     }
 
@@ -265,8 +256,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @return the score.
      */
-    public double getScore()
-    {
+    public double getScore() {
         return score;
     }
 
@@ -275,8 +265,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @param score the score.
      */
-    public void setScore(final double score)
-    {
+    public void setScore(final double score) {
         this.score = score;
     }
 
@@ -285,8 +274,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @return the cost.
      */
-    public double getCost()
-    {
+    public double getCost() {
         return cost;
     }
 
@@ -295,8 +283,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @param cost the cost.
      */
-    public void setCost(final double cost)
-    {
+    public void setCost(final double cost) {
         this.cost = cost;
     }
 
@@ -305,8 +292,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @return the steps.
      */
-    public int getSteps()
-    {
+    public int getSteps() {
         return steps;
     }
 
@@ -315,24 +301,21 @@ public class MNode implements Comparable<MNode> {
      *
      * @param steps the amount.
      */
-    public void setSteps(final int steps)
-    {
+    public void setSteps(final int steps) {
         this.steps = steps;
     }
 
     /**
      * Sets the node as a ladder node.
      */
-    public void setLadder()
-    {
+    public void setLadder() {
         ladder = true;
     }
 
     /**
      * Sets the node as a swimming node.
      */
-    public void setSwimming()
-    {
+    public void setSwimming() {
         swimming = true;
     }
 
@@ -341,8 +324,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @return the heuristic.
      */
-    public double getHeuristic()
-    {
+    public double getHeuristic() {
         return heuristic;
     }
 
@@ -351,8 +333,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @param heuristic the heuristic.
      */
-    public void setHeuristic(final double heuristic)
-    {
+    public void setHeuristic(final double heuristic) {
         this.heuristic = heuristic;
     }
 
@@ -361,8 +342,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @return the amount.
      */
-    public int getCounterAdded()
-    {
+    public int getCounterAdded() {
         return counterAdded;
     }
 
@@ -371,8 +351,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @param counterAdded amount to set.
      */
-    public void setCounterAdded(final int counterAdded)
-    {
+    public void setCounterAdded(final int counterAdded) {
         this.counterAdded = counterAdded;
     }
 
@@ -381,8 +360,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @param isOnRails if on rails.
      */
-    public void setOnRails(final boolean isOnRails)
-    {
+    public void setOnRails(final boolean isOnRails) {
         this.isOnRails = isOnRails;
     }
 
@@ -391,16 +369,14 @@ public class MNode implements Comparable<MNode> {
      *
      * @return true if so.
      */
-    public boolean isOnRails()
-    {
+    public boolean isOnRails() {
         return isOnRails;
     }
 
     /**
      * Marks the node as reached by the worker
      */
-    public void setReachedByWorker(boolean bool)
-    {
+    public void setReachedByWorker(boolean bool) {
         isReachedByWorker = bool;
     }
 
@@ -409,16 +385,14 @@ public class MNode implements Comparable<MNode> {
      *
      * @return reached
      */
-    public boolean isReachedByWorker()
-    {
+    public boolean isReachedByWorker() {
         return isReachedByWorker;
     }
 
     /**
      * Marks the node as reached by the worker
      */
-    public void setCornerNode(boolean isCornerNode)
-    {
+    public void setCornerNode(boolean isCornerNode) {
         this.isCornerNode = isCornerNode;
     }
 
@@ -427,8 +401,7 @@ public class MNode implements Comparable<MNode> {
      *
      * @return reached
      */
-    public boolean isCornerNode()
-    {
+    public boolean isCornerNode() {
         return isCornerNode;
     }
 }

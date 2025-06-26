@@ -87,10 +87,10 @@ public class CustomCollisionsBlockCollisions extends AbstractIterator<VoxelShape
                 }
 
                 VoxelShape voxelshape = blockstate.getCollisionShape(this.collisionGetter, this.pos, this.context);
-                if(context instanceof EntityCollisionContext){
-                    Entity entity = ((EntityCollisionContext)context).getEntity();
-                    if(entity instanceof ICustomCollisions){
-                        if(((ICustomCollisions) entity).canPassThrough(pos, blockstate, voxelshape)){
+                if (context instanceof EntityCollisionContext) {
+                    Entity entity = ((EntityCollisionContext) context).getEntity();
+                    if (entity instanceof ICustomCollisions) {
+                        if (((ICustomCollisions) entity).canPassThrough(pos, blockstate, voxelshape)) {
                             continue;
                         }
                     }

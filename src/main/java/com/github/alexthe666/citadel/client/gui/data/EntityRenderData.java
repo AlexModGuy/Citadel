@@ -10,7 +10,7 @@ public class EntityRenderData {
     private double rot_y;
     private double rot_z;
     private boolean follow_cursor;
-    private String entity_data;
+    private final String entity_data;
 
     public EntityRenderData(String entity, int x, int y, double scale, int page, double rot_x, double rot_y, double rot_z, boolean follow_cursor, String entity_data) {
         this.entity = entity;

@@ -17,12 +17,12 @@ import java.util.Map;
 
 public class PostEffectRegistry {
 
-    private static List<ResourceLocation> registry = new ArrayList<>();
+    private static final List<ResourceLocation> registry = new ArrayList<>();
 
-    private static Map<ResourceLocation, PostEffect> postEffects = new HashMap<>();
+    private static final Map<ResourceLocation, PostEffect> postEffects = new HashMap<>();
 
-    public static void clear(){
-        for(PostEffect postEffect : postEffects.values()){
+    public static void clear() {
+        for (PostEffect postEffect : postEffects.values()) {
             postEffect.close();
         }
         postEffects.clear();
@@ -108,8 +108,8 @@ public class PostEffectRegistry {
     }
 
     private static class PostEffect {
-        private PostChain postChain;
-        private RenderTarget renderTarget;
+        private final PostChain postChain;
+        private final RenderTarget renderTarget;
         private boolean enabled;
 
         public PostEffect(PostChain postChain, RenderTarget renderTarget, boolean enabled) {

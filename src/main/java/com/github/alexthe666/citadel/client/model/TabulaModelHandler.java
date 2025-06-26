@@ -24,12 +24,13 @@ import java.util.zip.ZipInputStream;
  * @since 1.0.0
  */
 @OnlyIn(Dist.CLIENT)
+@Deprecated(since = "2.6.2")
 public enum TabulaModelHandler implements JsonDeserializationContext {
     INSTANCE;
 
-    private Gson gson = new GsonBuilder().registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer()).registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer()).create();
-    private JsonParser parser = new JsonParser();
-    private TabulaModelBlock.Deserializer TabulaModelBlockDeserializer = new TabulaModelBlock.Deserializer();
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer()).registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer()).create();
+    private final JsonParser parser = new JsonParser();
+    private final TabulaModelBlock.Deserializer TabulaModelBlockDeserializer = new TabulaModelBlock.Deserializer();
     private ResourceManager manager;
     private final Set<String> enabledDomains = new HashSet<>();
 

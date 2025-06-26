@@ -61,10 +61,9 @@ public class LinkButton extends Button {
         RenderSystem.enableDepthTest();
 
 
-
         guiGraphics.blit(book.getBookButtonsTexture(), this.getX(), this.getY(), 0, 46 + i * 20, this.width / 2, this.height);
         guiGraphics.blit(book.getBookButtonsTexture(), this.getX() + this.width / 2, this.getY(), 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-        if(this.isHovered){
+        if (this.isHovered) {
             int color = book.getWidgetColor();
             int r = (color & 0xFF0000) >> 16;
             int g = (color & 0xFF00) >> 8;
@@ -76,8 +75,8 @@ public class LinkButton extends Button {
 
         int j = getFGColor();
         int itemTextOffset = previewStack.isEmpty() ? 0 : 8;
-        if(!previewStack.isEmpty()){
-            ItemRenderer itemRenderer =  Minecraft.getInstance().getItemRenderer();
+        if (!previewStack.isEmpty()) {
+            ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
             guiGraphics.renderItem(previewStack, this.getX() + 2, this.getY() + 1);
         }
         drawTextOf(guiGraphics, font, this.getMessage(), this.getX() + itemTextOffset + this.width / 2, this.getY() + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
@@ -85,7 +84,7 @@ public class LinkButton extends Button {
 
     public static void drawTextOf(GuiGraphics guiGraphics, Font font, Component component, int x, int y, int color) {
         FormattedCharSequence formattedcharsequence = component.getVisualOrderText();
-        guiGraphics.drawString(font, formattedcharsequence, (float)(x - font.width(formattedcharsequence) / 2), (float)y, color, false);
+        guiGraphics.drawString(font, formattedcharsequence, (float) (x - font.width(formattedcharsequence) / 2), (float) y, color, false);
     }
 
     @Override

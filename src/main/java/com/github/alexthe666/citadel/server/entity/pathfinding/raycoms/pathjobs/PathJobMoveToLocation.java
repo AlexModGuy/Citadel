@@ -82,8 +82,8 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     protected boolean isAtDestination(final MNode n) {
         if (destinationSlack <= DESTINATION_SLACK_NONE) {
             return n.pos.getX() == destination.getX()
-                && n.pos.getY() == destination.getY()
-                && n.pos.getZ() == destination.getZ();
+                    && n.pos.getY() == destination.getY()
+                    && n.pos.getZ() == destination.getZ();
         }
 
         if (n.pos.getY() == destination.getY() - 1) {

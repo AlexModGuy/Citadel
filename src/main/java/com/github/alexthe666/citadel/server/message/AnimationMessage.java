@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 
 public class AnimationMessage {
 
-    private int entityID;
-    private int index;
+    private final int entityID;
+    private final int index;
 
     public AnimationMessage(int entityID, int index) {
         this.entityID = entityID;

@@ -22,15 +22,13 @@ public abstract class AdvancedEntityModel<T extends Entity> extends BasicEntityM
     private final Map<String, TextureOffset> modelTextureMap = Maps.newHashMap();
     public int texWidth = 32;
     public int texHeight = 32;
-    public AdvancedEntityModel(){
+
+    public AdvancedEntityModel() {
         super();
     }
 
     public void updateDefaultPose() {
-        this.getAllParts().forEach(modelRenderer -> {
-            AdvancedModelBox advancedRendererModel = (AdvancedModelBox) modelRenderer;
-            advancedRendererModel.updateDefaultPose();
-        });
+        this.getAllParts().forEach(AdvancedModelBox::updateDefaultPose);
     }
 
     protected void setTextureOffset(String partName, int x, int y) {
@@ -45,10 +43,7 @@ public abstract class AdvancedEntityModel<T extends Entity> extends BasicEntityM
      * Sets the current pose to the previously set default pose
      */
     public void resetToDefaultPose() {
-        this.getAllParts().forEach(modelRenderer -> {
-            AdvancedModelBox advancedRendererModel = (AdvancedModelBox) modelRenderer;
-            advancedRendererModel.resetToDefaultPose();
-        });
+        this.getAllParts().forEach(AdvancedModelBox::resetToDefaultPose);
     }
 
     /**

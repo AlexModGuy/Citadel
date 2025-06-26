@@ -20,7 +20,7 @@ public class SpaceStationPatreonRenderer extends CitadelPatreonRenderer {
     private static final ResourceLocation CITADEL_TEXTURE = new ResourceLocation("citadel", "textures/patreon/citadel_model.png");
     private static final ResourceLocation CITADEL_LIGHTS_TEXTURE = new ResourceLocation("citadel", "textures/patreon/citadel_model_glow.png");
     private final ResourceLocation resourceLocation;
-    private int[] colors;
+    private final int[] colors;
 
     public SpaceStationPatreonRenderer(ResourceLocation resourceLocation, int[] colors) {
         this.resourceLocation = resourceLocation;
@@ -43,10 +43,10 @@ public class SpaceStationPatreonRenderer extends CitadelPatreonRenderer {
         matrixStackIn.mulPose(Axis.XP.rotationDegrees(90));
         matrixStackIn.mulPose(Axis.YP.rotationDegrees(rotation * 10));
         ClientProxy.CITADEL_MODEL.resetToDefaultPose();
-        if(CitadelConstants.debugShaders()){
+        if (CitadelConstants.debugShaders()) {
             PostEffectRegistry.renderEffectForNextTick(ClientProxy.RAINBOW_AURA_POST_SHADER);
             ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buffer.getBuffer(CitadelShaderRenderTypes.getRainbowAura(CITADEL_TEXTURE)), light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        }else{
+        } else {
             ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buffer.getBuffer(RenderType.entityCutoutNoCull(CitadelTextureManager.getColorMappedTexture(resourceLocation, CITADEL_TEXTURE, colors))), light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
             ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buffer.getBuffer(RenderType.eyes(CITADEL_LIGHTS_TEXTURE)), light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }

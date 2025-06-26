@@ -23,7 +23,7 @@ public abstract class AbstractClientPlayerMixin extends Player {
     @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/player/AbstractClientPlayer;getCloakTextureLocation()Lnet/minecraft/resources/ResourceLocation;", cancellable = true)
     private void citadel_getCapeLocation(CallbackInfoReturnable<ResourceLocation> cir) {
         CitadelCapes.Cape cape = CitadelCapes.getCurrentCape(this);
-        if(cape != null){
+        if (cape != null) {
             cir.setReturnValue(cape.getTexture());
         }
     }
@@ -31,7 +31,7 @@ public abstract class AbstractClientPlayerMixin extends Player {
     @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/player/AbstractClientPlayer;getElytraTextureLocation()Lnet/minecraft/resources/ResourceLocation;", cancellable = true)
     private void citadel_getElytraLocation(CallbackInfoReturnable<ResourceLocation> cir) {
         CitadelCapes.Cape cape = CitadelCapes.getCurrentCape(this);
-        if(cape != null){
+        if (cape != null) {
             cir.setReturnValue(cape.getTexture());
         }
     }

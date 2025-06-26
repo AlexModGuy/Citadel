@@ -8,9 +8,9 @@ import net.minecraftforge.eventbus.api.Event;
 @OnlyIn(Dist.CLIENT)
 @Event.HasResult
 public class EventGetStarBrightness extends Event {
-    private ClientLevel clientLevel;
+    private final ClientLevel clientLevel;
     private float brightness;
-    private float partialTicks;
+    private final float partialTicks;
 
     public EventGetStarBrightness(ClientLevel clientLevel, float brightness, float partialTicks) {
         this.clientLevel = clientLevel;

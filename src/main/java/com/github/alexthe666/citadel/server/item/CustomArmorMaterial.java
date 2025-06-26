@@ -6,12 +6,12 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
 
 public class CustomArmorMaterial implements ArmorMaterial {
-    private String name;
-    private int durability;
-    private int[] damageReduction;
-    private int encantability;
-    private SoundEvent sound;
-    private float toughness;
+    private final String name;
+    private final int durability;
+    private final int[] damageReduction;
+    private final int encantability;
+    private final SoundEvent sound;
+    private final float toughness;
     private Ingredient ingredient = null;
     public float knockbackResistance = 0.0F;
 
@@ -50,7 +50,7 @@ public class CustomArmorMaterial implements ArmorMaterial {
         return ingredient == null ? Ingredient.EMPTY : ingredient;
     }
 
-    public void setRepairMaterial(Ingredient ingredient){
+    public void setRepairMaterial(Ingredient ingredient) {
         this.ingredient = ingredient;
     }
 

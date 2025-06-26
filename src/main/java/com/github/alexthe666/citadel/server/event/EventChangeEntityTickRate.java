@@ -6,8 +6,8 @@ import net.minecraftforge.eventbus.api.Event;
 
 @Cancelable
 public class EventChangeEntityTickRate extends Event {
-    private Entity entity;
-    private float targetTickRate;
+    private final Entity entity;
+    private final float targetTickRate;
 
     public EventChangeEntityTickRate(Entity entity, float targetTickRate) {
         this.entity = entity;

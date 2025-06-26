@@ -17,7 +17,7 @@ import java.io.InputStream;
 
 public class ColorMappedTexture extends SimpleTexture {
 
-    private int[] colors;
+    private final int[] colors;
 
     public ColorMappedTexture(ResourceLocation resourceLocation, int[] colors) {
         super(resourceLocation);
@@ -26,13 +26,13 @@ public class ColorMappedTexture extends SimpleTexture {
 
     public void load(ResourceManager resourceManager) throws IOException {
         NativeImage nativeimage = getNativeImage(resourceManager, location);
-        if(nativeimage != null){
-            if(resourceManager.getResource(location).isPresent()){
+        if (nativeimage != null) {
+            if (resourceManager.getResource(location).isPresent()) {
                 Resource resource = resourceManager.getResource(location).get();
                 try {
                     ColorsMetadataSection section = resource.metadata().getSection(ColorsMetadataSection.SERIALIZER).orElse(new ColorsMetadataSection(null));
                     NativeImage nativeimage2 = getNativeImage(resourceManager, section.getColorRamp());
-                    if(nativeimage2 != null){
+                    if (nativeimage2 != null) {
                         processColorMap(nativeimage, nativeimage2);
                     }
                 } catch (Exception e) {
@@ -47,7 +47,7 @@ public class ColorMappedTexture extends SimpleTexture {
 
     private NativeImage getNativeImage(ResourceManager resourceManager, @Nullable ResourceLocation resourceLocation) {
         Resource resource = null;
-        if(resourceLocation == null){
+        if (resourceLocation == null) {
             return null;
         }
         try {
@@ -58,25 +58,25 @@ public class ColorMappedTexture extends SimpleTexture {
                 inputstream.close();
             }
             return nativeimage;
-        }catch (Throwable throwable1) {
+        } catch (Throwable throwable1) {
             return null;
         }
     }
 
     private void processColorMap(NativeImage nativeImage, NativeImage colorMap) {
         int[] fromColorMap = new int[colorMap.getHeight()];
-        for(int i = 0; i < fromColorMap.length; i++){
+        for (int i = 0; i < fromColorMap.length; i++) {
             fromColorMap[i] = colorMap.getPixelRGBA(0, i);
         }
         for (int i = 0; i < nativeImage.getWidth(); i++) {
             for (int j = 0; j < nativeImage.getHeight(); j++) {
                 int colorAt = nativeImage.getPixelRGBA(i, j);
-                if(FastColor.ABGR32.alpha(colorAt) == 0){
+                if (FastColor.ABGR32.alpha(colorAt) == 0) {
                     continue;
                 }
                 int replaceIndex = -1;
-                for(int k = 0; k < fromColorMap.length; k++){
-                    if(colorAt == fromColorMap[k]){
+                for (int k = 0; k < fromColorMap.length; k++) {
+                    if (colorAt == fromColorMap[k]) {
                         replaceIndex = k;
                     }
                 }
@@ -94,12 +94,13 @@ public class ColorMappedTexture extends SimpleTexture {
 
         public static final ColorsMetadataSectionSerializer SERIALIZER = new ColorsMetadataSectionSerializer();
 
-        private ResourceLocation colorRamp;
+        private final ResourceLocation colorRamp;
+
         public ColorsMetadataSection(ResourceLocation colorRamp) {
             this.colorRamp = colorRamp;
         }
 
-        private boolean areColorsEqual(int color1, int color2){
+        private boolean areColorsEqual(int color1, int color2) {
             int r1 = color1 >> 16 & 255;
             int g1 = color1 >> 8 & 255;
             int b1 = color1 & 255;
@@ -109,7 +110,7 @@ public class ColorMappedTexture extends SimpleTexture {
             return r1 == r2 && g1 == g2 && b1 == b2;
         }
 
-        public ResourceLocation getColorRamp(){
+        public ResourceLocation getColorRamp() {
             return colorRamp;
         }
     }

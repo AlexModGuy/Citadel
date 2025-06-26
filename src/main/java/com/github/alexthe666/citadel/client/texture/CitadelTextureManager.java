@@ -12,13 +12,11 @@ import java.util.Map;
 
 public class CitadelTextureManager {
 
-    private static final Map<ResourceLocation, ResourceLocation> COLOR_MAPPED_TEXTURES = new HashMap<>();
-
-    public static ResourceLocation getColorMappedTexture(ResourceLocation textureLoc, int[] colors){
+    public static ResourceLocation getColorMappedTexture(ResourceLocation textureLoc, int[] colors) {
         return getColorMappedTexture(textureLoc, textureLoc, colors);
     }
 
-    public static ResourceLocation getColorMappedTexture(ResourceLocation namespace, ResourceLocation textureLoc, int[] colors){
+    public static ResourceLocation getColorMappedTexture(ResourceLocation namespace, ResourceLocation textureLoc, int[] colors) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         AbstractTexture abstracttexture = textureManager.getTexture(namespace, MissingTextureAtlasSprite.getTexture());
         if (abstracttexture == MissingTextureAtlasSprite.getTexture()) {
@@ -27,7 +25,7 @@ public class CitadelTextureManager {
         return namespace;
     }
 
-    public static VideoFrameTexture getVideoTexture(ResourceLocation namespace, int defaultWidth, int defaultHeight){
+    public static VideoFrameTexture getVideoTexture(ResourceLocation namespace, int defaultWidth, int defaultHeight) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         AbstractTexture abstracttexture = textureManager.getTexture(namespace, MissingTextureAtlasSprite.getTexture());
         if (abstracttexture == MissingTextureAtlasSprite.getTexture()) {

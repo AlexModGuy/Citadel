@@ -45,38 +45,32 @@ public enum SurfaceType {
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if ((block instanceof TrapDoorBlock) && !blockState.getValue(TrapDoorBlock.OPEN))
-        {
+        if ((block instanceof TrapDoorBlock) && !blockState.getValue(TrapDoorBlock.OPEN)) {
             return SurfaceType.WALKABLE;
         }
 
         final VoxelShape shape = blockState.getShape(world, pos);
-        if (shape.max(Direction.Axis.Y) > 1.0)
-        {
+        if (shape.max(Direction.Axis.Y) > 1.0) {
             return SurfaceType.NOT_PASSABLE;
         }
 
         final FluidState fluid = world.getFluidState(pos);
-        if (blockState.getBlock() == Blocks.LAVA || !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA))
-        {
+        if (blockState.getBlock() == Blocks.LAVA || !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA)) {
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (isWater(world, pos, blockState, fluid))
-        {
+        if (isWater(world, pos, blockState, fluid)) {
             return SurfaceType.WALKABLE;
         }
 
-        if (block instanceof SignBlock || block instanceof VineBlock)
-        {
+        if (block instanceof SignBlock || block instanceof VineBlock) {
             return SurfaceType.DROPABLE;
         }
 
         if ((blockState.isSolid() && (shape.max(Direction.Axis.X) - shape.min(Direction.Axis.X)) > 0.75
                 && (shape.max(Direction.Axis.Z) - shape.min(Direction.Axis.Z)) > 0.75)
                 || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
-                || block instanceof CarpetBlock)
-        {
+                || block instanceof CarpetBlock) {
             return SurfaceType.WALKABLE;
         }
 

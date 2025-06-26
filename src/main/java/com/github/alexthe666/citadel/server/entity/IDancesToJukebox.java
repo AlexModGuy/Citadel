@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 public interface IDancesToJukebox {
 
     void setDancing(boolean dancing);
+
     void setJukeboxPos(BlockPos pos);
 
     default void onClientPlayMusicDisc(int entityId, BlockPos pos, boolean dancing) {

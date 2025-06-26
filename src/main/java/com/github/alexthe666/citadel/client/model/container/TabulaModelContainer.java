@@ -8,21 +8,22 @@ import java.util.List;
  * @author gegy1000
  * @since 1.0.0
  */
+@Deprecated(since = "2.6.2")
 public class TabulaModelContainer {
-    private String modelName;
-    private String authorName;
+    private final String modelName;
+    private final String authorName;
 
-    private int projVersion;
+    private final int projVersion;
     private String[] metadata;
 
-    private double[] scale = new double[]{1.0, 1.0, 1.0};
+    private final double[] scale = new double[]{1.0, 1.0, 1.0};
 
-    private int textureWidth;
-    private int textureHeight;
+    private final int textureWidth;
+    private final int textureHeight;
 
-    private List<TabulaCubeGroupContainer> cubeGroups = new ArrayList<>();
+    private final List<TabulaCubeGroupContainer> cubeGroups = new ArrayList<>();
     private List<TabulaCubeContainer> cubes = new ArrayList<>();
-    private List<TabulaAnimationContainer> anims = new ArrayList<>();
+    private final List<TabulaAnimationContainer> anims = new ArrayList<>();
     private int cubeCount;
 
     public TabulaModelContainer(String name, String author, int textureWidth, int textureHeight, List<TabulaCubeContainer> cubes, int projectVersion) {

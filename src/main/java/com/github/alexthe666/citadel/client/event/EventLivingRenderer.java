@@ -8,10 +8,10 @@ import net.minecraftforge.eventbus.api.Event;
 
 public class EventLivingRenderer extends Event {
 
-    private LivingEntity entity;
-    private EntityModel model;
-    private PoseStack poseStack;
-    private float partialTicks;
+    private final LivingEntity entity;
+    private final EntityModel model;
+    private final PoseStack poseStack;
+    private final float partialTicks;
 
     public EventLivingRenderer(LivingEntity entity, EntityModel model, PoseStack poseStack, float partialTicks) {
         this.entity = entity;
@@ -37,7 +37,7 @@ public class EventLivingRenderer extends Event {
     }
 
     public static class SetupRotations extends EventLivingRenderer {
-        private float bodyYRot;
+        private final float bodyYRot;
 
         public SetupRotations(LivingEntity entity, EntityModel model, PoseStack poseStack, float bodyYRot, float partialTicks) {
             super(entity, model, poseStack, partialTicks);
@@ -50,9 +50,9 @@ public class EventLivingRenderer extends Event {
     }
 
     public static class AccessToBufferSource extends EventLivingRenderer {
-        private float bodyYRot;
-        private MultiBufferSource bufferSource;
-        private int packedLight;
+        private final float bodyYRot;
+        private final MultiBufferSource bufferSource;
+        private final int packedLight;
 
         public AccessToBufferSource(LivingEntity entity, EntityModel model, PoseStack poseStack, float bodyYRot, float partialTicks, MultiBufferSource bufferSource, int packedLight) {
             super(entity, model, poseStack, partialTicks);

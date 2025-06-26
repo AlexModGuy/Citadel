@@ -40,9 +40,9 @@ public class Video {
 
     private boolean muted;
 
-    private String url;
-    private ResourceLocation resourceLocation;
-    private VideoFrameTexture texture;
+    private final String url;
+    private final ResourceLocation resourceLocation;
+    private final VideoFrameTexture texture;
 
     private FrameGrab frameGrabber = null;
     private FrameGrab prevFrameGrabber = null;
@@ -65,15 +65,15 @@ public class Video {
     public void update() {
 
         if (frameGrabber != null) {
-            if(prevFrameGrabber == null){
+            if (prevFrameGrabber == null) {
                 onStart();
             }
             long milliseconds = System.currentTimeMillis() - startTime;
             int frame = (int) (milliseconds / 1000D * framesPerSecond);
             pausedAudioTime = milliseconds * 1000;
-            if(lastFrame == frame || this.paused){
+            if (lastFrame == frame || this.paused) {
                 return;
-            }else{
+            } else {
                 lastFrame = frame;
             }
             try {
@@ -81,9 +81,9 @@ public class Video {
                 if (picture != null) {
                     BufferedImage bufferedImage = toBufferedImage(picture);
                     texture.setPixelsFromBufferedImage(bufferedImage);
-                } else if(repeat){
+                } else if (repeat) {
                     frameGrabber.seekToFramePrecise(0);
-                    if(audioClip != null && !this.muted){
+                    if (audioClip != null && !this.muted) {
                         audioClip.loop(-1);
                         audioClip.setFramePosition(0);
                     }
@@ -97,7 +97,7 @@ public class Video {
         prevFrameGrabber = frameGrabber;
     }
 
-    public void onStart(){
+    public void onStart() {
         startTime = System.currentTimeMillis();
     }
 
@@ -112,7 +112,7 @@ public class Video {
                 mp4FileOnDisk = path.toFile();
                 frameGrabber = FrameGrab.createFrameGrab(NIOUtils.readableChannel(mp4FileOnDisk));
                 LOGGER.info("loaded mp4 video from " + url);
-                if(!this.muted){
+                if (!this.muted) {
                     setupAudio(mp4FileOnDisk, 0);
                 }
             } catch (Exception e) {
@@ -132,7 +132,7 @@ public class Video {
 
             audioClip.setMicrosecondPosition(time);
             audioClip.start();
-            if(!hasAudioLoaded){
+            if (!hasAudioLoaded) {
                 LOGGER.info("loaded mp4 audio from " + url);
             }
             hasAudioLoaded = true;
@@ -147,13 +147,13 @@ public class Video {
 
     public void setPaused(boolean paused) {
         this.paused = paused;
-        if(audioClip != null && hasAudioLoaded){
-            if(paused || this.muted){
-                if(audioClip.isOpen()){
+        if (audioClip != null && hasAudioLoaded) {
+            if (paused || this.muted) {
+                if (audioClip.isOpen()) {
                     audioClip.close();
                 }
-            }else{
-                if(!audioClip.isOpen()){
+            } else {
+                if (!audioClip.isOpen()) {
                     setupAudio(mp4FileOnDisk, pausedAudioTime);
                 }
             }

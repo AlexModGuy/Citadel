@@ -70,7 +70,7 @@ public class EntityLinkButton extends Button {
             int r = (widgetColor & 0xFF0000) >> 16;
             int g = (widgetColor & 0xFF00) >> 8;
             int b = (widgetColor & 0xFF);
-            BookBlit.blitWithColor(guiGraphics, bookGUI.getBookWidgetTexture(),  p_238474_2_, p_238474_3_, 0, (float) p_238474_4_, (float) p_238474_5_, p_238474_6_, p_238474_7_, 256, 256, r, g, b, 255);
+            BookBlit.blitWithColor(guiGraphics, bookGUI.getBookWidgetTexture(), p_238474_2_, p_238474_3_, 0, (float) p_238474_4_, (float) p_238474_5_, p_238474_6_, p_238474_7_, 256, 256, r, g, b, 255);
         } else {
             guiGraphics.blit(bookGUI.getBookWidgetTexture(), p_238474_2_, p_238474_3_, 0, (float) p_238474_4_, (float) p_238474_5_, p_238474_6_, p_238474_7_, 256, 256);
         }
@@ -79,8 +79,8 @@ public class EntityLinkButton extends Button {
 
     public void renderEntityInInventory(GuiGraphics guiGraphics, int xPos, int yPos, float scale, Quaternionf rotation, Entity entity) {
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate((double)xPos, (double)yPos, 50.0D);
-        guiGraphics.pose().mulPoseMatrix((new Matrix4f()).scaling(scale, scale,  (-scale)));
+        guiGraphics.pose().translate(xPos, yPos, 50.0D);
+        guiGraphics.pose().mulPoseMatrix((new Matrix4f()).scaling(scale, scale, (-scale)));
         guiGraphics.pose().mulPose(rotation);
 
         Vector3f light0 = new Vector3f(1, -1.0F, -1.0F).normalize();

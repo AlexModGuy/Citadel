@@ -35,8 +35,8 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation 
     private final PathingOptions pathingOptions = new PathingOptions();
 
     public AbstractAdvancedPathNavigate(
-        final Mob entityLiving,
-        final Level worldIn) {
+            final Mob entityLiving,
+            final Level worldIn) {
         super(entityLiving, worldIn);
         this.ourEntity = mob;
     }
@@ -55,8 +55,8 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation 
      * Used to path away from a position.
      *
      * @param currentPosition the position to avoid.
-     * @param range the range he should move out of.
-     * @param speed the speed to run at.
+     * @param range           the range he should move out of.
+     * @param speed           the speed to run at.
      * @param safeDestination if the destination is save and should be set.
      * @return the result of the pathing.
      */
@@ -106,7 +106,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation 
      *
      * @param range the range he should move out of.
      * @param speed the speed to run at.
-     * @param pos the pos to circle around.
+     * @param pos   the pos to circle around.
      * @return the result of the pathing.
      */
     public abstract PathResult moveToRandomPosAroundX(final int range, final double speed, final BlockPos pos);
@@ -114,8 +114,8 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation 
     /**
      * Used to path towards a random pos within some restrictions
      *
-     * @param range the range he should move out of.
-     * @param speed the speed to run at.
+     * @param range   the range he should move out of.
+     * @param speed   the speed to run at.
      * @param corners the corners they can't leave.
      * @return the result of the pathing.
      */

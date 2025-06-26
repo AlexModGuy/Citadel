@@ -14,7 +14,6 @@ public class LocalEntityTickRateModifier extends LocalTickRateModifier {
 
     private int entityId;
     private EntityType expectedEntityType;
-    private boolean isEntityValid = true;
 
     public LocalEntityTickRateModifier(int entityId, EntityType expectedEntityType, double range, ResourceKey<Level> dimension, int durationInMasterTicks, float tickRateMultiplier) {
         super(TickRateModifierType.LOCAL_ENTITY, range, dimension, durationInMasterTicks, tickRateMultiplier);
@@ -32,7 +31,7 @@ public class LocalEntityTickRateModifier extends LocalTickRateModifier {
     @Override
     public Vec3 getCenter(Level level) {
         Entity entity = level.getEntity(this.entityId);
-        if(isEntityValid(level) && entity != null){
+        if (isEntityValid(level) && entity != null) {
             return entity.position();
         }
         return Vec3.ZERO;
@@ -43,9 +42,9 @@ public class LocalEntityTickRateModifier extends LocalTickRateModifier {
         return super.appliesTo(level, x, y, z) && isEntityValid(level);
     }
 
-    public boolean isEntityValid(Level level){
+    public boolean isEntityValid(Level level) {
         Entity entity = level.getEntity(this.entityId);
-        return entity != null && entity.isAddedToWorld() && entity.getType().equals(expectedEntityType) && entity.isAlive() && (!(entity instanceof IModifiesTime) || ((IModifiesTime)entity).isTimeModificationValid(this));
+        return entity != null && entity.isAddedToWorld() && entity.getType().equals(expectedEntityType) && entity.isAlive() && (!(entity instanceof IModifiesTime) || ((IModifiesTime) entity).isTimeModificationValid(this));
     }
 
     @Override

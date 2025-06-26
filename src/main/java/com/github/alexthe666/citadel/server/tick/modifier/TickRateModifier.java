@@ -5,7 +5,7 @@ import net.minecraft.world.level.Level;
 
 public abstract class TickRateModifier {
 
-    private TickRateModifierType type;
+    private final TickRateModifierType type;
     private float maxDuration;
     private float duration;
     private float tickRateMultiplier;

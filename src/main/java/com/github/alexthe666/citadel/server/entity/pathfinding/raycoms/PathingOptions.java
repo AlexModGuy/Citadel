@@ -1,4 +1,5 @@
 package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms;
+
 /*
     All of this code is used with permission from Raycoms, one of the developers of the minecolonies project.
  */
@@ -51,15 +52,15 @@ public class PathingOptions {
     /**
      * Whether to use minecart rail pathing
      */
-    private boolean canUseRails  = false;
+    private boolean canUseRails = false;
     /**
      * Can swim
      */
-    private boolean canSwim      = false;
+    private boolean canSwim = false;
     /**
      * Allowed to enter doors?
      */
-    private boolean enterDoors   = false;
+    private boolean enterDoors = false;
     /**
      * Allowed to open doors?
      */
@@ -67,7 +68,7 @@ public class PathingOptions {
     /**
      * Whether to path through vines.
      */
-    private boolean canClimbVines  = false;
+    private final boolean canClimbVines = false;
 
     private boolean flying = false;
 
@@ -88,8 +89,7 @@ public class PathingOptions {
         return canUseRails;
     }
 
-    public boolean canClimbVines()
-    {
+    public boolean canClimbVines() {
         return canClimbVines;
     }
 
@@ -113,13 +113,21 @@ public class PathingOptions {
         this.enterDoors = enterDoors;
     }
 
-    public boolean isFlying(){return this.flying;}
+    public boolean isFlying() {
+        return this.flying;
+    }
 
-    public void setIsFlying(final boolean flying){this.flying = flying;}
+    public void setIsFlying(final boolean flying) {
+        this.flying = flying;
+    }
 
-    public boolean canClimb(){return this.canClimb;}
+    public boolean canClimb() {
+        return this.canClimb;
+    }
 
-    public void setCanClimb(final boolean canClimb){this.canClimb = canClimb;}
+    public void setCanClimb(final boolean canClimb) {
+        this.canClimb = canClimb;
+    }
 
     public PathingOptions withStartSwimCost(final double startSwimCost) {
         swimCostEnter = startSwimCost;
@@ -131,14 +139,12 @@ public class PathingOptions {
         return this;
     }
 
-    public PathingOptions withJumpCost(final double jumpCost)
-    {
+    public PathingOptions withJumpCost(final double jumpCost) {
         this.jumpCost = jumpCost;
         return this;
     }
 
-    public PathingOptions withDropCost(final double dropCost)
-    {
+    public PathingOptions withDropCost(final double dropCost) {
         this.dropCost = dropCost;
         return this;
     }
@@ -158,14 +164,12 @@ public class PathingOptions {
         return this;
     }
 
-    public PathingOptions withToggleCost(final double toggleCost)
-    {
+    public PathingOptions withToggleCost(final double toggleCost) {
         traverseToggleAbleCost = toggleCost;
         return this;
     }
 
-    public PathingOptions withVineCost(final double vineCost)
-    {
+    public PathingOptions withVineCost(final double vineCost) {
         this.vineCost = vineCost;
         return this;
     }
@@ -176,19 +180,18 @@ public class PathingOptions {
      * @param canswim whether swimming is allowed
      * @return
      */
-    public PathingOptions withCanSwim(final boolean canswim)
-    {
+    public PathingOptions withCanSwim(final boolean canswim) {
         setCanSwim(canswim);
         return this;
     }
 
     /**
      * Set door opening capability
+     *
      * @param canEnter whether we can enter doors
      * @return
      */
-    public PathingOptions withCanEnterDoors(final boolean canEnter)
-    {
+    public PathingOptions withCanEnterDoors(final boolean canEnter) {
         setEnterDoors(canEnter);
         return this;
     }

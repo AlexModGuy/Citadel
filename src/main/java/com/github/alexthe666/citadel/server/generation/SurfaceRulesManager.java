@@ -92,16 +92,16 @@ public class SurfaceRulesManager {
         return rulesIn;
     }
 
-    private static int calculateSurfaceRuleDepth(SurfaceRules.RuleSource source, int depthIn){
-        if(source instanceof SurfaceRules.SequenceRuleSource sequenceRuleSource){
+    private static int calculateSurfaceRuleDepth(SurfaceRules.RuleSource source, int depthIn) {
+        if (source instanceof SurfaceRules.SequenceRuleSource sequenceRuleSource) {
             int j = depthIn;
-            for(SurfaceRules.RuleSource ruleSource : sequenceRuleSource.sequence()){
+            for (SurfaceRules.RuleSource ruleSource : sequenceRuleSource.sequence()) {
                 j = Math.max(calculateSurfaceRuleDepth(ruleSource, depthIn + 1), j);
             }
             return j;
-        }else if(source instanceof SurfaceRules.TestRuleSource testRuleSource){
+        } else if (source instanceof SurfaceRules.TestRuleSource testRuleSource) {
             depthIn = Math.max(calculateSurfaceRuleDepth(testRuleSource.thenRun(), depthIn + 1), depthIn);
-        }else if(source instanceof CitadelSurfaceRuleWrapper citadelSurfaceRuleWrapper){
+        } else if (source instanceof CitadelSurfaceRuleWrapper citadelSurfaceRuleWrapper) {
             depthIn = Math.max(calculateSurfaceRuleDepth(citadelSurfaceRuleWrapper.wrappedRule(), depthIn + 1), depthIn);
         }
         return depthIn;

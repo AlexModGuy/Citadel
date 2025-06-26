@@ -12,8 +12,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 public class WorldEventContext {
     public static final WorldEventContext INSTANCE = new WorldEventContext();
 
-    private WorldEventContext()
-    {
+    private WorldEventContext() {
         // singleton
     }
 
@@ -30,8 +29,7 @@ public class WorldEventContext {
      */
     int clientRenderDist;
 
-    public void renderWorldLastEvent(final RenderLevelStageEvent event)
-    {
+    public void renderWorldLastEvent(final RenderLevelStageEvent event) {
         bufferSource = WorldRenderMacros.getBufferSource();
         poseStack = event.getPoseStack();
         partialTicks = event.getPartialTick();
@@ -44,14 +42,11 @@ public class WorldEventContext {
         poseStack.pushPose();
         poseStack.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
 
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS)
-        {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS) {
             PathfindingDebugRenderer.render(this);
 
             bufferSource.endBatch();
-        }
-        else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS)
-        {
+        } else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS) {
             bufferSource.endBatch();
         }
 

@@ -11,7 +11,7 @@ import net.minecraft.world.phys.Vec3;
 public abstract class LocalTickRateModifier extends TickRateModifier {
 
     private double range;
-    private ResourceKey<Level> dimension;
+    private final ResourceKey<Level> dimension;
 
     public LocalTickRateModifier(TickRateModifierType localPosition, double range, ResourceKey<Level> dimension, int durationInMasterTicks, float tickRateMultiplier) {
         super(localPosition, durationInMasterTicks, tickRateMultiplier);
@@ -31,7 +31,7 @@ public abstract class LocalTickRateModifier extends TickRateModifier {
         super(tag);
         this.range = tag.getDouble("Range");
         ResourceKey<Level> dimFromTag = Level.OVERWORLD;
-        if(tag.contains("Dimension")){
+        if (tag.contains("Dimension")) {
             dimFromTag = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString("dimension")));
         }
         this.dimension = dimFromTag;

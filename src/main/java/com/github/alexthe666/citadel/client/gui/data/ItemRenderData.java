@@ -6,7 +6,7 @@ public class ItemRenderData {
     private int x;
     private int y;
     private double scale;
-    private int page;
+    private final int page;
 
     public ItemRenderData(String item, int x, int y, double scale, int page) {
         this.item = item;

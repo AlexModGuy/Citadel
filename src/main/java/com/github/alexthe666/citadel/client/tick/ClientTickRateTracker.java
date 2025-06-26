@@ -15,24 +15,24 @@ import java.util.Map;
 
 public class ClientTickRateTracker extends TickRateTracker {
     public static final Logger LOGGER = LogManager.getLogger("citadel-client-tick");
-    private static Map<Minecraft, ClientTickRateTracker> dataMap = new HashMap<>();
+    private static final Map<Minecraft, ClientTickRateTracker> dataMap = new HashMap<>();
 
     public Minecraft client;
 
-    private static float MS_PER_TICK = 50f;
+    private static final float MS_PER_TICK = 50f;
 
     public ClientTickRateTracker(Minecraft client) {
         this.client = client;
 
     }
 
-    public void syncFromServer(CompoundTag tag){
+    public void syncFromServer(CompoundTag tag) {
         tickRateModifierList.clear();
         fromTag(tag);
     }
 
-    public static ClientTickRateTracker getForClient(Minecraft minecraft){
-        if(!dataMap.containsKey(minecraft)){
+    public static ClientTickRateTracker getForClient(Minecraft minecraft) {
+        if (!dataMap.containsKey(minecraft)) {
             ClientTickRateTracker tracker = new ClientTickRateTracker(minecraft);
             dataMap.put(minecraft, tracker);
             return tracker;
@@ -40,18 +40,18 @@ public class ClientTickRateTracker extends TickRateTracker {
         return dataMap.get(minecraft);
     }
 
-    public void masterTick(){
+    public void masterTick() {
         super.masterTick();
         client.timer.msPerTick = getClientTickRate();
     }
 
-    public float getClientTickRate(){
+    public float getClientTickRate() {
         float f = MS_PER_TICK;
-        if(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) {
+        if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) {
             return f;
         }
-        for(TickRateModifier modifier : tickRateModifierList){
-            if(modifier.appliesTo(Minecraft.getInstance().level, Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ())){
+        for (TickRateModifier modifier : tickRateModifierList) {
+            if (modifier.appliesTo(Minecraft.getInstance().level, Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ())) {
                 f *= modifier.getTickRateMultiplier();
             }
         }
@@ -60,11 +60,11 @@ public class ClientTickRateTracker extends TickRateTracker {
 
     public float modifySoundPitch(SoundInstance soundInstance) {
         float f = 1.0F;
-        if(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null){
+        if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) {
             return f;
         }
-        for(TickRateModifier modifier : tickRateModifierList){
-            if(modifier.appliesTo(Minecraft.getInstance().level, Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ())){
+        for (TickRateModifier modifier : tickRateModifierList) {
+            if (modifier.appliesTo(Minecraft.getInstance().level, Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ())) {
                 f /= modifier.getTickRateMultiplier();
             }
         }
@@ -73,8 +73,8 @@ public class ClientTickRateTracker extends TickRateTracker {
 
     @Override
     public void tickEntityAtCustomRate(Entity entity) {
-        if(entity.level().isClientSide && entity.level() instanceof ClientLevel){
-            ((ClientLevel)entity.level()).tickNonPassenger(entity);
+        if (entity.level().isClientSide && entity.level() instanceof ClientLevel) {
+            ((ClientLevel) entity.level()).tickNonPassenger(entity);
         }
     }
 }

@@ -13,7 +13,9 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
 
-    @Shadow @Final private MinecraftServer server;
+    @Shadow
+    @Final
+    private MinecraftServer server;
 
     @ModifyConstant(
             method = "Lnet/minecraft/server/level/ServerLevel;tickTime()V",
@@ -21,7 +23,7 @@ public class ServerLevelMixin {
             constant = @Constant(longValue = 1L),
             expect = 2)
     private long citadel_clientSetDayTime(long timeIn) {
-       return ServerTickRateTracker.getForServer(server).getDayTimeIncrement(timeIn);
+        return ServerTickRateTracker.getForServer(server).getDayTimeIncrement(timeIn);
     }
 
 

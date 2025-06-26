@@ -10,9 +10,9 @@ import net.minecraftforge.eventbus.api.Event;
 @OnlyIn(Dist.CLIENT)
 @Event.HasResult
 public class EventPosePlayerHand extends Event {
-    private LivingEntity entityIn;
-    private HumanoidModel model;
-    private boolean left;
+    private final LivingEntity entityIn;
+    private final HumanoidModel model;
+    private final boolean left;
 
     public EventPosePlayerHand(LivingEntity entityIn, HumanoidModel model, boolean left) {
         this.entityIn = entityIn;

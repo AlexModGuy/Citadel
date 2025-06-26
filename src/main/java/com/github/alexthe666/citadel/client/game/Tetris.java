@@ -36,20 +36,20 @@ public class Tetris {
     private int score;
     private int renderTime = 0;
     private int keyCooldown;
-    private static int HEIGHT = 20;
+    private static final int HEIGHT = 20;
     private TetrominoShape fallingShape;
     private BlockState fallingBlock;
     private float fallingX;
     private float prevFallingY;
     private float fallingY;
     private Rotation fallingRotation;
-    private BlockState[][] settledBlocks = new BlockState[10][HEIGHT];
+    private final BlockState[][] settledBlocks = new BlockState[10][HEIGHT];
     private boolean gameOver = false;
 
     private TetrominoShape nextShape;
     private BlockState nextBlock;
 
-    private boolean[] flashingLayer = new boolean[HEIGHT];
+    private final boolean[] flashingLayer = new boolean[HEIGHT];
     private int flashFor = 0;
 
     private final Block[] allRegisteredBlocks = ForgeRegistries.BLOCKS.getValues().stream().toArray(Block[]::new);
@@ -167,6 +167,7 @@ public class Tetris {
                 if (i == 9) {
                     flashingLayer[j] = true;
                     flag = true;
+                    break;
                 }
             }
         }
@@ -214,7 +215,8 @@ public class Tetris {
                         randomState = block;
                         break;
                     }
-                } catch (Exception ignored){}
+                } catch (Exception ignored) {
+                }
             }
         }
         nextShape = TetrominoShape.getRandom(random);
@@ -277,8 +279,8 @@ public class Tetris {
         float offsetX = screen.width / 2F - scale * 5F;
         float offsetY = scale * 0.5F;
         if (started) {
-            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.05F), (int) (screen.height * 0.3F), (int) (screen.width * 0.05F) + 70, (int) (screen.height * 0.5F),  -1873784752);
-            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.7F), (int) (screen.height * 0.3F), (int) (screen.width * 0.7F) + 130, (int) (screen.height * 0.84F),  -1873784752);
+            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.05F), (int) (screen.height * 0.3F), (int) (screen.width * 0.05F) + 70, (int) (screen.height * 0.5F), -1873784752);
+            guiGraphics.fill(RenderType.guiOverlay(), (int) (screen.width * 0.7F), (int) (screen.height * 0.3F), (int) (screen.width * 0.7F) + 130, (int) (screen.height * 0.84F), -1873784752);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
@@ -314,7 +316,7 @@ public class Tetris {
             guiGraphics.drawString(Minecraft.getInstance().font, "[DOWN ARROW] quick drop", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 30, rainbow);
             guiGraphics.drawString(Minecraft.getInstance().font, "[T] start over", (int) (screen.width * 0.71F), (int) (screen.height * 0.55F) + 50, rainbow);
             guiGraphics.drawString(Minecraft.getInstance().font, "Happy april fools from Citadel", 5, 5, rainbow);
-            if(gameOver){
+            if (gameOver) {
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate((int) (screen.width * 0.5F), (int) (screen.height * 0.5F), 150);
                 guiGraphics.pose().scale(3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F, 3 + (float) Math.sin(hue * Math.PI) * 0.4F);

@@ -16,8 +16,7 @@ import javax.annotation.Nullable;
 /**
  * Job that handles moving away from something.
  */
-public class PathJobMoveAwayFromLocation extends AbstractPathJob
-{
+public class PathJobMoveAwayFromLocation extends AbstractPathJob {
     /**
      * Position to run to, in order to avoid something.
      */
@@ -26,7 +25,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     /**
      * Required avoidDistance.
      */
-    protected final int      avoidDistance;
+    protected final int avoidDistance;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -39,13 +38,12 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @param entity        the entity.
      */
     public PathJobMoveAwayFromLocation(
-        final Level world,
-        final BlockPos start,
-        final BlockPos avoid,
-        final int avoidDistance,
-        final int range,
-        final LivingEntity entity)
-    {
+            final Level world,
+            final BlockPos start,
+            final BlockPos avoid,
+            final int avoidDistance,
+            final int range,
+            final LivingEntity entity) {
         super(world, start, avoid, range, entity);
 
         this.avoid = new BlockPos(avoid);
@@ -59,12 +57,10 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      */
     @Nullable
     @Override
-    protected Path search()
-    {
-        if (Pathfinding.isDebug())
-        {
+    protected Path search() {
+        if (Pathfinding.isDebug()) {
             Citadel.LOGGER.info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]",
-              start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
+                    start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
         }
 
         return super.search();
@@ -77,8 +73,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @return heuristic as a double - Manhatten Distance with tie-breaker.
      */
     @Override
-    protected double computeHeuristic(final BlockPos pos)
-    {
+    protected double computeHeuristic(final BlockPos pos) {
         return -avoid.distSqr(pos);
     }
 

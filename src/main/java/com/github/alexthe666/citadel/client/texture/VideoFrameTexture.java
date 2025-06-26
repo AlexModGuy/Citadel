@@ -24,8 +24,8 @@ public class VideoFrameTexture extends DynamicTexture {
     }
 
     public void setPixelsFromBufferedImage(BufferedImage bufferedImage) {
-        for(int i = 0; i < Math.min(this.getPixels().getWidth(), bufferedImage.getWidth()); i++){
-            for(int j = 0; j < Math.min(this.getPixels().getHeight(), bufferedImage.getHeight()); j++){
+        for (int i = 0; i < Math.min(this.getPixels().getWidth(), bufferedImage.getWidth()); i++) {
+            for (int j = 0; j < Math.min(this.getPixels().getHeight(), bufferedImage.getHeight()); j++) {
                 int color = bufferedImage.getRGB(i, j);
                 int r = color >> 16 & 255;
                 int g = color >> 8 & 255;

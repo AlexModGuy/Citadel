@@ -147,7 +147,7 @@ public abstract class GuiBasicBook extends Screen {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(posX, posY, zOff);
-        guiGraphics.pose().mulPoseMatrix((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
+        guiGraphics.pose().mulPoseMatrix((new Matrix4f()).scaling(scale, scale, -scale));
         Quaternionf quaternion = Axis.ZP.rotationDegrees(180F);
         Quaternionf quaternion1 = Axis.XP.rotationDegrees(f1 * 20.0F);
         quaternion.mul(quaternion1);
@@ -272,7 +272,7 @@ public abstract class GuiBasicBook extends Screen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize + 128) / 2;
         BookBlit.blitWithColor(guiGraphics, getBookBindingTexture(), k, l, 0, 0, xSize, ySize, xSize, ySize, bindingR, bindingG, bindingB, 255);
-        BookBlit.blitWithColor(guiGraphics, getBookPageTexture(), k, l, 0, 0, xSize, ySize, xSize, ySize,  255, 255, 255, 255);
+        BookBlit.blitWithColor(guiGraphics, getBookPageTexture(), k, l, 0, 0, xSize, ySize, xSize, ySize, 255, 255, 255, 255);
         if (internalPage == null || currentPageJSON != prevPageJSON || prevPageJSON == null) {
             internalPage = generatePage(currentPageJSON);
             if (internalPage != null) {
@@ -483,7 +483,7 @@ public abstract class GuiBasicBook extends Screen {
     protected void renderRecipe(GuiGraphics guiGraphics, Recipe recipe, RecipeData recipeData, int k, int l) {
         int playerTicks = Minecraft.getInstance().player.tickCount;
         float scale = (float) recipeData.getScale();
-        NonNullList<Ingredient> ingredients = recipe instanceof SpecialRecipeInGuideBook ? ((SpecialRecipeInGuideBook)recipe).getDisplayIngredients() : recipe.getIngredients();
+        NonNullList<Ingredient> ingredients = recipe instanceof SpecialRecipeInGuideBook ? ((SpecialRecipeInGuideBook) recipe).getDisplayIngredients() : recipe.getIngredients();
         NonNullList<ItemStack> displayedStacks = NonNullList.create();
 
         for (int i = 0; i < ingredients.size(); i++) {
@@ -513,7 +513,7 @@ public abstract class GuiBasicBook extends Screen {
         guiGraphics.pose().translate(recipeData.getX() + 70 * finScale, recipeData.getY() + 10 * finScale, 0);
         guiGraphics.pose().scale(finScale, finScale, finScale);
         ItemStack result = recipe.getResultItem(Minecraft.getInstance().level.registryAccess());
-        if(recipe instanceof SpecialRecipeInGuideBook){
+        if (recipe instanceof SpecialRecipeInGuideBook) {
             result = ((SpecialRecipeInGuideBook) recipe).getDisplayResultFor(displayedStacks);
         }
         guiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
@@ -697,7 +697,7 @@ public abstract class GuiBasicBook extends Screen {
                         if (newline) {
                             yIndex++;
                         }
-                        lineToPrint = "" + (word.equals("<NEWLINE>") ? "" : word);
+                        lineToPrint = word.equals("<NEWLINE>") ? "" : word;
                     } else {
                         lineToPrint = lineToPrint + " " + word;
                         if (last) {
@@ -724,7 +724,7 @@ public abstract class GuiBasicBook extends Screen {
         this.entityTooltip = hoverText;
     }
 
-    public ResourceLocation getBookButtonsTexture(){
+    public ResourceLocation getBookButtonsTexture() {
         return BOOK_BUTTONS_TEXTURE;
     }
 }

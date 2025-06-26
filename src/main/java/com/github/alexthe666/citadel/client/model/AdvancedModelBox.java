@@ -29,7 +29,7 @@ public class AdvancedModelBox extends BasicModelPart {
     public float scaleX = 1.0F, scaleY = 1.0F, scaleZ = 1.0F;
     public int textureOffsetX, textureOffsetY;
     public boolean scaleChildren;
-    private AdvancedEntityModel model;
+    private final AdvancedEntityModel model;
     private AdvancedModelBox parent;
     private int displayList;
     private boolean compiled;
@@ -70,14 +70,14 @@ public class AdvancedModelBox extends BasicModelPart {
     }
 
     public BasicModelPart setTexSize(int p_78787_1_, int p_78787_2_) {
-        this.textureWidth = (float)p_78787_1_;
-        this.textureHeight = (float)p_78787_2_;
+        this.textureWidth = (float) p_78787_1_;
+        this.textureHeight = (float) p_78787_2_;
         return this;
     }
 
     public BasicModelPart addBox(String p_217178_1_, float p_217178_2_, float p_217178_3_, float p_217178_4_, int p_217178_5_, int p_217178_6_, int p_217178_7_, float p_217178_8_, int p_217178_9_, int p_217178_10_) {
         this.setTextureOffset(p_217178_9_, p_217178_10_);
-        this.addBox(this.textureOffsetX, this.textureOffsetY, p_217178_2_, p_217178_3_, p_217178_4_, (float)p_217178_5_, (float)p_217178_6_, (float)p_217178_7_, p_217178_8_, p_217178_8_, p_217178_8_, this.mirror, false);
+        this.addBox(this.textureOffsetX, this.textureOffsetY, p_217178_2_, p_217178_3_, p_217178_4_, (float) p_217178_5_, (float) p_217178_6_, (float) p_217178_7_, p_217178_8_, p_217178_8_, p_217178_8_, this.mirror, false);
         return this;
     }
 
@@ -152,20 +152,21 @@ public class AdvancedModelBox extends BasicModelPart {
         this.defaultRotationY = this.rotateAngleY;
         this.defaultRotationZ = this.rotateAngleZ;
 
-       // this.defaultOffsetX = this.offsetX;
-       // this.defaultOffsetY = this.offsetY;
-       // this.defaultOffsetZ = this.offsetZ;
+        // this.defaultOffsetX = this.offsetX;
+        // this.defaultOffsetY = this.offsetY;
+        // this.defaultOffsetZ = this.offsetZ;
 
         this.defaultPositionX = this.rotationPointX;
         this.defaultPositionY = this.rotationPointY;
         this.defaultPositionZ = this.rotationPointZ;
     }
 
-    public void setPos(float xIn, float yIn, float zIn){
+    public void setPos(float xIn, float yIn, float zIn) {
         this.rotationPointX = xIn;
         this.rotationPointY = yIn;
         this.rotationPointZ = zIn;
     }
+
     /**
      * Sets the current pose to the previously set default pose.
      */
@@ -174,9 +175,9 @@ public class AdvancedModelBox extends BasicModelPart {
         this.rotateAngleY = this.defaultRotationY;
         this.rotateAngleZ = this.defaultRotationZ;
 
-       // this.offsetX = this.defaultOffsetX;
-       // this.offsetY = this.defaultOffsetY;
-       // this.offsetZ = this.defaultOffsetZ;
+        // this.offsetX = this.defaultOffsetX;
+        // this.offsetY = this.defaultOffsetY;
+        // this.offsetZ = this.defaultOffsetZ;
 
         this.rotationPointX = this.defaultPositionX;
         this.rotationPointY = this.defaultPositionY;
@@ -187,8 +188,7 @@ public class AdvancedModelBox extends BasicModelPart {
     public void addChild(BasicModelPart child) {
         super.addChild(child);
         this.childModels.add(child);
-        if (child instanceof AdvancedModelBox) {
-            AdvancedModelBox advancedChild = (AdvancedModelBox) child;
+        if (child instanceof AdvancedModelBox advancedChild) {
             advancedChild.setParent(this);
         }
     }
@@ -218,7 +218,7 @@ public class AdvancedModelBox extends BasicModelPart {
         if (this.parent != null) {
             this.parent.parentedPostRender(scale);
         }
-       // this.postRender(scale);
+        // this.postRender(scale);
     }
 
     /**
@@ -234,7 +234,7 @@ public class AdvancedModelBox extends BasicModelPart {
     }
 
     public void translateAndRotate(PoseStack matrixStackIn) {
-        matrixStackIn.translate((double)(this.rotationPointX / 16.0F), (double)(this.rotationPointY / 16.0F), (double)(this.rotationPointZ / 16.0F));
+        matrixStackIn.translate(this.rotationPointX / 16.0F, this.rotationPointY / 16.0F, (double) (this.rotationPointZ / 16.0F));
         if (this.rotateAngleZ != 0.0F) {
             matrixStackIn.mulPose(Axis.ZP.rotation(this.rotateAngleZ));
         }
@@ -258,8 +258,8 @@ public class AdvancedModelBox extends BasicModelPart {
                 this.translateAndRotate(p_228309_1_);
                 this.doRender(p_228309_1_.last(), p_228309_2_, p_228309_3_, p_228309_4_, p_228309_5_, p_228309_6_, p_228309_7_, p_228309_8_);
                 ObjectListIterator var9 = this.childModels.iterator();
-                if(!scaleChildren){
-                    p_228309_1_.scale(1F / Math.max(this.scaleX, 0.0001F), 1F / Math.max(this.scaleY, 0.0001F) , 1F / Math.max(this.scaleZ, 0.0001F));
+                if (!scaleChildren) {
+                    p_228309_1_.scale(1F / Math.max(this.scaleX, 0.0001F), 1F / Math.max(this.scaleY, 0.0001F), 1F / Math.max(this.scaleZ, 0.0001F));
                 }
                 while (var9.hasNext()) {
                     BasicModelPart lvt_10_1_ = (BasicModelPart) var9.next();
@@ -276,12 +276,12 @@ public class AdvancedModelBox extends BasicModelPart {
         Matrix3f lvt_10_1_ = p_228306_1_.normal();
         ObjectListIterator var11 = this.cubeList.iterator();
 
-        while(var11.hasNext()) {
-            TabulaModelRenderUtils.ModelBox lvt_12_1_ = (TabulaModelRenderUtils.ModelBox)var11.next();
+        while (var11.hasNext()) {
+            TabulaModelRenderUtils.ModelBox lvt_12_1_ = (TabulaModelRenderUtils.ModelBox) var11.next();
             TabulaModelRenderUtils.TexturedQuad[] var13 = lvt_12_1_.quads;
             int var14 = var13.length;
 
-            for(int var15 = 0; var15 < var14; ++var15) {
+            for (int var15 = 0; var15 < var14; ++var15) {
                 TabulaModelRenderUtils.TexturedQuad lvt_16_1_ = var13[var15];
                 Vector3f lvt_17_1_ = new Vector3f(lvt_16_1_.normal);
                 lvt_17_1_.mul(lvt_10_1_);
@@ -289,7 +289,7 @@ public class AdvancedModelBox extends BasicModelPart {
                 float lvt_19_1_ = lvt_17_1_.y();
                 float lvt_20_1_ = lvt_17_1_.z();
 
-                for(int lvt_21_1_ = 0; lvt_21_1_ < 4; ++lvt_21_1_) {
+                for (int lvt_21_1_ = 0; lvt_21_1_ < 4; ++lvt_21_1_) {
                     TabulaModelRenderUtils.PositionTextureVertex lvt_22_1_ = lvt_16_1_.vertexPositions[lvt_21_1_];
                     float lvt_23_1_ = lvt_22_1_.position.x() / 16.0F;
                     float lvt_24_1_ = lvt_22_1_.position.y() / 16.0F;

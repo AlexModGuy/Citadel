@@ -4,12 +4,12 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 
 public class CustomToolMaterial implements Tier {
-   private String name;
-   private int harvestLevel;
-   private int durability;
-   private float damage;
-   private float speed;
-   private int enchantability;
+    private final String name;
+    private final int harvestLevel;
+    private final int durability;
+    private final float damage;
+    private final float speed;
+    private final int enchantability;
     private Ingredient ingredient = null;
 
     public CustomToolMaterial(String name, int harvestLevel, int durability, float damage, float speed, int enchantability) {
@@ -55,7 +55,7 @@ public class CustomToolMaterial implements Tier {
         return ingredient == null ? Ingredient.EMPTY : ingredient;
     }
 
-    public void setRepairMaterial(Ingredient ingredient){
+    public void setRepairMaterial(Ingredient ingredient) {
         this.ingredient = ingredient;
     }
 }

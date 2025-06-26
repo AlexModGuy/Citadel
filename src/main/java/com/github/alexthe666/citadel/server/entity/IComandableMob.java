@@ -18,14 +18,14 @@ public interface IComandableMob {
             this.setCommand(command);
             this.sendCommandMessage(owner, command, ourselves.getName());
 
-            if(ourselves instanceof TamableAnimal){
-                ((TamableAnimal)(ourselves)).setOrderedToSit(command == 1);
+            if (ourselves instanceof TamableAnimal) {
+                ((TamableAnimal) (ourselves)).setOrderedToSit(command == 1);
             }
         }
         return InteractionResult.PASS;
     }
 
-    default void sendCommandMessage(Player owner, int command, Component name){
+    default void sendCommandMessage(Player owner, int command, Component name) {
 
     }
 

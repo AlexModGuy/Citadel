@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.config.biome;
 
+@Deprecated(since = "2.6.2")
 public class CitadelBiomeDefinitions {
 
     public static final SpawnBiomeData TEST = new SpawnBiomeData()
