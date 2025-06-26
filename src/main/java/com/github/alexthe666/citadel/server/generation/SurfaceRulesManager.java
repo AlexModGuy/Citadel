@@ -11,7 +11,6 @@ public class SurfaceRulesManager {
     private static final List<SurfaceRules.RuleSource> NETHER_REGISTRY = new ArrayList();
     private static final List<SurfaceRules.RuleSource> END_REGISTRY = new ArrayList();
     private static final List<SurfaceRules.RuleSource> CAVE_REGISTRY = new ArrayList();
-    private static boolean levelBeingSaved;
 
     public SurfaceRulesManager() {
     }
@@ -70,12 +69,7 @@ public class SurfaceRulesManager {
                 Citadel.LOGGER.info("added {} new surface rule(s) to new rule source", toMerge.size());
                 result = new CitadelSurfaceRuleWrapper(prev, SurfaceRules.sequence(toMerge.toArray(SurfaceRules.RuleSource[]::new)));
             }
-            Citadel.LOGGER.info("surface rule recursive depth: {}", calculateSurfaceRuleDepth(result, 1));
-            Citadel.LOGGER.info("**** CITADEL SURFACE RULES ON LOAD ****");
-            Citadel.LOGGER.info(prev);
-            Citadel.LOGGER.info("**** CITADEL SURFACE RULES AFTER LOAD ****");
-            Citadel.LOGGER.info(result);
-            Citadel.LOGGER.info("**** CITADEL SURFACE RULES END ****");
+            Citadel.LOGGER.debug("surface rule recursive depth: {}", calculateSurfaceRuleDepth(result, 1));
             return result;
         }
     }
@@ -93,13 +87,5 @@ public class SurfaceRulesManager {
             depthIn = Math.max(calculateSurfaceRuleDepth(citadelSurfaceRuleWrapper.vanillaRules(), depthIn + 1), depthIn);
         }
         return depthIn;
-    }
-
-    public static boolean isLevelBeingSaved() {
-        return levelBeingSaved;
-    }
-
-    public static void setLevelBeingSaved(boolean saved) {
-        levelBeingSaved = saved;
     }
 }

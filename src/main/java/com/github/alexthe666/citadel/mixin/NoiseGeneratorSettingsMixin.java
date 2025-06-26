@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = NoiseGeneratorSettings.class, priority = 300)
+@Mixin(value = NoiseGeneratorSettings.class, priority = 1500)
 public class NoiseGeneratorSettingsMixin implements NoiseGeneratorSettingsAccessor {
 
     @Mutable
@@ -29,13 +29,14 @@ public class NoiseGeneratorSettingsMixin implements NoiseGeneratorSettingsAccess
     @Unique
     private SurfaceRules.RuleSource swapSurfaceRule = null;
 
-    @Inject(method = "surfaceRule", at = @At("HEAD"))
-    private void surfaceRule(CallbackInfoReturnable<SurfaceRules.RuleSource> cir) {
-        if (!hasModifiedRules) { // initialized
-            this.unmodifiedSurfaceRule = surfaceRule;
-            this.citadelSurfaceRule = SurfaceRulesManager.mergeOverworldRules(surfaceRule);
+    @Override
+    public void afterLoadOtherSurfaceRules(SurfaceRules.RuleSource initialRules) {
+        if (!hasModifiedRules && !saving) { // initialized
+            this.unmodifiedSurfaceRule = initialRules;
+            this.citadelSurfaceRule = SurfaceRulesManager.mergeOverworldRules(initialRules);
             this.surfaceRule = citadelSurfaceRule;
             this.hasModifiedRules = true;
+            Citadel.LOGGER.info("transformed surface rules from type {} --> {}", initialRules.getClass().getSimpleName(), surfaceRule.getClass().getSimpleName());
         }
     }
 
@@ -46,11 +47,16 @@ public class NoiseGeneratorSettingsMixin implements NoiseGeneratorSettingsAccess
             if(saving){
                 this.swapSurfaceRule = this.surfaceRule;
                 this.surfaceRule = this.unmodifiedSurfaceRule;
-                Citadel.LOGGER.info("saving unmodified surface rules as {}", surfaceRule.getClass().getSimpleName());
+                Citadel.LOGGER.info("saving unmodified surface rules as type {}", surfaceRule.getClass().getSimpleName());
             }else{
                 this.surfaceRule = this.swapSurfaceRule == null ? this.citadelSurfaceRule : this.swapSurfaceRule;
-                Citadel.LOGGER.info("using modified surface rules as {}", surfaceRule.getClass().getSimpleName());
+                Citadel.LOGGER.info("modified surface rules to type {}", surfaceRule.getClass().getSimpleName());
             }
         }
+    }
+
+    @Override
+    public SurfaceRules.RuleSource getRuleSource() {
+        return this.surfaceRule;
     }
 }
