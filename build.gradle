@@ -38,7 +38,6 @@ group = "com.tfar.${modid}" // http://maven.apache.org/guides/mini/guide-naming-
 archivesBaseName = "${modid}"
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
     mappings channel: 'official', version: '1.20.1'
@@ -130,8 +129,8 @@ dependencies {
             exclude group: "$it"
         }
     }
-    //TODO remove after testing
-    runtimeOnly(fg.deobf("curse.maven:terrablender-563928:4590487"))
+    compileOnly(fg.deobf("curse.maven:terrablender-563928:4590487"))
+    //runtimeOnly(fg.deobf("curse.maven:terrablender-563928:4590487"))
 }
 
 configurations {

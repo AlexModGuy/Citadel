@@ -3,6 +3,7 @@ package com.github.alexthe666.citadel.server.generation;
 import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,24 +55,24 @@ public class SurfaceRulesManager {
     }
 
     public static SurfaceRules.RuleSource mergeOverworldRules(SurfaceRules.RuleSource rulesIn) {
-        return mergeRules(rulesIn, OVERWORLD_REGISTRY);
+        SurfaceRules.RuleSource ruleSource = getOverworldRules();
+        return ruleSource == null ? rulesIn : mergeRules(rulesIn, ruleSource);
     }
 
-    private static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, List<SurfaceRules.RuleSource> toMerge) {
-        if (toMerge.isEmpty()) {
-            return prev;
+    @Nullable
+    public static SurfaceRules.RuleSource getOverworldRules(){
+        return OVERWORLD_REGISTRY.isEmpty() ? null : SurfaceRules.sequence(OVERWORLD_REGISTRY.toArray(SurfaceRules.RuleSource[]::new));
+    }
+
+    private static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, SurfaceRules.RuleSource toMerge) {
+        CitadelSurfaceRuleWrapper result;
+        if (prev instanceof CitadelSurfaceRuleWrapper wrapper) {
+            result = new CitadelSurfaceRuleWrapper(wrapper.vanillaRules(), toMerge);
         } else {
-            CitadelSurfaceRuleWrapper result;
-            if (prev instanceof CitadelSurfaceRuleWrapper wrapper) {
-                Citadel.LOGGER.info("added {} new surface rule(s) to existing rule source", toMerge.size());
-                result = new CitadelSurfaceRuleWrapper(wrapper.vanillaRules(), SurfaceRules.sequence(toMerge.toArray(SurfaceRules.RuleSource[]::new)));
-            } else {
-                Citadel.LOGGER.info("added {} new surface rule(s) to new rule source", toMerge.size());
-                result = new CitadelSurfaceRuleWrapper(prev, SurfaceRules.sequence(toMerge.toArray(SurfaceRules.RuleSource[]::new)));
-            }
-            Citadel.LOGGER.debug("surface rule recursive depth: {}", calculateSurfaceRuleDepth(result, 1));
-            return result;
+            result = new CitadelSurfaceRuleWrapper(prev, toMerge);
         }
+        Citadel.LOGGER.debug("surface rule recursive depth: {}", calculateSurfaceRuleDepth(result, 1));
+        return result;
     }
 
     private static int calculateSurfaceRuleDepth(SurfaceRules.RuleSource source, int depthIn) {

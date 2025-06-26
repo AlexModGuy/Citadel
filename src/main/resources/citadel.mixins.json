@@ -9,7 +9,6 @@
     "LevelMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
-    "NoiseBasedChunkGeneratorMixin",
     "NoiseGeneratorSettingsMixin",
     "PrimaryLevelDataMixin",
     "ServerLevelMixin",
