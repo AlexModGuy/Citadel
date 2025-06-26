@@ -145,7 +145,7 @@ public class Citadel {
 
     @SubscribeEvent
     public void loadComplete(FMLLoadCompleteEvent event) {
-        event.enqueueWork(ModCompatBridge::setup);
+        event.enqueueWork(ModCompatBridge::afterAllModsLoaded);
     }
 
     @SubscribeEvent

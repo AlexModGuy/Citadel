@@ -1,11 +1,14 @@
 package com.github.alexthe666.citadel.server.generation;
 
 import com.github.alexthe666.citadel.Citadel;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SurfaceRulesManager {
     private static final List<SurfaceRules.RuleSource> OVERWORLD_REGISTRY = new ArrayList();
@@ -60,9 +63,43 @@ public class SurfaceRulesManager {
     }
 
     @Nullable
-    public static SurfaceRules.RuleSource getOverworldRules(){
+    private static SurfaceRules.RuleSource getOverworldRules() {
         return OVERWORLD_REGISTRY.isEmpty() ? null : SurfaceRules.sequence(OVERWORLD_REGISTRY.toArray(SurfaceRules.RuleSource[]::new));
     }
+
+    /*
+        Needed for terrablender compatibility
+     */
+    public static Map<String, SurfaceRules.RuleSource> getOverworldRulesByBiomeForTerrablender(boolean vanilla) {
+        Map<String, SurfaceRules.RuleSource> map = new HashMap<>();
+        for (SurfaceRules.RuleSource ruleSource : OVERWORLD_REGISTRY) {
+            if (ruleSource instanceof SurfaceRules.TestRuleSource testRuleSource && testRuleSource.ifTrue() instanceof SurfaceRules.BiomeConditionSource biomeRule && !biomeRule.biomes.isEmpty()) {
+                String namespace = biomeRule.biomes.get(0).location().getNamespace();
+                boolean vanillaBiome = namespace.equals("minecraft");
+
+                if (vanilla && vanillaBiome) {
+                    map.put(namespace, testRuleSource);
+                }
+                if (!vanilla && !vanillaBiome) {
+                    if (map.containsKey(namespace)) {
+                        SurfaceRules.RuleSource ruleSource1 = map.get(namespace);
+                        if (ruleSource1 instanceof SurfaceRules.SequenceRuleSource sequenceRuleSource) {
+                            ImmutableList.Builder<SurfaceRules.RuleSource> ruleSources = ImmutableList.builder();
+                            ruleSources.addAll(sequenceRuleSource.sequence());
+                            ruleSources.add(testRuleSource);
+                            map.put(namespace, SurfaceRules.sequence(ruleSources.build().toArray(SurfaceRules.RuleSource[]::new)));
+                        } else {
+                            map.put(namespace, SurfaceRules.sequence(ruleSource1, testRuleSource));
+                        }
+                    } else {
+                        map.put(namespace, testRuleSource);
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
 
     private static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, SurfaceRules.RuleSource toMerge) {
         CitadelSurfaceRuleWrapper result;
