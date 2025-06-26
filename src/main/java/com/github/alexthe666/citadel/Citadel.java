@@ -100,6 +100,7 @@ public class Citadel {
         serializers.register(bus);
         serializers.register("mob_spawn_probability", SpawnProbabilityModifier::makeCodec);
         final DeferredRegister<Codec<? extends SurfaceRules.RuleSource>> surfaceRules = DeferredRegister.create(Registries.MATERIAL_RULE, "citadel");
+        surfaceRules.register(bus);
         surfaceRules.register("citadel_wrapper", CitadelSurfaceRuleWrapper.CODEC::codec);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(PROXY);
