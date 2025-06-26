@@ -10,6 +10,7 @@
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "NoiseGeneratorSettingsMixin",
+    "PrimaryLevelDataMixin",
     "ServerLevelMixin",
     "SmithingMenuMixin"
   ],

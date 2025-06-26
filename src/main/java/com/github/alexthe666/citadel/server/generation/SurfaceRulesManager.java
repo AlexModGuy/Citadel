@@ -1,7 +1,6 @@
 package com.github.alexthe666.citadel.server.generation;
 
 import com.github.alexthe666.citadel.Citadel;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
 import java.util.ArrayList;
@@ -12,6 +11,7 @@ public class SurfaceRulesManager {
     private static final List<SurfaceRules.RuleSource> NETHER_REGISTRY = new ArrayList();
     private static final List<SurfaceRules.RuleSource> END_REGISTRY = new ArrayList();
     private static final List<SurfaceRules.RuleSource> CAVE_REGISTRY = new ArrayList();
+    private static boolean levelBeingSaved;
 
     public SurfaceRulesManager() {
     }
@@ -55,41 +55,29 @@ public class SurfaceRulesManager {
     }
 
     public static SurfaceRules.RuleSource mergeOverworldRules(SurfaceRules.RuleSource rulesIn) {
-        return mergeRules(stripPreviouslyAddedRules(rulesIn), OVERWORLD_REGISTRY);
+        return mergeRules(rulesIn, OVERWORLD_REGISTRY);
     }
 
     private static SurfaceRules.RuleSource mergeRules(SurfaceRules.RuleSource prev, List<SurfaceRules.RuleSource> toMerge) {
         if (toMerge.isEmpty()) {
             return prev;
         } else {
-            ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
-            toMerge.forEach(newRule -> builder.add(new CitadelSurfaceRuleWrapper(newRule)));
-            if (prev instanceof SurfaceRules.SequenceRuleSource sequenceRuleSource) { // usual case
-                Citadel.LOGGER.info("added {} new surface rule(s) to sequenced rule source", toMerge.size());
-                builder.addAll(sequenceRuleSource.sequence());
+            CitadelSurfaceRuleWrapper result;
+            if (prev instanceof CitadelSurfaceRuleWrapper wrapper) {
+                Citadel.LOGGER.info("added {} new surface rule(s) to existing rule source", toMerge.size());
+                result = new CitadelSurfaceRuleWrapper(wrapper.vanillaRules(), SurfaceRules.sequence(toMerge.toArray(SurfaceRules.RuleSource[]::new)));
             } else {
                 Citadel.LOGGER.info("added {} new surface rule(s) to new rule source", toMerge.size());
-                builder.add(prev);
+                result = new CitadelSurfaceRuleWrapper(prev, SurfaceRules.sequence(toMerge.toArray(SurfaceRules.RuleSource[]::new)));
             }
-            SurfaceRules.RuleSource ruleSource = SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
-            Citadel.LOGGER.info("surface rule recursive depth: {}", calculateSurfaceRuleDepth(ruleSource, 0));
-            return ruleSource;
+            Citadel.LOGGER.info("surface rule recursive depth: {}", calculateSurfaceRuleDepth(result, 1));
+            Citadel.LOGGER.info("**** CITADEL SURFACE RULES ON LOAD ****");
+            Citadel.LOGGER.info(prev);
+            Citadel.LOGGER.info("**** CITADEL SURFACE RULES AFTER LOAD ****");
+            Citadel.LOGGER.info(result);
+            Citadel.LOGGER.info("**** CITADEL SURFACE RULES END ****");
+            return result;
         }
-    }
-
-    private static SurfaceRules.RuleSource stripPreviouslyAddedRules(SurfaceRules.RuleSource rulesIn) {
-        if (rulesIn instanceof SurfaceRules.SequenceRuleSource sequenceRuleSource) {
-            ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
-            // rebuild surface rules with all Citadel modifications removed.
-            sequenceRuleSource.sequence().stream().filter(ruleSource -> !(ruleSource instanceof CitadelSurfaceRuleWrapper)).forEach(builder::add);
-            ImmutableList<SurfaceRules.RuleSource> list = builder.build();
-            int j = sequenceRuleSource.sequence().size() - list.size();
-            Citadel.LOGGER.info("stripped {} rule(s) from surface rules", j);
-            if (j > 0) {
-                return SurfaceRules.sequence(list.toArray(SurfaceRules.RuleSource[]::new));
-            }
-        }
-        return rulesIn;
     }
 
     private static int calculateSurfaceRuleDepth(SurfaceRules.RuleSource source, int depthIn) {
@@ -102,8 +90,16 @@ public class SurfaceRulesManager {
         } else if (source instanceof SurfaceRules.TestRuleSource testRuleSource) {
             depthIn = Math.max(calculateSurfaceRuleDepth(testRuleSource.thenRun(), depthIn + 1), depthIn);
         } else if (source instanceof CitadelSurfaceRuleWrapper citadelSurfaceRuleWrapper) {
-            depthIn = Math.max(calculateSurfaceRuleDepth(citadelSurfaceRuleWrapper.wrappedRule(), depthIn + 1), depthIn);
+            depthIn = Math.max(calculateSurfaceRuleDepth(citadelSurfaceRuleWrapper.vanillaRules(), depthIn + 1), depthIn);
         }
         return depthIn;
+    }
+
+    public static boolean isLevelBeingSaved() {
+        return levelBeingSaved;
+    }
+
+    public static void setLevelBeingSaved(boolean saved) {
+        levelBeingSaved = saved;
     }
 }

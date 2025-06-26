@@ -130,6 +130,8 @@ dependencies {
             exclude group: "$it"
         }
     }
+    //TODO remove after testing
+    runtimeOnly(fg.deobf("curse.maven:terrablender-563928:4590487"))
 }
 
 configurations {
