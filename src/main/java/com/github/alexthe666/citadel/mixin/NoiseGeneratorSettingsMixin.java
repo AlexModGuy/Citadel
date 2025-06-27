@@ -28,31 +28,42 @@ public class NoiseGeneratorSettingsMixin implements NoiseGeneratorSettingsAccess
     @Unique
     private boolean saving = false;
     @Unique
+    private boolean requiresSurfaceRuleSwapping = false;
+    @Unique
     private SurfaceRules.RuleSource swapSurfaceRule = null;
 
 
-    @Inject(method = "surfaceRule", at = @At("HEAD"))
+   @Inject(method = "surfaceRule", at = @At("HEAD"), cancellable = true)
     private void surfaceRule(CallbackInfoReturnable<SurfaceRules.RuleSource> cir) {
-        if (!hasModifiedRules && !ModCompatBridge.usingTerrablender()) { // initialized
+        if (!hasModifiedRules && !saving && !ModCompatBridge.usingTerrablender()) { // initialized
             this.unmodifiedSurfaceRule = surfaceRule;
-            this.citadelSurfaceRule = SurfaceRulesManager.mergeOverworldRules(surfaceRule);
-            this.surfaceRule = citadelSurfaceRule;
+            if(SurfaceRulesManager.hasOverworldModifications()){
+                this.requiresSurfaceRuleSwapping = true;
+                this.citadelSurfaceRule = SurfaceRulesManager.mergeOverworldRules(surfaceRule);
+                this.surfaceRule = citadelSurfaceRule;
+            }else{
+                Citadel.LOGGER.info("vanilla surface rule behavior unchanged");
+                this.requiresSurfaceRuleSwapping = false;
+            }
             this.hasModifiedRules = true;
+        }
+        if(this.hasModifiedRules && this.requiresSurfaceRuleSwapping){
+            cir.setReturnValue(this.surfaceRule);
         }
     }
 
     @Override
     public void onSaveData(boolean saving) {
         this.saving = saving;
-        if(!ModCompatBridge.usingTerrablender()){
+        if(!ModCompatBridge.usingTerrablender() && this.requiresSurfaceRuleSwapping){
             if(this.hasModifiedRules){
                 if(saving){
                     this.swapSurfaceRule = this.surfaceRule;
                     this.surfaceRule = this.unmodifiedSurfaceRule;
-                    Citadel.LOGGER.info("saving unmodified surface rules as type {}", surfaceRule.getClass().getSimpleName());
+                    Citadel.LOGGER.debug("saving unmodified surface rules as type {}", surfaceRule.getClass().getSimpleName());
                 }else{
                     this.surfaceRule = this.swapSurfaceRule == null ? this.citadelSurfaceRule : this.swapSurfaceRule;
-                    Citadel.LOGGER.info("modified surface rules to type {}", surfaceRule.getClass().getSimpleName());
+                    Citadel.LOGGER.debug("modified surface rules to type {}", surfaceRule.getClass().getSimpleName());
                 }
             }
         }

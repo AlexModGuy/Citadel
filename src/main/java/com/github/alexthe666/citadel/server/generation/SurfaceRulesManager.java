@@ -57,14 +57,13 @@ public class SurfaceRulesManager {
         CAVE_REGISTRY.add(rule);
     }
 
-    public static SurfaceRules.RuleSource mergeOverworldRules(SurfaceRules.RuleSource rulesIn) {
-        SurfaceRules.RuleSource ruleSource = getOverworldRules();
-        return ruleSource == null ? rulesIn : mergeRules(rulesIn, ruleSource);
+    public static boolean hasOverworldModifications(){
+        return !OVERWORLD_REGISTRY.isEmpty();
     }
 
-    @Nullable
-    private static SurfaceRules.RuleSource getOverworldRules() {
-        return OVERWORLD_REGISTRY.isEmpty() ? null : SurfaceRules.sequence(OVERWORLD_REGISTRY.toArray(SurfaceRules.RuleSource[]::new));
+    public static SurfaceRules.RuleSource mergeOverworldRules(SurfaceRules.RuleSource rulesIn) {
+        Citadel.LOGGER.info("merged {} surface rules with vanilla rule {}", OVERWORLD_REGISTRY.size(), rulesIn.getClass().getSimpleName());
+        return mergeRules(rulesIn, SurfaceRules.sequence(OVERWORLD_REGISTRY.toArray(SurfaceRules.RuleSource[]::new)));
     }
 
     /*

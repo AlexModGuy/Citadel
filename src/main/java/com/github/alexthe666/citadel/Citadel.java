@@ -85,10 +85,8 @@ public class Citadel {
     public Citadel() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(this::setup);
-        bus.addListener(this::enqueueIMC);
-        bus.addListener(this::processIMC);
-        bus.addListener(this::doClientStuff);
-        bus.addListener(this::onModConfigEvent);
+        bus.addListener(this::clientSetup);
+        bus.addListener(this::modConfigEvent);
         bus.addListener(this::loadComplete);
         ITEMS.register(bus);
         BLOCKS.register(bus);
@@ -121,26 +119,28 @@ public class Citadel {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        PROXY.onPreInit();
-        LecternBooks.init();
-        int packetsRegistered = 0;
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, PropertiesMessage.class, PropertiesMessage::write, PropertiesMessage::read, PropertiesMessage.Handler::handle);
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, AnimationMessage.class, AnimationMessage::write, AnimationMessage::read, AnimationMessage.Handler::handle);
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, SyncClientTickRateMessage.class, SyncClientTickRateMessage::write, SyncClientTickRateMessage::read, SyncClientTickRateMessage.Handler::handle);
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, DanceJukeboxMessage.class, DanceJukeboxMessage::write, DanceJukeboxMessage::read, DanceJukeboxMessage.Handler::handle);
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSyncPath.class, MessageSyncPath::write, MessageSyncPath::read, MessageSyncPath.Handler::handle);
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSyncPathReached.class, MessageSyncPathReached::write, MessageSyncPathReached::read, MessageSyncPathReached.Handler::handle);
-        BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
-        if (urlContents != null) {
-            try {
-                String line;
-                while ((line = urlContents.readLine()) != null) {
-                    PATREONS.add(line);
+        event.enqueueWork(() -> {
+            PROXY.onPreInit();
+            LecternBooks.init();
+            int packetsRegistered = 0;
+            NETWORK_WRAPPER.registerMessage(packetsRegistered++, PropertiesMessage.class, PropertiesMessage::write, PropertiesMessage::read, PropertiesMessage.Handler::handle);
+            NETWORK_WRAPPER.registerMessage(packetsRegistered++, AnimationMessage.class, AnimationMessage::write, AnimationMessage::read, AnimationMessage.Handler::handle);
+            NETWORK_WRAPPER.registerMessage(packetsRegistered++, SyncClientTickRateMessage.class, SyncClientTickRateMessage::write, SyncClientTickRateMessage::read, SyncClientTickRateMessage.Handler::handle);
+            NETWORK_WRAPPER.registerMessage(packetsRegistered++, DanceJukeboxMessage.class, DanceJukeboxMessage::write, DanceJukeboxMessage::read, DanceJukeboxMessage.Handler::handle);
+            NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSyncPath.class, MessageSyncPath::write, MessageSyncPath::read, MessageSyncPath.Handler::handle);
+            NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSyncPathReached.class, MessageSyncPathReached::write, MessageSyncPathReached::read, MessageSyncPathReached.Handler::handle);
+            BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
+            if (urlContents != null) {
+                try {
+                    String line;
+                    while ((line = urlContents.readLine()) != null) {
+                        PATREONS.add(line);
+                    }
+                } catch (IOException e) {
+                    LOGGER.warn("Failed to load patreon contributor perks");
                 }
-            } catch (IOException e) {
-                LOGGER.warn("Failed to load patreon contributor perks");
-            }
-        } else LOGGER.warn("Failed to load patreon contributor perks");
+            } else LOGGER.warn("Failed to load patreon contributor perks");
+        });
     }
 
     @SubscribeEvent
@@ -149,7 +149,7 @@ public class Citadel {
     }
 
     @SubscribeEvent
-    public void onModConfigEvent(final ModConfigEvent event) {
+    public void modConfigEvent(final ModConfigEvent event) {
         final ModConfig config = event.getConfig();
         // Rebake the configs when they change
         ServerConfig.skipWarnings = ConfigHolder.SERVER.skipDatapackWarnings.get();
@@ -161,16 +161,8 @@ public class Citadel {
         }
     }
 
-    private void doClientStuff(final FMLClientSetupEvent event) {
+    private void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> PROXY.onClientInit());
-    }
-
-    private void enqueueIMC(final InterModEnqueueEvent event) {
-
-    }
-
-    private void processIMC(final InterModProcessEvent event) {
-
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

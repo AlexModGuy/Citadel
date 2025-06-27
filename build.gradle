@@ -130,7 +130,7 @@ dependencies {
         }
     }
     compileOnly(fg.deobf("curse.maven:terrablender-563928:4590487"))
-    runtimeOnly(fg.deobf("curse.maven:terrablender-563928:4590487"))
+//    runtimeOnly(fg.deobf("curse.maven:terrablender-563928:4590487"))
 }
 
 configurations {
