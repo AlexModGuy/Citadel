@@ -12,9 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SoundEngine.class)
 public class SoundEngineMixin {
-
     @Inject(
-            method = {"Lnet/minecraft/client/sounds/SoundEngine;calculatePitch(Lnet/minecraft/client/resources/sounds/SoundInstance;)F"},
+            method = "calculatePitch",
             remap = CitadelConstants.REMAPREFS,
             cancellable = true,
             at = @At(value = "RETURN")

@@ -16,6 +16,7 @@ import org.joml.Vector4f;
  * @since 1.9.0
  * Duplicate of ModelPart class which is not final
  */
+//FIXME::Extend ModelPart class with AT?
 public class BasicModelPart {
     public float textureWidth = 64.0F;
     public float textureHeight = 32.0F;

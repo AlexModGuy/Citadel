@@ -48,7 +48,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             /*
             if (stack.getTag() != null && stack.getTag().contains("DisplayItem")) {
                 String displayID = stack.getTag().getString("DisplayItem");
-                toRender = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(displayID)));
+                toRender = new ItemStack(ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(displayID)));
                 if (stack.getTag().contains("DisplayItemNBT")) {
                     try {
                         toRender.setTag(stack.getTag().getCompound("DisplayItemNBT"));
@@ -132,7 +132,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
                 if(LOADED_ICONS.containsKey(iconLocationStr)){
                     texture = LOADED_ICONS.get(iconLocationStr);
                 }else{
-                    texture = new ResourceLocation(iconLocationStr);
+                    texture = ResourceLocation.parse(iconLocationStr);
                     LOADED_ICONS.put(iconLocationStr, texture);
                 }
             }*/

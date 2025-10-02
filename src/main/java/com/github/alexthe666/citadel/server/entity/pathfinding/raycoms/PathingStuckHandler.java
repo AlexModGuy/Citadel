@@ -3,6 +3,7 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms;
     All of this code is used with permission from Raycoms, one of the developers of the minecolonies project.
  */
 
+import com.github.alexthe666.citadel.mixin.BlockBehaviourAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.damagesource.DamageSource;
@@ -24,8 +25,7 @@ import java.util.function.BiPredicate;
 /**
  * Stuck handler for pathing
  */
-public class PathingStuckHandler implements IStuckHandler
-{
+public class PathingStuckHandler implements IStuckHandler {
     /**
      * The distance at which we consider a target to arrive
      */
@@ -39,7 +39,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Constants related to tp.
      */
-    protected static final int MIN_TP_DELAY    = 120 * 20;
+    protected static final int MIN_TP_DELAY = 120 * 20;
     protected static final int MIN_DIST_FOR_TP = 10;
 
     /**
@@ -91,7 +91,7 @@ public class PathingStuckHandler implements IStuckHandler
      * Whether take damage on stuck is enabled
      */
     protected boolean takeDamageOnCompleteStuck = false;
-    protected float   damagePct                 = 0.2f;
+    protected float damagePct = 0.2f;
 
     /**
      * BLock break range on complete stuck
@@ -101,14 +101,14 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Temporary comparison variables to compare with last update
      */
-    protected boolean hadPath         = false;
-    protected int     lastPathIndex   = -1;
-    protected int     progressedNodes = 0;
+    protected boolean hadPath = false;
+    protected int lastPathIndex = -1;
+    protected int progressedNodes = 0;
 
     /**
      * Delay before taking unstuck actions in ticks, default 60 seconds
      */
-    protected int delayBeforeActions       = 60 * 20;
+    protected int delayBeforeActions = 60 * 20;
     protected int delayToNextUnstuckAction = delayBeforeActions;
 
     /**
@@ -118,8 +118,7 @@ public class PathingStuckHandler implements IStuckHandler
 
     protected final Random rand = new Random();
 
-    protected PathingStuckHandler()
-    {
+    protected PathingStuckHandler() {
     }
 
     /**
@@ -127,8 +126,7 @@ public class PathingStuckHandler implements IStuckHandler
      *
      * @return new stuck handler
      */
-    public static PathingStuckHandler createStuckHandler()
-    {
+    public static PathingStuckHandler createStuckHandler() {
         return new PathingStuckHandler();
     }
 
@@ -138,36 +136,29 @@ public class PathingStuckHandler implements IStuckHandler
      * @param navigator navigator to check
      */
     @Override
-    public void checkStuck(final AbstractAdvancedPathNavigate navigator)
-    {
-        if (navigator.getDesiredPos() == null || navigator.getDesiredPos().equals(BlockPos.ZERO))
-        {
+    public void checkStuck(final AbstractAdvancedPathNavigate navigator) {
+        if (navigator.getDesiredPos() == null || navigator.getDesiredPos().equals(BlockPos.ZERO)) {
             return;
         }
 
         final double distanceToGoal =
-            navigator.getOurEntity().position().distanceTo(new Vec3(navigator.getDesiredPos().getX(), navigator.getDesiredPos().getY(), navigator.getDesiredPos().getZ()));
+                navigator.getOurEntity().position().distanceTo(new Vec3(navigator.getDesiredPos().getX(), navigator.getDesiredPos().getY(), navigator.getDesiredPos().getZ()));
 
         // Close enough to be considered at the goal
-        if (distanceToGoal < MIN_TARGET_DIST)
-        {
+        if (distanceToGoal < MIN_TARGET_DIST) {
             resetGlobalStuckTimers();
             return;
         }
 
         // Global timeout check
-        if (prevDestination.equals(navigator.getDesiredPos()))
-        {
+        if (prevDestination.equals(navigator.getDesiredPos())) {
             globalTimeout++;
 
             // Try path first, if path fits target pos
-            if (globalTimeout > Math.max(MIN_TP_DELAY, timePerBlockDistance * Math.max(MIN_DIST_FOR_TP, distanceToGoal)))
-            {
+            if (globalTimeout > Math.max(MIN_TP_DELAY, timePerBlockDistance * Math.max(MIN_DIST_FOR_TP, distanceToGoal))) {
                 completeStuckAction(navigator);
             }
-        }
-        else
-        {
+        } else {
             resetGlobalStuckTimers();
         }
 
@@ -182,9 +173,7 @@ public class PathingStuckHandler implements IStuckHandler
             if (!hadPath) {
                 tryUnstuck(navigator);
             }
-        }
-        else
-        {
+        } else {
             if (navigator.getPath().getNextNodeIndex() == lastPathIndex) {
                 // Stuck when we have a path, but are not progressing on it
                 tryUnstuck(navigator);
@@ -208,8 +197,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Resets global stuck timers
      */
-    protected void resetGlobalStuckTimers()
-    {
+    protected void resetGlobalStuckTimers() {
         globalTimeout = 0;
         prevDestination = BlockPos.ZERO;
         resetStuckTimers();
@@ -225,9 +213,9 @@ public class PathingStuckHandler implements IStuckHandler
 
         if (canTeleportGoal) {
             final BlockPos tpPos = findAround(world, desired, 10, 10,
-                (posworld, pos) -> SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE
-                    && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos), pos) == SurfaceType.DROPABLE
-                    && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.above()), pos.above()) == SurfaceType.DROPABLE);
+                    (posworld, pos) -> SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE
+                            && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos), pos) == SurfaceType.DROPABLE
+                            && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.above()), pos.above()) == SurfaceType.DROPABLE);
             if (tpPos != null) {
                 entity.teleportTo(tpPos.getX() + 0.5, tpPos.getY(), tpPos.getZ() + 0.5);
             }
@@ -236,12 +224,10 @@ public class PathingStuckHandler implements IStuckHandler
             entity.hurt(new DamageSource(entity.level().damageSources().inWall().typeHolder(), entity), entity.getMaxHealth() * damagePct);
         }
 
-        if (completeStuckBlockBreakRange > 0)
-        {
+        if (completeStuckBlockBreakRange > 0) {
             final Direction facing = getFacing(entity.blockPosition(), navigator.getDesiredPos());
 
-            for (int i = 1; i <= completeStuckBlockBreakRange; i++)
-            {
+            for (int i = 1; i <= completeStuckBlockBreakRange; i++) {
                 if (!world.isEmptyBlock(new BlockPos(entity.blockPosition()).relative(facing, i)) || !world.isEmptyBlock(new BlockPos(entity.blockPosition()).relative(facing, i).above())) {
                     breakBlocksAhead(world, new BlockPos(entity.blockPosition()).relative(facing, i - 1), facing);
                     break;
@@ -256,17 +242,14 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Tries unstuck options depending on the level
      */
-    public void tryUnstuck(final AbstractAdvancedPathNavigate navigator)
-    {
-        if (delayToNextUnstuckAction-- > 0)
-        {
+    public void tryUnstuck(final AbstractAdvancedPathNavigate navigator) {
+        if (delayToNextUnstuckAction-- > 0) {
             return;
         }
         delayToNextUnstuckAction = 50;
 
         // Clear path
-        if (stuckLevel == 0)
-        {
+        if (stuckLevel == 0) {
             stuckLevel++;
             delayToNextUnstuckAction = 100;
             navigator.stop();
@@ -293,31 +276,25 @@ public class PathingStuckHandler implements IStuckHandler
         }
 
         // Place ladders & leaves
-        if (stuckLevel >= 3 && stuckLevel <= 5)
-        {
-            if (canPlaceLadders && rand.nextBoolean())
-            {
+        if (stuckLevel >= 3 && stuckLevel <= 5) {
+            if (canPlaceLadders && rand.nextBoolean()) {
                 delayToNextUnstuckAction = 200;
                 placeLadders(navigator);
-            }
-            else if (canBuildLeafBridges && rand.nextBoolean())
-            {
+            } else if (canBuildLeafBridges && rand.nextBoolean()) {
                 delayToNextUnstuckAction = 100;
                 placeLeaves(navigator);
             }
         }
 
         // break blocks
-        if (stuckLevel >= 6 && stuckLevel <= 8 && canBreakBlocks)
-        {
+        if (stuckLevel >= 6 && stuckLevel <= 8 && canBreakBlocks) {
             delayToNextUnstuckAction = 200;
             breakBlocks(navigator);
         }
 
         chanceStuckLevel();
 
-        if (stuckLevel == 9)
-        {
+        if (stuckLevel == 9) {
             completeStuckAction(navigator);
             resetStuckTimers();
         }
@@ -326,12 +303,10 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Random chance to decrease to a previous level of stuck
      */
-    protected void chanceStuckLevel()
-    {
+    protected void chanceStuckLevel() {
         stuckLevel++;
         // 20 % to decrease to the previous level again
-        if (stuckLevel > 1 && rand.nextInt(6) == 0)
-        {
+        if (stuckLevel > 1 && rand.nextInt(6) == 0) {
             stuckLevel -= 2;
         }
     }
@@ -339,8 +314,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Resets timers
      */
-    protected void resetStuckTimers()
-    {
+    protected void resetStuckTimers() {
         delayToNextUnstuckAction = delayBeforeActions;
         lastPathIndex = -1;
         progressedNodes = 0;
@@ -427,8 +401,7 @@ public class PathingStuckHandler implements IStuckHandler
         }
     }
 
-    public static Direction getFacing(final BlockPos pos, final BlockPos neighbor)
-    {
+    public static Direction getFacing(final BlockPos pos, final BlockPos neighbor) {
         final BlockPos vector = neighbor.subtract(pos);
         return Direction.getNearest(vector.getX(), vector.getY(), -vector.getZ());
     }
@@ -458,7 +431,7 @@ public class PathingStuckHandler implements IStuckHandler
         if (state.getBlock() != Blocks.LADDER && !state.canOcclude() && world.getFluidState(pos).isEmpty()) {
             for (final Direction dir : directions) {
                 final BlockState toPlace = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, dir.getOpposite());
-                if (world.getBlockState(pos.relative(dir)).isSolid() && Blocks.LADDER.canSurvive(toPlace, world, pos)) {
+                if (world.getBlockState(pos.relative(dir)).isSolid() && ((BlockBehaviourAccessor) Blocks.LADDER).citadel_canSurvive(toPlace, world, pos)) {
                     world.setBlockAndUpdate(pos, toPlace);
                     break;
                 }
@@ -466,20 +439,17 @@ public class PathingStuckHandler implements IStuckHandler
         }
     }
 
-    public PathingStuckHandler withBlockBreaks()
-    {
+    public PathingStuckHandler withBlockBreaks() {
         canBreakBlocks = true;
         return this;
     }
 
-    public PathingStuckHandler withPlaceLadders()
-    {
+    public PathingStuckHandler withPlaceLadders() {
         canPlaceLadders = true;
         return this;
     }
 
-    public PathingStuckHandler withBuildLeafBridges()
-    {
+    public PathingStuckHandler withBuildLeafBridges() {
         canBuildLeafBridges = true;
         return this;
     }
@@ -490,20 +460,17 @@ public class PathingStuckHandler implements IStuckHandler
      * @param steps steps to teleport
      * @return this
      */
-    public PathingStuckHandler withTeleportSteps(int steps)
-    {
+    public PathingStuckHandler withTeleportSteps(int steps) {
         teleportRange = steps;
         return this;
     }
 
-    public PathingStuckHandler withTeleportOnFullStuck()
-    {
+    public PathingStuckHandler withTeleportOnFullStuck() {
         canTeleportGoal = true;
         return this;
     }
 
-    public PathingStuckHandler withTakeDamageOnStuck(float damagePct)
-    {
+    public PathingStuckHandler withTakeDamageOnStuck(float damagePct) {
         this.damagePct = damagePct;
         takeDamageOnCompleteStuck = true;
         return this;
@@ -515,8 +482,7 @@ public class PathingStuckHandler implements IStuckHandler
      * @param time in ticks to set
      * @return this
      */
-    public PathingStuckHandler withTimePerBlockDistance(int time)
-    {
+    public PathingStuckHandler withTimePerBlockDistance(int time) {
         timePerBlockDistance = time;
         return this;
     }
@@ -527,8 +493,7 @@ public class PathingStuckHandler implements IStuckHandler
      * @param delay to set
      * @return this
      */
-    public PathingStuckHandler withDelayBeforeStuckActions(int delay)
-    {
+    public PathingStuckHandler withDelayBeforeStuckActions(int delay) {
         delayBeforeActions = delay;
         return this;
     }
@@ -539,8 +504,7 @@ public class PathingStuckHandler implements IStuckHandler
      * @param range to set
      * @return this
      */
-    public PathingStuckHandler withCompleteStuckBlockBreak(int range)
-    {
+    public PathingStuckHandler withCompleteStuckBlockBreak(int range) {
         completeStuckBlockBreakRange = range;
         return this;
     }
@@ -567,19 +531,15 @@ public class PathingStuckHandler implements IStuckHandler
         int y = 0;
         int y_offset = 1;
 
-        for (int i = 0; i < hRange + 2; i++)
-        {
-            for (int steps = 1; steps <= vRange; steps++)
-            {
+        for (int i = 0; i < hRange + 2; i++) {
+            for (int steps = 1; steps <= vRange; steps++) {
                 // Start topleft of middle point
                 temp = start.offset(-steps, y, -steps);
 
                 // X ->
-                for (int x = 0; x <= steps; x++)
-                {
+                for (int x = 0; x <= steps; x++) {
                     temp = temp.offset(1, 0, 0);
-                    if (predicate.test(world, temp))
-                    {
+                    if (predicate.test(world, temp)) {
                         return temp;
                     }
                 }
@@ -587,21 +547,17 @@ public class PathingStuckHandler implements IStuckHandler
                 // X
                 // |
                 // v
-                for (int z = 0; z <= steps; z++)
-                {
+                for (int z = 0; z <= steps; z++) {
                     temp = temp.offset(0, 0, 1);
-                    if (predicate.test(world, temp))
-                    {
+                    if (predicate.test(world, temp)) {
                         return temp;
                     }
                 }
 
                 // < - X
-                for (int x = 0; x <= steps; x++)
-                {
+                for (int x = 0; x <= steps; x++) {
                     temp = temp.offset(-1, 0, 0);
-                    if (predicate.test(world, temp))
-                    {
+                    if (predicate.test(world, temp)) {
                         return temp;
                     }
                 }
@@ -609,11 +565,9 @@ public class PathingStuckHandler implements IStuckHandler
                 // ^
                 // |
                 // X
-                for (int z = 0; z <= steps; z++)
-                {
+                for (int z = 0; z <= steps; z++) {
                     temp = temp.offset(0, 0, -1);
-                    if (predicate.test(world, temp))
-                    {
+                    if (predicate.test(world, temp)) {
                         return temp;
                     }
                 }

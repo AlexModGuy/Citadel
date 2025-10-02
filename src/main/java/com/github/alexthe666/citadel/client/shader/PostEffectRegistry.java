@@ -98,7 +98,7 @@ public class PostEffectRegistry {
         }
     }
 
-    public static void processEffects(RenderTarget mainTarget, float f) {
+    public static void processEffects(RenderTarget mainTarget) {
         for (PostEffect postEffect : postEffects.values()) {
             if (postEffect.isEnabled() && postEffect.postChain != null) {
                 postEffect.postChain.process(Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());

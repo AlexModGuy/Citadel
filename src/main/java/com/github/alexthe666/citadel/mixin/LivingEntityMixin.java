@@ -25,12 +25,12 @@ public abstract class LivingEntityMixin extends Entity implements ICitadelDataEn
         super(entityType, world);
     }
 
-    @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/world/entity/LivingEntity;defineSynchedData()V")
-    private void citadel_registerData(CallbackInfo ci) {
-        entityData.define(CITADEL_DATA, new CompoundTag());
+    @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, method = "defineSynchedData")
+    private void citadel_registerData(SynchedEntityData.Builder builder, CallbackInfo ci) {
+        builder.define(CITADEL_DATA, new CompoundTag());
     }
 
-    @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/world/entity/LivingEntity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V")
+    @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, method = "addAdditionalSaveData")
     private void citadel_writeAdditional(CompoundTag compoundNBT, CallbackInfo ci) {
         CompoundTag citadelDat = getCitadelEntityData();
         if (citadelDat != null) {
@@ -38,7 +38,7 @@ public abstract class LivingEntityMixin extends Entity implements ICitadelDataEn
         }
     }
 
-    @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/world/entity/LivingEntity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V")
+    @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, method = "readAdditionalSaveData")
     private void citadel_readAdditional(CompoundTag compoundNBT, CallbackInfo ci) {
         if (compoundNBT.contains("CitadelData")) {
             setCitadelEntityData(compoundNBT.getCompound("CitadelData"));

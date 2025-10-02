@@ -2,7 +2,7 @@ package com.github.alexthe666.citadel.client.video;
 
 import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

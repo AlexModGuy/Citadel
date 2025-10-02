@@ -8,6 +8,7 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.neoforged.bus.api.Event;
+import net.neoforged.neoforge.common.util.TriState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class EventMergeStructureSpawns extends Event {
     private MobCategory category;
     private WeightedRandomList<MobSpawnSettings.SpawnerData> structureSpawns;
     private WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns;
+    private TriState result = TriState.DEFAULT;
 
     public EventMergeStructureSpawns(StructureManager structureManager, BlockPos pos, MobCategory category, WeightedRandomList<MobSpawnSettings.SpawnerData> structureSpawns, WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns) {
         this.structureManager = structureManager;
@@ -36,11 +38,11 @@ public class EventMergeStructureSpawns extends Event {
         return pos;
     }
 
-    public MobCategory getCategory(){
+    public MobCategory getCategory() {
         return category;
     }
 
-    public boolean isStructureTagged(TagKey<Structure> tagKey){
+    public boolean isStructureTagged(TagKey<Structure> tagKey) {
         return structureManager.getStructureWithPieceAt(pos, tagKey).isValid();
     }
 
@@ -52,10 +54,10 @@ public class EventMergeStructureSpawns extends Event {
         structureSpawns = spawns;
     }
 
-    public void mergeSpawns(){
-        List<MobSpawnSettings.SpawnerData> list =  new ArrayList<>(biomeSpawns.unwrap());
-        for(MobSpawnSettings.SpawnerData structureSpawn : structureSpawns.unwrap()){
-            if(!list.contains(structureSpawn)){
+    public void mergeSpawns() {
+        List<MobSpawnSettings.SpawnerData> list = new ArrayList<>(biomeSpawns.unwrap());
+        for (MobSpawnSettings.SpawnerData structureSpawn : structureSpawns.unwrap()) {
+            if (!list.contains(structureSpawn)) {
                 list.add(structureSpawn);
             }
         }
@@ -64,5 +66,13 @@ public class EventMergeStructureSpawns extends Event {
 
     public WeightedRandomList<MobSpawnSettings.SpawnerData> getBiomeSpawns() {
         return biomeSpawns;
+    }
+
+    public TriState getResult() {
+        return this.result;
+    }
+
+    public void setResult(TriState result) {
+        this.result = result;
     }
 }

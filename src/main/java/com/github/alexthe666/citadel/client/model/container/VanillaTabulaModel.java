@@ -229,7 +229,7 @@ public class VanillaTabulaModel implements UnbakedModel {
     @Nullable
     @Override
     public IBakedModel bake(ModelBakery bakery, Function spriteGetter, ISprite sprite, VertexFormat format) {
-        TextureAtlasSprite spriteA = (TextureAtlasSprite) spriteGetter.apply(this.textures.isEmpty() ? new ResourceLocation("missingno") : this.textures.get(0));
+        TextureAtlasSprite spriteA = (TextureAtlasSprite) spriteGetter.apply(this.textures.isEmpty() ? ResourceLocation.parse("missingno") : this.textures.get(0));
         TextureAtlasSprite particleSprite = this.particle == null ? spriteA : (TextureAtlasSprite) spriteGetter.apply(this.particle);
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         TabulaMatrix matrix = new TabulaMatrix();

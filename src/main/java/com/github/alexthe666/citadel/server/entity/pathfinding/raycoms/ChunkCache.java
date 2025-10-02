@@ -71,7 +71,7 @@ public class ChunkCache implements LevelReader {
                 if (WorldChunkUtil.isEntityChunkLoaded(world, new ChunkPos(k, l)) && worldIn.getChunkSource() instanceof ServerChunkCache serverChunkCache) {
                     final ChunkHolder holder = serverChunkCache.chunkMap.getVisibleChunkIfPresent(ChunkPos.asLong(k, l));
                     if (holder != null) {
-                        this.chunkArray[k - this.chunkX][l - this.chunkZ] = holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left().orElse(null);
+                        this.chunkArray[k - this.chunkX][l - this.chunkZ] = holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).orElse(null);
                     }
                 }
             }

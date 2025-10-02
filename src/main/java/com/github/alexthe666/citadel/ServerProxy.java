@@ -15,13 +15,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ServerProxy {
-
-
     public ServerProxy() {
     }
 
@@ -55,24 +53,6 @@ public class ServerProxy {
     }
 
     public void onClientInit() {
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onServerTick(ServerTickEvent.Pre event) {
-        if (event.getServer().isRunning()) {
-            ServerTickRateTracker tickRateTracker = CitadelServerData.get(event.getServer()).getOrCreateTickRateTracker();
-            if (event.getServer() instanceof ModifiableTickRateServer modifiableServer) {
-                long l = tickRateTracker.getServerTickLengthMs();
-                if (l == MinecraftServer.MS_PER_TICK) {
-                    modifiableServer.resetGlobalTickLengthMs();
-                } else {
-                    modifiableServer.setGlobalTickLengthMs(tickRateTracker.getServerTickLengthMs());
-                }
-                if (!event.getServer().isShutdown()) {
-                    tickRateTracker.masterTick();
-                }
-            }
-        }
     }
 
     public boolean canEntityTickClient(Level level, Entity entity) {
