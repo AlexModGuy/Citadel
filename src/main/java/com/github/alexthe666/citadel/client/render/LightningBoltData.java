@@ -149,15 +149,7 @@ public class LightningBoltData {
         return Pair.of(quads, new QuadCache(end, endRight, endBack));
     }
 
-    private static class QuadCache {
-
-        private final Vec3 prevEnd, prevEndRight, prevEndBack;
-
-        private QuadCache(Vec3 prevEnd, Vec3 prevEndRight, Vec3 prevEndBack) {
-            this.prevEnd = prevEnd;
-            this.prevEndRight = prevEndRight;
-            this.prevEndBack = prevEndBack;
-        }
+    private record QuadCache(Vec3 prevEnd, Vec3 prevEndRight, Vec3 prevEndBack) {
     }
 
     protected static class BoltInstructions {
@@ -177,7 +169,7 @@ public class LightningBoltData {
         }
     }
 
-    public class BoltQuads {
+    public static class BoltQuads {
 
         private final List<Vec3> vecs = new ArrayList<>();
 

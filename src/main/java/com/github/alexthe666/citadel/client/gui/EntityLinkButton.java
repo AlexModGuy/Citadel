@@ -43,9 +43,7 @@ public class EntityLinkButton extends Button {
         this.drawBtn(false, guiGraphics, 0, 0, lvt_5_1_, lvt_6_1_, 24, 24);
         Entity model = null;
         EntityType type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(data.getEntity()));
-        if (type != null) {
-            model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
-        }
+        model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
 
         guiGraphics.enableScissor(this.getX() + Math.round(f * 4), this.getY() + Math.round(f * 4), this.getX() + Math.round(f * 20), this.getY() + Math.round(f * 20));
         if (model != null) {
@@ -79,7 +77,7 @@ public class EntityLinkButton extends Button {
 
     public void renderEntityInInventory(GuiGraphics guiGraphics, int xPos, int yPos, float scale, Quaternionf rotation, Entity entity) {
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate((double)xPos, (double)yPos, 50.0D);
+        guiGraphics.pose().translate(xPos, yPos, 50.0D);
         guiGraphics.pose().mulPose((new Matrix4f()).scaling(scale, scale,  (-scale)));
         guiGraphics.pose().mulPose(rotation);
 
@@ -88,9 +86,7 @@ public class EntityLinkButton extends Button {
         RenderSystem.setShaderLights(light0, light1);
         EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         entityrenderdispatcher.setRenderShadow(false);
-        RenderSystem.runAsFancy(() -> {
-            entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), guiGraphics.bufferSource(), 15728880);
-        });
+        RenderSystem.runAsFancy(() -> entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), guiGraphics.bufferSource(), 15728880));
         guiGraphics.flush();
         entityrenderdispatcher.setRenderShadow(true);
         guiGraphics.pose().popPose();

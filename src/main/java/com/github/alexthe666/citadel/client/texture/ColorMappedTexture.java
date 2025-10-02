@@ -12,7 +12,6 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.GsonHelper;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class ColorMappedTexture extends SimpleTexture {
@@ -24,7 +23,7 @@ public class ColorMappedTexture extends SimpleTexture {
         this.colors = colors;
     }
 
-    public void load(ResourceManager resourceManager) throws IOException {
+    public void load(ResourceManager resourceManager) {
         NativeImage nativeimage = getNativeImage(resourceManager, location);
         if(nativeimage != null){
             if(resourceManager.getResource(location).isPresent()){
@@ -54,9 +53,7 @@ public class ColorMappedTexture extends SimpleTexture {
             resource = resourceManager.getResourceOrThrow(resourceLocation);
             InputStream inputstream = resource.open();
             NativeImage nativeimage = NativeImage.read(inputstream);
-            if (inputstream != null) {
-                inputstream.close();
-            }
+            inputstream.close();
             return nativeimage;
         }catch (Throwable throwable1) {
             return null;

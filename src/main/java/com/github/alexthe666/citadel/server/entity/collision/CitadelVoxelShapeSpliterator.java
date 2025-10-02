@@ -17,6 +17,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -34,13 +35,11 @@ public class CitadelVoxelShapeSpliterator extends Spliterators.AbstractSpliterat
     private boolean needsBorderCheck;
 
     public CitadelVoxelShapeSpliterator(CollisionGetter reader, @Nullable Entity entity, AABB aabb) {
-        this(reader, entity, aabb, (p_241459_0_, p_241459_1_) -> {
-            return true;
-        });
+        this(reader, entity, aabb, (p_241459_0_, p_241459_1_) -> true);
     }
 
     public CitadelVoxelShapeSpliterator(CollisionGetter reader, @Nullable Entity entity, AABB aabb, BiPredicate<BlockState, BlockPos> statePositionPredicate) {
-        super(Long.MAX_VALUE, 1280);
+        super(Long.MAX_VALUE, Spliterator.NONNULL | Spliterator.IMMUTABLE);
         this.context = entity == null ? CollisionContext.empty() : CollisionContext.of(entity);
         this.mutablePos = new BlockPos.MutableBlockPos();
         this.shape = Shapes.create(aabb);

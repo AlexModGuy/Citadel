@@ -4,9 +4,6 @@ import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
-import net.minecraft.world.entity.raid.Raids;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
@@ -38,9 +35,7 @@ public class CitadelServerData extends SavedData {
         if(fromMap == null){
             DimensionDataStorage storage = server.getLevel(Level.OVERWORLD).getDataStorage();
             CitadelServerData data = storage.computeIfAbsent(factory(server), IDENTIFIER);
-            if (data != null) {
-                data.setDirty();
-            }
+            data.setDirty();
             dataMap.put(server, data);
             return data;
         }

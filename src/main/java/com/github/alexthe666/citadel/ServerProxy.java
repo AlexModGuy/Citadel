@@ -3,21 +3,14 @@ package com.github.alexthe666.citadel;
 import com.github.alexthe666.citadel.server.entity.IDancesToJukebox;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
-import com.github.alexthe666.citadel.server.world.CitadelServerData;
-import com.github.alexthe666.citadel.server.world.ModifiableTickRateServer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 public class ServerProxy {
     public ServerProxy() {

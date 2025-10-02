@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Minecolonies async PathNavigate.
@@ -231,7 +230,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
         if (speedFactor > MAX_SPEED_ALLOWED || speedFactor < MIN_SPEED_ALLOWED)
         {
-            Citadel.LOGGER.error("Tried to set a bad speed:" + speedFactor + " for entity:" + ourEntity, new Exception());
+            Citadel.LOGGER.error("Tried to set a bad speed:{} for entity:{}", speedFactor, ourEntity, new Exception());
             return null;
         }
 
@@ -258,9 +257,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
             nodeEvaluator.entityDepth = Mth.floor(ourEntity.getBbWidth() + 1.0F);
         }
         if (desiredPosTimeout > 0) {
-            if (desiredPosTimeout-- <= 0) {
-                desiredPos = null;
-            }
+            desiredPosTimeout--;
         }
 
         if (pathResult != null) {
@@ -269,11 +266,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
             }
             else if (pathResult.getStatus() == PathFindingStatus.CALCULATION_COMPLETE)
             {
-                try {
-                    processCompletedCalculationResult();
-                } catch (InterruptedException | ExecutionException e) {
-                    Citadel.LOGGER.catching(e);
-                }
+                processCompletedCalculationResult();
             }
         }
 
@@ -454,7 +447,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
     @Override
     public void setSpeedModifier(final double speedFactor) {
         if (speedFactor > MAX_SPEED_ALLOWED || speedFactor < MIN_SPEED_ALLOWED) {
-            Citadel.LOGGER.debug("Tried to set a bad speed:" + speedFactor + " for entity:" + ourEntity);
+            Citadel.LOGGER.debug("Tried to set a bad speed:{} for entity:{}", speedFactor, ourEntity);
             return;
         }
         walkSpeedFactor = speedFactor;
@@ -524,7 +517,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
         return tempPath == null ? path : tempPath;
     }
 
-    private boolean processCompletedCalculationResult() throws InterruptedException, ExecutionException {
+    private boolean processCompletedCalculationResult() {
         pathResult.getJob().synchToClient(mob);
         moveTo(pathResult.getPath(), getSpeedFactor());
 
@@ -799,7 +792,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
         }
         Node node = path.getNode(index);
         double d0 = (double)node.x + 0.5D;
-        double d1 = (double)node.y;
+        double d1 = node.y;
         double d2 = (double)node.z + 0.5D;
         return new Vec3(d0, d1, d2);
     }

@@ -1,9 +1,12 @@
 package com.github.alexthe666.citadel.math;
 
+import java.io.Serial;
+
 public class Point2f extends Tuple2f implements java.io.Serializable {
 
     // Compatible with 1.1
-    static final long serialVersionUID = -4801347926528714435L;
+    @Serial
+    private static final long serialVersionUID = -4801347926528714435L;
 
     /**
      * Constructs and initializes a Point2f from the specified xy coordinates.

@@ -51,7 +51,7 @@ public class SurfaceRulesManager {
         ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
         builder.addAll(toMerge);
         builder.add(prev);
-        return SurfaceRules.sequence(builder.build().toArray((size) -> new SurfaceRules.RuleSource[size]));
+        return SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
     }
 
     public static SurfaceRules.RuleSource mergeOverworldRules(SurfaceRules.RuleSource rulesIn) {

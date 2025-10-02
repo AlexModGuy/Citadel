@@ -556,8 +556,6 @@ public class UiRenderMacros {
         // INLINE: vanilla from InventoryScreen
         final LivingEntity livingEntity = (entity instanceof LivingEntity) ? (LivingEntity) entity : null;
         final Minecraft mc = Minecraft.getInstance();
-        if (entity.level() == null)
-            return; // this was entity.setLevel, not sure why cuz sus, dont care if entity has no level
         poseStack.pushPose();
         poseStack.translate((float) x, (float) y, 1050.0F);
         poseStack.scale(1.0F, 1.0F, -1.0F);
@@ -571,7 +569,7 @@ public class UiRenderMacros {
         final float oldYawOffset = livingEntity == null ? 0F : livingEntity.yBodyRot;
         final float oldPrevYawHead = livingEntity == null ? 0F : livingEntity.yHeadRotO;
         final float oldYawHead = livingEntity == null ? 0F : livingEntity.yHeadRot;
-        entity.setYRot(180.0F + (float) headYaw);
+        entity.setYRot(180.0F + headYaw);
         entity.setXRot(-pitch);
         if (livingEntity != null) {
             livingEntity.yBodyRot = 180.0F + yaw;

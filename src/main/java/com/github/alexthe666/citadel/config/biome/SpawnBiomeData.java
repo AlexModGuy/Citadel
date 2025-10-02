@@ -67,7 +67,7 @@ public class SpawnBiomeData {
         }
     }
 
-    private class SpawnBiomeEntry {
+    private static class SpawnBiomeEntry {
         BiomeEntryType type;
         boolean negate;
         String value;
@@ -84,7 +84,7 @@ public class SpawnBiomeData {
                 return false;
             }else{
                 if(type == BiomeEntryType.BIOME_TAG){
-                    if(biomeHolder.tags().anyMatch((biomeTagKey -> biomeTagKey.location() != null && biomeTagKey.location().toString().equals(value)))){
+                    if(biomeHolder.tags().anyMatch(biomeTagKey -> biomeTagKey.location().toString().equals(value))){
                         return !negate;
                     }
                     return negate;

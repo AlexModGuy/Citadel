@@ -63,8 +63,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     {
         if (Pathfinding.isDebug())
         {
-            Citadel.LOGGER.info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]",
-              start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
+            Citadel.LOGGER.info("Pathfinding from [{},{},{}] away from [{},{},{}]", start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ());
         }
 
         return super.search();

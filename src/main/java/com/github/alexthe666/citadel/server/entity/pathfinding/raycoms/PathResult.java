@@ -142,7 +142,6 @@ public class PathResult<T extends Callable<Path>>
     /**
      * Get the queried job for the pathresult
      *
-     * @return
      */
     public T getJob()
     {
@@ -152,7 +151,6 @@ public class PathResult<T extends Callable<Path>>
     /**
      * Set the job for this result
      *
-     * @param job
      */
     public void setJob(final T job)
     {

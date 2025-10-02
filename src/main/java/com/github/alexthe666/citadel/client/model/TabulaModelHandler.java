@@ -99,7 +99,7 @@ public enum TabulaModelHandler implements JsonDeserializationContext {
 
     /**
      * @param model the model container
-     * @return an array with all cubes of the model
+     * @return a list with all cubes of the model
      */
     public List<TabulaCubeContainer> getAllCubes(TabulaModelContainer model) {
         List<TabulaCubeContainer> cubes = new ArrayList<>();

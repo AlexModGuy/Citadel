@@ -35,7 +35,7 @@ public class CitadelEvents {
             if (event.getEntity() instanceof Player player) {
                 CompoundTag tag = CitadelEntityData.getCitadelTag(player);
                 tag.putInt("CitadelInt", tag.getInt("CitadelInt") + 1);
-                Citadel.LOGGER.debug("Citadel Data Tag tracker example: " + tag.getInt("CitadelInt"));
+                Citadel.LOGGER.debug("Citadel Data Tag tracker example: {}", tag.getInt("CitadelInt"));
             }
         }
     }
@@ -57,7 +57,7 @@ public class CitadelEvents {
                 }
                 event.getLevel().setBlockEntity(newBe);
                 event.getEntity().swing(event.getHand(), true);
-                event.getLevel().playSound((Player) null, event.getPos(), SoundEvents.BOOK_PUT, SoundSource.BLOCKS, 1.0F, 1.0F);
+                event.getLevel().playSound(null, event.getPos(), SoundEvents.BOOK_PUT, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
         }
     }

@@ -12,7 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PropertiesMessage implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<PropertiesMessage> TYPE = new CustomPacketPayload.Type<PropertiesMessage>(ResourceLocation.fromNamespaceAndPath("citadel", "properties"));
+    public static final CustomPacketPayload.Type<PropertiesMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("citadel", "properties"));
     public static final StreamCodec<FriendlyByteBuf, PropertiesMessage> CODEC = StreamCodec.ofMember(PropertiesMessage::write, PropertiesMessage::read);
     private String propertyID;
     private CompoundTag compound;

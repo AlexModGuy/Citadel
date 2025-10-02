@@ -27,7 +27,7 @@ public class WebHelper {
         }
         
         try { // Backup
-            return new BufferedReader(new InputStreamReader(WebHelper.class.getClass().getClassLoader().getResourceAsStream(backupFileLoc), StandardCharsets.UTF_8));
+            return new BufferedReader(new InputStreamReader(WebHelper.class.getClassLoader().getResourceAsStream(backupFileLoc), StandardCharsets.UTF_8));
         } catch (NullPointerException e) { // Can't parse backupFileLoc
             e.printStackTrace();
         }

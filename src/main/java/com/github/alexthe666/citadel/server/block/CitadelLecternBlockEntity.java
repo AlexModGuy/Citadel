@@ -9,7 +9,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -115,11 +114,11 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
     }
 
     public void setBook(ItemStack stack) {
-        this.setBook(stack, (Player) null);
+        this.setBook(stack, null);
     }
 
     void onBookItemRemove() {
-        LecternBlock.resetBookState((Entity)null, this.getLevel(), this.getBlockPos(), this.getBlockState(), false);
+        LecternBlock.resetBookState(null, this.getLevel(), this.getBlockPos(), this.getBlockState(), false);
     }
 
     public void setBook(ItemStack itemStack, @Nullable Player player) {

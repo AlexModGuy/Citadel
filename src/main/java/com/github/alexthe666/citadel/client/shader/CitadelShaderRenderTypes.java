@@ -18,9 +18,7 @@ public class CitadelShaderRenderTypes extends RenderType {
             target.copyDepthFrom(Minecraft.getInstance().getMainRenderTarget());
             target.bindWrite(false);
         }
-    }, () -> {
-        Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
-    });
+    }, () -> Minecraft.getInstance().getMainRenderTarget().bindWrite(false));
 
     private CitadelShaderRenderTypes(String s, VertexFormat format, VertexFormat.Mode mode, int i, boolean b1, boolean b2, Runnable runnable1, Runnable runnable2) {
         super(s, format, mode, i, b1, b2, runnable1, runnable2);

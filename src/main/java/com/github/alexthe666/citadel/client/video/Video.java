@@ -111,7 +111,7 @@ public class Video {
                 in.close();
                 mp4FileOnDisk = path.toFile();
                 frameGrabber = FrameGrab.createFrameGrab(NIOUtils.readableChannel(mp4FileOnDisk));
-                LOGGER.info("loaded mp4 video from " + url);
+                LOGGER.info("loaded mp4 video from {}", url);
                 if(!this.muted){
                     setupAudio(mp4FileOnDisk, 0);
                 }
@@ -133,7 +133,7 @@ public class Video {
             audioClip.setMicrosecondPosition(time);
             audioClip.start();
             if(!hasAudioLoaded){
-                LOGGER.info("loaded mp4 audio from " + url);
+                LOGGER.info("loaded mp4 audio from {}", url);
             }
             hasAudioLoaded = true;
         } catch (Exception e) {
@@ -202,7 +202,7 @@ public class Video {
         if (!Files.exists(jsonPath)) {
             try {
                 IOUtils.forceMkdir(jsonPath.toFile());
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return jsonPath;

@@ -74,7 +74,7 @@ public class CitadelLecternBlock extends LecternBlock {
             ItemStack itemstack = lecternblockentity.getBook().copy();
             float f = 0.25F * (float) direction.getStepX();
             float f1 = 0.25F * (float) direction.getStepZ();
-            ItemEntity itementity = new ItemEntity(level, (double) pos.getX() + 0.5D + (double) f, (double) (pos.getY() + 1), (double) pos.getZ() + 0.5D + (double) f1, itemstack);
+            ItemEntity itementity = new ItemEntity(level, (double) pos.getX() + 0.5D + (double) f, pos.getY() + 1, (double) pos.getZ() + 0.5D + (double) f1, itemstack);
             itementity.setDefaultPickUpDelay();
             level.addFreshEntity(itementity);
             lecternblockentity.clearContent();

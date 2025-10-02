@@ -24,9 +24,7 @@ public abstract class BasicEntityModel<T extends Entity> extends EntityModel<T> 
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLightIn, int packedOverlayIn, int color) {
-        this.parts().forEach((part) -> {
-            part.render(poseStack, vertexConsumer, packedLightIn, packedOverlayIn, color);
-        });
+        this.parts().forEach((part) -> part.render(poseStack, vertexConsumer, packedLightIn, packedOverlayIn, color));
     }
 
     public abstract Iterable<BasicModelPart> parts();

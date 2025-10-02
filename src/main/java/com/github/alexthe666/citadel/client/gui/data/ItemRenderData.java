@@ -29,7 +29,6 @@ public class ItemRenderData {
     }
 
     public void setItemTag(String item) {
-        this.item_tag = item_tag;
     }
 
     public int getPage() {

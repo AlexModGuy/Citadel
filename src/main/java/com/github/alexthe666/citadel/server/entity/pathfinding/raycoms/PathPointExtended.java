@@ -140,7 +140,7 @@ public class PathPointExtended extends Node {
         {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+        if (getClass() != o.getClass())
         {
             return false;
         }

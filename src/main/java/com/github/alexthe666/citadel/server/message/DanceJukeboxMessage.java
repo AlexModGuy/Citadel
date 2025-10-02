@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class DanceJukeboxMessage implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<DanceJukeboxMessage> TYPE = new CustomPacketPayload.Type<DanceJukeboxMessage>(ResourceLocation.fromNamespaceAndPath("citadel", "dance_jukebox"));
+    public static final CustomPacketPayload.Type<DanceJukeboxMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("citadel", "dance_jukebox"));
     public static final StreamCodec<FriendlyByteBuf, DanceJukeboxMessage> CODEC = StreamCodec.ofMember(DanceJukeboxMessage::write, DanceJukeboxMessage::read);
 
     public int entityID;

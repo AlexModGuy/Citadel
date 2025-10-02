@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SyncClientTickRateMessage implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<SyncClientTickRateMessage> TYPE = new CustomPacketPayload.Type<SyncClientTickRateMessage>(ResourceLocation.fromNamespaceAndPath("citadel", "tick_rate"));
+    public static final CustomPacketPayload.Type<SyncClientTickRateMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("citadel", "tick_rate"));
     public static final StreamCodec<FriendlyByteBuf, SyncClientTickRateMessage> CODEC = StreamCodec.ofMember(SyncClientTickRateMessage::write, SyncClientTickRateMessage::read);
     private CompoundTag compound;
 
