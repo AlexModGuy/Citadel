@@ -66,7 +66,7 @@ public final class Pathfinding {
             thread.setDaemon(true);
             thread.setPriority(Thread.MAX_PRIORITY);
             if (thread.getContextClassLoader() != classLoader) {
-                Citadel.LOGGER.info("Corrected CCL of new Citadel Pathfinding Thread, was: " + thread.getContextClassLoader().toString());
+                Citadel.LOGGER.info("Corrected CCL of new Citadel Pathfinding Thread, was: {}", thread.getContextClassLoader().toString());
                 thread.setContextClassLoader(classLoader);
             }
             thread.setUncaughtExceptionHandler((thread1, throwable) -> Citadel.LOGGER.error("Citadel Pathfinding Thread errored! ", throwable));

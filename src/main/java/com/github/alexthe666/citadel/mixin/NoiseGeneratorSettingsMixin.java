@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = NoiseGeneratorSettings.class, priority = 500)
 public class NoiseGeneratorSettingsMixin {
-
     @Mutable
     @Final
     @Shadow

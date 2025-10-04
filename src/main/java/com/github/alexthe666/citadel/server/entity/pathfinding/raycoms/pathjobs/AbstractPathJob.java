@@ -821,8 +821,6 @@ public abstract class AbstractPathJob implements Callable<Path> {
     /**
      * Creates the path for the given points
      *
-     * @param finalNode
-     * @return
      */
     protected BlockPos getPathTargetPos(final MNode finalNode) {
         return finalNode.pos;
@@ -838,10 +836,10 @@ public abstract class AbstractPathJob implements Callable<Path> {
             Citadel.LOGGER.info("Path found:");
 
             for (final Node p : points) {
-                Citadel.LOGGER.info(String.format("Step: [%d,%d,%d]", p.x, p.y, p.z));
+                Citadel.LOGGER.info("Step: [{},{},{}]", p.x, p.y, p.z);
             }
 
-            Citadel.LOGGER.info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
+            Citadel.LOGGER.info("Total Nodes Visited {} / {}", totalNodesVisited, totalNodesAdded);
         }
     }
 
@@ -930,7 +928,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
         final BlockState state = world.getBlockState(pos);
         final boolean onRoad = false;
         final boolean onRails = pathingOptions.canUseRails() && world.getBlockState(corner ? pos.below() : pos).getBlock() instanceof BaseRailBlock;
-        final boolean railsExit = !onRails && parent != null && parent.isOnRails();
+        final boolean railsExit = !onRails && parent.isOnRails();
         //  Cost may have changed due to a jump up or drop
         final double stepCost = computeCost(dPos, isSwimming, onRoad, onRails, railsExit, swimStart, corner, state, pos);
         final double heuristic = computeHeuristic(pos);
@@ -1399,7 +1397,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
      *
      * @param blockState Block to check.
      * @param pos        the position.
-     * @return true if the block at that location can be walked on.
+     * @return NOT_PASSABLE if the block at that location cannot be walked on.
      */
 
     protected SurfaceType isFlyable(final BlockState blockState, final BlockPos pos, MNode parent) {
@@ -1415,7 +1413,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
             return SurfaceType.NOT_PASSABLE;
         }
         final FluidState fluid = world.getFluidState(pos);
-        if (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA)) {
+        if (!fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA)) {
             return SurfaceType.NOT_PASSABLE;
         }
         if (isPassable(blockState, pos, parent)) {
@@ -1438,7 +1436,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
         }
 
         final FluidState fluid = world.getFluidState(pos);
-        if (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA)) {
+        if (!fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA)) {
             return SurfaceType.NOT_PASSABLE;
         }
 

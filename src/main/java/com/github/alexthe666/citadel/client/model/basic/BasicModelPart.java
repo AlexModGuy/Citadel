@@ -16,6 +16,7 @@ import org.joml.Vector4f;
  * @since 1.9.0
  * Duplicate of ModelPart class which is not final
  */
+//FIXME::Extend ModelPart class with AT?
 public class BasicModelPart {
     public float textureWidth = 64.0F;
     public float textureHeight = 32.0F;
@@ -135,7 +136,7 @@ public class BasicModelPart {
     }
 
     public void translateRotate(PoseStack matrixStackIn) {
-        matrixStackIn.translate((double)(this.rotationPointX / 16.0F), (double)(this.rotationPointY / 16.0F), (double)(this.rotationPointZ / 16.0F));
+        matrixStackIn.translate(this.rotationPointX / 16.0F, this.rotationPointY / 16.0F, (double)(this.rotationPointZ / 16.0F));
         if (this.rotateAngleZ != 0.0F) {
             matrixStackIn.mulPose(Axis.ZP.rotation(this.rotateAngleZ));
         }
@@ -185,7 +186,7 @@ public class BasicModelPart {
     }
 
     public BasicModelPart.ModelBox getRandomCube(RandomSource randomIn) {
-        return this.cubeList.size() > 0 ? this.cubeList.get(randomIn.nextInt(this.cubeList.size())) : null;
+        return !this.cubeList.isEmpty() ? this.cubeList.get(randomIn.nextInt(this.cubeList.size())) : null;
     }
 
     public static class ModelBox {

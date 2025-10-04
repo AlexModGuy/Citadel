@@ -1,6 +1,5 @@
 package com.github.alexthe666.citadel.client.gui;
 
-import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.ClientProxy;
 import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
@@ -55,8 +54,6 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
     }
 
     public static void renderBackwardsEntity(int x, int y, int size, float angleXComponent, float angleYComponent, LivingEntity entity) {
-        float f = angleXComponent;
-        float f1 = angleYComponent;
         Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
         matrix4fStack.pushMatrix();
         matrix4fStack.translate(x, y, 1050.0F);
@@ -64,9 +61,9 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         RenderSystem.applyModelViewMatrix();
         PoseStack posestack1 = new PoseStack();
         posestack1.translate(0.0D, 0.0D, 1000.0D);
-        posestack1.scale((float)size, (float)size, (float)size);
+        posestack1.scale((float) size, (float) size, (float) size);
         Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
-        Quaternionf quaternion1 = Axis.XP.rotationDegrees(f1 * 20.0F);
+        Quaternionf quaternion1 = Axis.XP.rotationDegrees(angleYComponent * 20.0F);
         quaternion.mul(quaternion1);
         quaternion.mul(Axis.YP.rotationDegrees(180.0F));
         posestack1.mulPose(quaternion);
@@ -75,9 +72,9 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         float f4 = entity.getXRot();
         float f5 = entity.yHeadRotO;
         float f6 = entity.yHeadRot;
-        entity.yBodyRot = 180.0F + f * 20.0F;
-        entity.setYRot(180.0F + f * 40.0F);
-        entity.setXRot(-f1 * 20.0F);
+        entity.yBodyRot = 180.0F + angleXComponent * 20.0F;
+        entity.setYRot(180.0F + angleXComponent * 40.0F);
+        entity.setXRot(-angleYComponent * 20.0F);
         entity.yHeadRot = entity.getYRot();
         entity.yHeadRotO = entity.getYRot();
         Lighting.setupForEntityInInventory();
@@ -86,9 +83,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         entityrenderdispatcher.overrideCameraOrientation(quaternion1);
         entityrenderdispatcher.setRenderShadow(false);
         MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
-        RenderSystem.runAsFancy(() -> {
-            entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, posestack1, multibuffersource$buffersource, 15728880);
-        });
+        RenderSystem.runAsFancy(() -> entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, posestack1, multibuffersource$buffersource, 15728880));
         multibuffersource$buffersource.endBatch();
         entityrenderdispatcher.setRenderShadow(true);
         entity.yBodyRot = f2;
@@ -106,24 +101,20 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
         super.init();
         int i = this.width / 2;
         int j = this.height / 6;
-        Button doneButton = Button.builder(CommonComponents.GUI_DONE, (p_213079_1_) -> {
-            this.minecraft.setScreen(this.lastScreen);
-        }).size(200, 20).pos(i - 100, j+ 160).build();
+        Button doneButton = Button.builder(CommonComponents.GUI_DONE, (p_213079_1_) -> this.minecraft.setScreen(this.lastScreen)).size(200, 20).pos(i - 100, j + 160).build();
         this.addRenderableWidget(doneButton);
         button = Button.builder(getTypeText(), (p_213079_1_) -> {
             CitadelCapes.Cape nextCape = CitadelCapes.getNextCape(capeType, Minecraft.getInstance().player.getUUID());
             this.capeType = nextCape == null ? null : nextCape.getIdentifier();
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
-            if(tag != null){
-                if(capeType == null){
-                    tag.putString("CitadelCapeType", "");
-                    tag.putBoolean("CitadelCapeDisabled", true);
-                }else{
-                    tag.putString("CitadelCapeType", capeType);
-                    tag.putBoolean("CitadelCapeDisabled", false);
-                }
-                CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
+            if (capeType == null) {
+                tag.putString("CitadelCapeType", "");
+                tag.putBoolean("CitadelCapeDisabled", true);
+            } else {
+                tag.putString("CitadelCapeType", capeType);
+                tag.putBoolean("CitadelCapeDisabled", false);
             }
+            CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
             PacketDistributor.sendToServer(new PropertiesMessage("CitadelTagUpdate", tag, Minecraft.getInstance().player.getId()));
             button.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
@@ -136,17 +127,17 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
 
     }
 
-    private Component getTypeText(){
+    private Component getTypeText() {
         Component suffix;
 
-        if(capeType == null){
+        if (capeType == null) {
             suffix = Component.translatable("citadel.gui.no_cape");
-        }else{
+        } else {
 
             CitadelCapes.Cape cape = CitadelCapes.getById(capeType);
-            if(cape == null){
+            if (cape == null) {
                 suffix = Component.translatable("citadel.gui.no_cape");
-            }else{
+            } else {
                 suffix = Component.translatable("cape." + cape.getIdentifier());
             }
         }

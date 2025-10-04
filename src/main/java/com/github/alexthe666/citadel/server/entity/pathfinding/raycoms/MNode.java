@@ -145,7 +145,6 @@ public class MNode implements Comparable<MNode> {
     /**
      * Serialize the Node to buf.
      *
-     * @param byteBuf
      */
     public void serializeToBuf(final FriendlyByteBuf byteBuf) {
         byteBuf.writeBoolean(this.parent != null);

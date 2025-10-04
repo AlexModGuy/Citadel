@@ -81,7 +81,7 @@ public class LightningRender {
         }
     }
 
-    public class BoltInstance {
+    public static class BoltInstance {
 
         private final LightningBoltData bolt;
         private final List<LightningBoltData.BoltQuads> renderQuads;
@@ -107,7 +107,7 @@ public class LightningRender {
         }
     }
 
-    public class Timestamp {
+    public static class Timestamp {
 
         private long ticks;
         private float partial;

@@ -44,9 +44,9 @@ public class CitadelCapes {
 
     @Nullable
     public static Cape getById(String identifier){
-        for(int i = 0; i < CAPES.size(); i++){
-            if(CAPES.get(i).getIdentifier().equals(identifier)){
-                return CAPES.get(i);
+        for (Cape cape : CAPES) {
+            if (cape.getIdentifier().equals(identifier)) {
+                return cape;
             }
         }
         return null;
@@ -54,9 +54,9 @@ public class CitadelCapes {
 
     @Nullable
     private static Cape getFirstApplicable(Player player){
-        for(int i = 0; i < CAPES.size(); i++){
-            if(CAPES.get(i).isFor(player.getUUID())){
-                return CAPES.get(i);
+        for (Cape cape : CAPES) {
+            if (cape.isFor(player.getUUID())) {
+                return cape;
             }
         }
         return null;

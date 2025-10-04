@@ -2,7 +2,7 @@ package com.github.alexthe666.citadel.client.video;
 
 import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -111,7 +111,7 @@ public class Video {
                 in.close();
                 mp4FileOnDisk = path.toFile();
                 frameGrabber = FrameGrab.createFrameGrab(NIOUtils.readableChannel(mp4FileOnDisk));
-                LOGGER.info("loaded mp4 video from " + url);
+                LOGGER.info("loaded mp4 video from {}", url);
                 if(!this.muted){
                     setupAudio(mp4FileOnDisk, 0);
                 }
@@ -133,7 +133,7 @@ public class Video {
             audioClip.setMicrosecondPosition(time);
             audioClip.start();
             if(!hasAudioLoaded){
-                LOGGER.info("loaded mp4 audio from " + url);
+                LOGGER.info("loaded mp4 audio from {}", url);
             }
             hasAudioLoaded = true;
         } catch (Exception e) {
@@ -202,7 +202,7 @@ public class Video {
         if (!Files.exists(jsonPath)) {
             try {
                 IOUtils.forceMkdir(jsonPath.toFile());
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return jsonPath;

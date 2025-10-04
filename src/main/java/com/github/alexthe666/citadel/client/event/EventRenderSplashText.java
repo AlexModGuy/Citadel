@@ -2,6 +2,7 @@ package com.github.alexthe666.citadel.client.event;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.bus.api.Event;
+import net.neoforged.neoforge.common.util.TriState;
 
 public class EventRenderSplashText extends Event {
     private String splashText;
@@ -32,6 +33,7 @@ public class EventRenderSplashText extends Event {
     }
 
     public static class Pre extends EventRenderSplashText {
+        private TriState result = TriState.DEFAULT;
 
         private int splashTextColor;
 
@@ -46,6 +48,14 @@ public class EventRenderSplashText extends Event {
 
         public void setSplashTextColor(int splashTextColor) {
             this.splashTextColor = splashTextColor;
+        }
+
+        public void setResult(TriState result) {
+            this.result = result;
+        }
+
+        public TriState getResult() {
+            return result;
         }
     }
 

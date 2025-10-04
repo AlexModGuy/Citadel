@@ -184,8 +184,7 @@ public class AdvancedModelBox extends BasicModelPart {
     public void addChild(BasicModelPart child) {
         super.addChild(child);
         this.childModels.add(child);
-        if (child instanceof AdvancedModelBox) {
-            AdvancedModelBox advancedChild = (AdvancedModelBox) child;
+        if (child instanceof AdvancedModelBox advancedChild) {
             advancedChild.setParent(this);
         }
     }
@@ -231,7 +230,7 @@ public class AdvancedModelBox extends BasicModelPart {
     }
 
     public void translateAndRotate(PoseStack matrixStackIn) {
-        matrixStackIn.translate((double)(this.rotationPointX / 16.0F), (double)(this.rotationPointY / 16.0F), (double)(this.rotationPointZ / 16.0F));
+        matrixStackIn.translate(this.rotationPointX / 16.0F, this.rotationPointY / 16.0F, (double)(this.rotationPointZ / 16.0F));
         if (this.rotateAngleZ != 0.0F) {
             matrixStackIn.mulPose(Axis.ZP.rotation(this.rotateAngleZ));
         }
@@ -271,22 +270,19 @@ public class AdvancedModelBox extends BasicModelPart {
     private void doRender(PoseStack.Pose p_228306_1_, VertexConsumer p_228306_2_, int p_228306_3_, int p_228306_4_, int color) {
         Matrix4f lvt_9_1_ = p_228306_1_.pose();
         Matrix3f lvt_10_1_ = p_228306_1_.normal();
-        ObjectListIterator var11 = this.cubeList.iterator();
 
-        while(var11.hasNext()) {
-            TabulaModelRenderUtils.ModelBox lvt_12_1_ = (TabulaModelRenderUtils.ModelBox)var11.next();
+        for (TabulaModelRenderUtils.ModelBox lvt_12_1_ : this.cubeList) {
             TabulaModelRenderUtils.TexturedQuad[] var13 = lvt_12_1_.quads;
             int var14 = var13.length;
 
-            for(int var15 = 0; var15 < var14; ++var15) {
-                TabulaModelRenderUtils.TexturedQuad lvt_16_1_ = var13[var15];
+            for (TabulaModelRenderUtils.TexturedQuad lvt_16_1_ : var13) {
                 Vector3f lvt_17_1_ = new Vector3f(lvt_16_1_.normal);
                 lvt_17_1_.mul(lvt_10_1_);
                 float lvt_18_1_ = lvt_17_1_.x();
                 float lvt_19_1_ = lvt_17_1_.y();
                 float lvt_20_1_ = lvt_17_1_.z();
 
-                for(int lvt_21_1_ = 0; lvt_21_1_ < 4; ++lvt_21_1_) {
+                for (int lvt_21_1_ = 0; lvt_21_1_ < 4; ++lvt_21_1_) {
                     TabulaModelRenderUtils.PositionTextureVertex lvt_22_1_ = lvt_16_1_.vertexPositions[lvt_21_1_];
                     float lvt_23_1_ = lvt_22_1_.position.x() / 16.0F;
                     float lvt_24_1_ = lvt_22_1_.position.y() / 16.0F;

@@ -21,7 +21,7 @@ public class ItemCitadelBook extends Item {
         if (worldIn.isClientSide) {
             Citadel.PROXY.openBookGUI(itemStackIn);
         }
-        return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, itemStackIn);
+        return new InteractionResultHolder<>(InteractionResult.PASS, itemStackIn);
     }
 
 }

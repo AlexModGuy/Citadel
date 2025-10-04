@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class CitadelPatreonRenderer {
-    private static final Map<String, CitadelPatreonRenderer> PATREON_RENDERER_MAP = new LinkedHashMap<String, CitadelPatreonRenderer>();
+    private static final Map<String, CitadelPatreonRenderer> PATREON_RENDERER_MAP = new LinkedHashMap<>();
 
     public static CitadelPatreonRenderer get(String identifier) {
         return PATREON_RENDERER_MAP.get(identifier);

@@ -119,7 +119,7 @@ public abstract class GuiBasicBook extends Screen {
         RenderSystem.runAsFancy(() -> {
             VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.entityCutoutNoCull(tex));
             model.resetToDefaultPose();
-            model.renderToBuffer(matrixstack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            model.renderToBuffer(matrixstack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, -1);
         });
         Lighting.setupFor3DItems();
     }
@@ -148,7 +148,7 @@ public abstract class GuiBasicBook extends Screen {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(posX, posY, zOff);
-        guiGraphics.pose().mulPose((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
+        guiGraphics.pose().mulPose((new Matrix4f()).scaling(scale, scale, -scale));
         Quaternionf quaternion = Axis.ZP.rotationDegrees(180F);
         Quaternionf quaternion1 = Axis.XP.rotationDegrees(f1 * 20.0F);
         quaternion.mul(quaternion1);
@@ -164,9 +164,7 @@ public abstract class GuiBasicBook extends Screen {
         quaternion1.conjugate();
         entityrenderdispatcher.overrideCameraOrientation(quaternion1);
         entityrenderdispatcher.setRenderShadow(false);
-        RenderSystem.runAsFancy(() -> {
-            entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), bufferSource, 240);
-        });
+        RenderSystem.runAsFancy(() -> entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), bufferSource, 240));
         entityrenderdispatcher.setRenderShadow(true);
         entity.setYRot(0);
         entity.setXRot(0);
@@ -192,12 +190,8 @@ public abstract class GuiBasicBook extends Screen {
     private void addNextPreviousButtons() {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize + 128) / 2;
-        this.buttonPreviousPage = this.addRenderableWidget(new BookPageButton(this, k + 10, l + 180, false, (p_214208_1_) -> {
-            this.onSwitchPage(false);
-        }, true));
-        this.buttonNextPage = this.addRenderableWidget(new BookPageButton(this, k + 365, l + 180, true, (p_214205_1_) -> {
-            this.onSwitchPage(true);
-        }, true));
+        this.buttonPreviousPage = this.addRenderableWidget(new BookPageButton(this, k + 10, l + 180, false, (p_214208_1_) -> this.onSwitchPage(false), true));
+        this.buttonNextPage = this.addRenderableWidget(new BookPageButton(this, k + 365, l + 180, true, (p_214205_1_) -> this.onSwitchPage(true), true));
     }
 
     private void addLinkButtons() {
@@ -273,7 +267,7 @@ public abstract class GuiBasicBook extends Screen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize + 128) / 2;
         BookBlit.blitWithColor(guiGraphics, getBookBindingTexture(), k, l, 0, 0, xSize, ySize, xSize, ySize, bindingR, bindingG, bindingB, 255);
-        BookBlit.blitWithColor(guiGraphics, getBookPageTexture(), k, l, 0, 0, xSize, ySize, xSize, ySize,  255, 255, 255, 255);
+        BookBlit.blitWithColor(guiGraphics, getBookPageTexture(), k, l, 0, 0, xSize, ySize, xSize, ySize, 255, 255, 255, 255);
         if (internalPage == null || currentPageJSON != prevPageJSON || prevPageJSON == null) {
             internalPage = generatePage(currentPageJSON);
             if (internalPage != null) {
@@ -341,10 +335,8 @@ public abstract class GuiBasicBook extends Screen {
         yIndexesToSkip.clear();
         for (ItemRenderData itemRenderData : itemRenders) {
             Item item = getItemByRegistryName(itemRenderData.getItem());
-            if (item != null) {
-                yIndexesToSkip.add(new Whitespace(itemRenderData.getPage(), itemRenderData.getX(), itemRenderData.getY(), (int) (itemRenderData.getScale() * 17), (int) (itemRenderData.getScale() * 15)));
+            yIndexesToSkip.add(new Whitespace(itemRenderData.getPage(), itemRenderData.getX(), itemRenderData.getY(), (int) (itemRenderData.getScale() * 17), (int) (itemRenderData.getScale() * 15)));
 
-            }
         }
         for (RecipeData recipeData : recipes) {
             Recipe recipe = getRecipeByName(recipeData.getRecipe());
@@ -373,20 +365,18 @@ public abstract class GuiBasicBook extends Screen {
 
         for (ImageData imageData : images) {
             if (imageData.getPage() == this.currentPageCounter) {
-                if (imageData != null) {
-                    ResourceLocation tex = textureMap.get(imageData.getTexture());
-                    if (tex == null) {
-                        tex = ResourceLocation.parse(imageData.getTexture());
-                        textureMap.put(imageData.getTexture(), tex);
-                    }
-                    // yIndexesToSkip.put(imageData.getPage(), new Whitespace(imageData.getX(), imageData.getY(),(int) (imageData.getScale() * imageData.getWidth()), (int) (imageData.getScale() * imageData.getHeight() * 0.8F)));
-                    float scale = (float) imageData.getScale();
-                    guiGraphics.pose().pushPose();
-                    guiGraphics.pose().translate(k + imageData.getX(), l + imageData.getY(), 0);
-                    guiGraphics.pose().scale(scale, scale, scale);
-                    guiGraphics.blit(tex, 0, 0, imageData.getU(), imageData.getV(), imageData.getWidth(), imageData.getHeight());
-                    guiGraphics.pose().popPose();
+                ResourceLocation tex = textureMap.get(imageData.getTexture());
+                if (tex == null) {
+                    tex = ResourceLocation.parse(imageData.getTexture());
+                    textureMap.put(imageData.getTexture(), tex);
                 }
+                // yIndexesToSkip.put(imageData.getPage(), new Whitespace(imageData.getX(), imageData.getY(),(int) (imageData.getScale() * imageData.getWidth()), (int) (imageData.getScale() * imageData.getHeight() * 0.8F)));
+                float scale = (float) imageData.getScale();
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(k + imageData.getX(), l + imageData.getY(), 0);
+                guiGraphics.pose().scale(scale, scale, scale);
+                guiGraphics.blit(tex, 0, 0, imageData.getU(), imageData.getV(), imageData.getWidth(), imageData.getHeight());
+                guiGraphics.pose().popPose();
             }
         }
         for (RecipeData recipeData : recipes) {
@@ -415,7 +405,7 @@ public abstract class GuiBasicBook extends Screen {
                     try {
                         model = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/" + tabulaRenderData.getModel().split(":")[0] + "/" + tabulaRenderData.getModel().split(":")[1]));
                     } catch (Exception e) {
-                        Citadel.LOGGER.warn("Could not load in tabula model for book at " + tabulaRenderData.getModel());
+                        Citadel.LOGGER.warn("Could not load in tabula model for book at {}", tabulaRenderData.getModel());
                     }
                     renderedTabulaModels.put(tabulaRenderData.getModel(), model);
                 }
@@ -430,9 +420,7 @@ public abstract class GuiBasicBook extends Screen {
             if (data.getPage() == this.currentPageCounter) {
                 Entity model = null;
                 EntityType type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(data.getEntity()));
-                if (type != null) {
-                    model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
-                }
+                model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
                 if (model != null) {
                     float scale = (float) data.getScale();
                     model.tickCount = Minecraft.getInstance().player.tickCount;
@@ -459,24 +447,22 @@ public abstract class GuiBasicBook extends Screen {
         for (ItemRenderData itemRenderData : itemRenders) {
             if (itemRenderData.getPage() == this.currentPageCounter) {
                 Item item = getItemByRegistryName(itemRenderData.getItem());
-                if (item != null) {
-                    float scale = (float) itemRenderData.getScale();
-                    ItemStack stack = new ItemStack(item);
-                    if (itemRenderData.getItemTag() != null && !itemRenderData.getItemTag().isEmpty()) {
-                        Tag tag = stack.save(Minecraft.getInstance().level.registryAccess());
-                        try {
-                            tag = TagParser.parseTag(itemRenderData.getItemTag());
-                        } catch (CommandSyntaxException e) {
-                            e.printStackTrace();
-                        }
-                        // TODO convert to component
+                float scale = (float) itemRenderData.getScale();
+                ItemStack stack = new ItemStack(item);
+                if (itemRenderData.getItemTag() != null && !itemRenderData.getItemTag().isEmpty()) {
+                    Tag tag = stack.save(Minecraft.getInstance().level.registryAccess());
+                    try {
+                        tag = TagParser.parseTag(itemRenderData.getItemTag());
+                    } catch (CommandSyntaxException e) {
+                        e.printStackTrace();
                     }
-                    guiGraphics.pose().pushPose();
-                    guiGraphics.pose().translate(k, l, 0);
-                    guiGraphics.pose().scale(scale, scale, scale);
-                    guiGraphics.renderItem(stack, itemRenderData.getX(), itemRenderData.getY());
-                    guiGraphics.pose().popPose();
+                    // TODO convert to component
                 }
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(k, l, 0);
+                guiGraphics.pose().scale(scale, scale, scale);
+                guiGraphics.renderItem(stack, itemRenderData.getX(), itemRenderData.getY());
+                guiGraphics.pose().popPose();
             }
         }
     }
@@ -484,7 +470,7 @@ public abstract class GuiBasicBook extends Screen {
     protected void renderRecipe(GuiGraphics guiGraphics, Recipe recipe, RecipeData recipeData, int k, int l) {
         int playerTicks = Minecraft.getInstance().player.tickCount;
         float scale = (float) recipeData.getScale();
-        NonNullList<Ingredient> ingredients = recipe instanceof SpecialRecipeInGuideBook ? ((SpecialRecipeInGuideBook)recipe).getDisplayIngredients() : recipe.getIngredients();
+        NonNullList<Ingredient> ingredients = recipe instanceof SpecialRecipeInGuideBook ? ((SpecialRecipeInGuideBook) recipe).getDisplayIngredients() : recipe.getIngredients();
         NonNullList<ItemStack> displayedStacks = NonNullList.create();
 
         for (int i = 0; i < ingredients.size(); i++) {
@@ -514,7 +500,7 @@ public abstract class GuiBasicBook extends Screen {
         guiGraphics.pose().translate(recipeData.getX() + 70 * finScale, recipeData.getY() + 10 * finScale, 0);
         guiGraphics.pose().scale(finScale, finScale, finScale);
         ItemStack result = recipe.getResultItem(Minecraft.getInstance().level.registryAccess());
-        if(recipe instanceof SpecialRecipeInGuideBook){
+        if (recipe instanceof SpecialRecipeInGuideBook) {
             result = ((SpecialRecipeInGuideBook) recipe).getDisplayResultFor(displayedStacks);
         }
         guiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
@@ -593,21 +579,17 @@ public abstract class GuiBasicBook extends Screen {
 
     @Nullable
     protected BookPage generatePage(ResourceLocation res) {
-        Optional<Resource> resource = null;
+        Optional<Resource> resource;
         BookPage page = null;
         try {
             resource = Minecraft.getInstance().getResourceManager().getResource(res);
-            try {
-                resource = Minecraft.getInstance().getResourceManager().getResource(res);
-                if (resource.isPresent()) {
-                    BufferedReader inputstream = resource.get().openAsReader();
-                    page = BookPage.deserialize(inputstream);
-                }
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            if (resource.isPresent()) {
+                BufferedReader inputstream = resource.get().openAsReader();
+                page = BookPage.deserialize(inputstream);
             }
-        } catch (Exception e) {
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
             return null;
         }
         return page;
@@ -698,7 +680,7 @@ public abstract class GuiBasicBook extends Screen {
                         if (newline) {
                             yIndex++;
                         }
-                        lineToPrint = "" + (word.equals("<NEWLINE>") ? "" : word);
+                        lineToPrint = word.equals("<NEWLINE>") ? "" : word;
                     } else {
                         lineToPrint = lineToPrint + " " + word;
                         if (last) {
@@ -706,9 +688,6 @@ public abstract class GuiBasicBook extends Screen {
                             this.lines.add(new LineData(xIndex, yIndex, lineToPrint, page));
                             yIndex++;
                             actualTextX = 0;
-                            if (newline) {
-                                yIndex++;
-                            }
                         }
                     }
                 }
@@ -717,7 +696,7 @@ public abstract class GuiBasicBook extends Screen {
                 e1.printStackTrace();
             }
         } catch (Exception e) {
-            Citadel.LOGGER.warn("Could not load in page .txt from json from page, page: " + res);
+            Citadel.LOGGER.warn("Could not load in page .txt from json from page, page: {}", res);
         }
     }
 
@@ -725,7 +704,7 @@ public abstract class GuiBasicBook extends Screen {
         this.entityTooltip = hoverText;
     }
 
-    public ResourceLocation getBookButtonsTexture(){
+    public ResourceLocation getBookButtonsTexture() {
         return BOOK_BUTTONS_TEXTURE;
     }
 }

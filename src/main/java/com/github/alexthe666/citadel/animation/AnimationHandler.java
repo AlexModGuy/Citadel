@@ -1,6 +1,5 @@
 package com.github.alexthe666.citadel.animation;
 
-import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.common.NeoForge;

@@ -17,7 +17,7 @@ public abstract class MinecraftServerMixin implements ModifiableTickRateServer {
     private long masterMs;
 
     @Inject(
-            method = {"Lnet/minecraft/server/MinecraftServer;runServer()V"},
+            method = "runServer",
             remap = CitadelConstants.REMAPREFS,
             at = @At(
                     value = "INVOKE",
@@ -34,7 +34,7 @@ public abstract class MinecraftServerMixin implements ModifiableTickRateServer {
     }
 
     @ModifyConstant(
-            method = {"Lnet/minecraft/server/MinecraftServer;runServer()V"},
+            method = "runServer",
             constant = @Constant(longValue = 50L),
             expect = 4)
     private long citadel_serverMsPerTick(long value) {

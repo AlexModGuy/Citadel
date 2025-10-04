@@ -50,8 +50,7 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     @Override
     protected Path search() {
         if (Pathfinding.isDebug()) {
-            Citadel.LOGGER.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
-                    start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
+            Citadel.LOGGER.info("Pathfinding from [{},{},{}] to [{},{},{}]", start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ());
         }
 
         //  Compute destination slack - if the destination point cannot be stood in

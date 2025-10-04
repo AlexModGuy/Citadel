@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class SyncePathMessage implements CustomPacketPayload{
 
-    public static final CustomPacketPayload.Type<SyncePathMessage> TYPE = new CustomPacketPayload.Type<SyncePathMessage>(ResourceLocation.fromNamespaceAndPath("citadel", "sync_path"));
+    public static final CustomPacketPayload.Type<SyncePathMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("citadel", "sync_path"));
     public static final StreamCodec<FriendlyByteBuf, SyncePathMessage> CODEC = StreamCodec.ofMember(SyncePathMessage::write, SyncePathMessage::read);
 
     /**

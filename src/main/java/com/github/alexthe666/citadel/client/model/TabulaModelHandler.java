@@ -99,7 +99,7 @@ public enum TabulaModelHandler implements JsonDeserializationContext {
 
     /**
      * @param model the model container
-     * @return an array with all cubes of the model
+     * @return a list with all cubes of the model
      */
     public List<TabulaCubeContainer> getAllCubes(TabulaModelContainer model) {
         List<TabulaCubeContainer> cubes = new ArrayList<>();
@@ -155,13 +155,13 @@ public enum TabulaModelHandler implements JsonDeserializationContext {
     public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception {
         String modelPath = modelLocation.getPath();
         modelPath = modelPath.substring(0, modelPath.lastIndexOf('.')) + ".json";
-        IResource resource = this.manager.getResource(new ResourceLocation(modelLocation.getPath(), modelPath));
+        IResource resource = this.manager.getResource(ResourceLocation.parse(modelLocation.getPath(), modelPath));
         InputStreamReader jsonStream = new InputStreamReader(resource.getInputStream());
         JsonElement json = this.parser.parse(jsonStream);
         jsonStream.close();
         TabulaModelBlock TabulaModelBlock = this.TabulaModelBlockDeserializer.deserialize(json, TabulaModelBlock.class, this);
         String tblLocationStr = json.getAsJsonObject().get("tabula").getAsString() + ".tbl";
-        ResourceLocation tblLocation = new ResourceLocation(tblLocationStr);
+        ResourceLocation tblLocation = ResourceLocation.parse(tblLocationStr);
         IResource tblResource = this.manager.getResource(tblLocation);
         InputStream modelStream = this.getModelJsonStream(tblLocation.toString(), tblResource.getInputStream());
         TabulaModelContainer modelJson = TabulaModelHandler.INSTANCE.loadTabulaModel(modelStream);
@@ -170,10 +170,10 @@ public enum TabulaModelHandler implements JsonDeserializationContext {
         int layer = 0;
         String texture;
         while ((texture = TabulaModelBlock.textures.get("layer" + layer++)) != null) {
-            builder.add(new ResourceLocation(texture));
+            builder.add(ResourceLocation.parse(texture));
         }
         String particle = TabulaModelBlock.textures.get("particle");
-        return new VanillaTabulaModel(modelJson, particle != null ? new ResourceLocation(particle) : null, builder.build(), PerspectiveMapWrapper.getTransforms(TabulaModelBlock.getAllTransforms()));
+        return new VanillaTabulaModel(modelJson, particle != null ? ResourceLocation.parse(particle) : null, builder.build(), PerspectiveMapWrapper.getTransforms(TabulaModelBlock.getAllTransforms()));
     }
 
    */

@@ -48,7 +48,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             /*
             if (stack.getTag() != null && stack.getTag().contains("DisplayItem")) {
                 String displayID = stack.getTag().getString("DisplayItem");
-                toRender = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(displayID)));
+                toRender = new ItemStack(ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(displayID)));
                 if (stack.getTag().contains("DisplayItemNBT")) {
                     try {
                         toRender.setTag(stack.getTag().getCompound("DisplayItemNBT"));
@@ -91,20 +91,12 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             RenderSystem.enableDepthTest();
             Holder<MobEffect> effect;
             //TODO: convert to component system
-            if (false){//stack.getTag() != null && stack.getTag().contains("DisplayEffect")) {
-                //String displayID = stack.getTag().getString("DisplayEffect");
-                //effect = ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.parse(displayID));
-            } else {
-                if(mobEffectList == null){
-                    mobEffectList = BuiltInRegistries.MOB_EFFECT.holders().toList();
-                }
-                int size = mobEffectList.size();
-                int time = (int) (Util.getMillis() / 500);
-                effect = mobEffectList.get(time % size);
-                if (effect == null) {
-                    effect = MobEffects.MOVEMENT_SPEED.getDelegate();
-                }
+            if (mobEffectList == null) {
+                mobEffectList = BuiltInRegistries.MOB_EFFECT.holders().toList();
             }
+            int size = mobEffectList.size();
+            int time = (int) (Util.getMillis() / 500);
+            effect = mobEffectList.get(time % size);
             if (effect == null) {
                 effect = MobEffects.MOVEMENT_SPEED.getDelegate();
             }
@@ -125,14 +117,13 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.popPose();
         }
         if (stack.getItem() == Citadel.ICON_ITEM.get()) {
-            ResourceLocation texture = DEFAULT_ICON_TEXTURE;
             //TODO: convert to component system
             /*if (stack.getTag() != null && stack.getTag().contains("IconLocation")) {
                 String iconLocationStr = stack.getTag().getString("IconLocation");
                 if(LOADED_ICONS.containsKey(iconLocationStr)){
                     texture = LOADED_ICONS.get(iconLocationStr);
                 }else{
-                    texture = new ResourceLocation(iconLocationStr);
+                    texture = ResourceLocation.parse(iconLocationStr);
                     LOADED_ICONS.put(iconLocationStr, texture);
                 }
             }*/
@@ -140,7 +131,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.translate(0, 0, 0.5F);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, texture);
+            RenderSystem.setShaderTexture(0, DEFAULT_ICON_TEXTURE);
             Tesselator tessellator = Tesselator.getInstance();
             BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
             Matrix4f mx = poseStack.last().pose();

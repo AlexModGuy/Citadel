@@ -55,8 +55,6 @@ public class PacketBufferUtils {
     /**
      * An extended length short. Used by custom payload packets to extend size.
      *
-     * @param buf
-     * @return
      */
     public static int readVarShort(ByteBuf buf) {
         int low = buf.readUnsignedShort();

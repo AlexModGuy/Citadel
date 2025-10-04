@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class AnimationMessage implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<AnimationMessage> TYPE = new CustomPacketPayload.Type<AnimationMessage>(ResourceLocation.fromNamespaceAndPath("citadel", "animation"));
+    public static final CustomPacketPayload.Type<AnimationMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("citadel", "animation"));
     public static final StreamCodec<FriendlyByteBuf, AnimationMessage> CODEC = StreamCodec.ofMember(AnimationMessage::write, AnimationMessage::read);
 
     private int entityID;
@@ -35,8 +35,6 @@ public class AnimationMessage implements CustomPacketPayload {
     }
 
     public static void handle(final AnimationMessage message, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Citadel.PROXY.handleAnimationPacket(message.entityID, message.index);
-        });
+        context.enqueueWork(() -> Citadel.PROXY.handleAnimationPacket(message.entityID, message.index));
     }
 }

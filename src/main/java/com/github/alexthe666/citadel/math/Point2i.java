@@ -1,8 +1,11 @@
 package com.github.alexthe666.citadel.math;
 
+import java.io.Serial;
+
 public class Point2i  extends Tuple2i implements java.io.Serializable {
 
-    static final long serialVersionUID = 9208072376494084954L;
+    @Serial
+    private static final long serialVersionUID = 9208072376494084954L;
 
     /**
      * Constructs and initializes a Point2i from the specified

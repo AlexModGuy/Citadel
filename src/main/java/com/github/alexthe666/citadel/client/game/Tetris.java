@@ -17,13 +17,13 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class Tetris {
 
@@ -129,8 +129,8 @@ public class Tetris {
             if (y < 0) {
                 return true;
             }
-            if (x >= 0 && x < 10 && y >= 0 && y < HEIGHT) {
-                if (y <= 0 || settledBlocks[x][y - 1] != null) {
+            if (x >= 0 && x < 10 && y < HEIGHT) {
+                if (y == 0 || settledBlocks[x][y - 1] != null) {
                     return true;
                 }
             }
@@ -162,6 +162,7 @@ public class Tetris {
                 if (i == 9) {
                     flashingLayer[j] = true;
                     flag = true;
+                    break;
                 }
             }
         }
@@ -178,7 +179,7 @@ public class Tetris {
             int x = Math.round(fallingX) + vec2.getX() + xOffset;
             int y = HEIGHT - (int) Math.ceil(fallingY) - vec2.getY() + yOffset;
             if (x >= 0 && x < 10 && y >= 0 && y < HEIGHT) {
-                if (y <= 0 || settledBlocks[x][y] != null) {
+                if (y == 0 || settledBlocks[x][y] != null) {
                     return true;
                 }
             }
@@ -318,15 +319,11 @@ public class Tetris {
 
     public void reset() {
         score = 0;
-        for (int i = 0; i < settledBlocks.length; i++) {
-            for (int j = 0; j < settledBlocks[i].length; j++) {
-                settledBlocks[i][j] = null;
-            }
+        for (BlockState[] settledBlock : settledBlocks) {
+            Arrays.fill(settledBlock, null);
         }
         gameOver = false;
-        for (int i = 0; i < flashingLayer.length; i++) {
-            flashingLayer[i] = false;
-        }
+        Arrays.fill(flashingLayer, false);
         generateNextTetromino();
         generateTetromino();
         generateNextTetromino();
@@ -340,16 +337,12 @@ public class Tetris {
 
         int l = relativeTo.getX();
         int i1 = relativeTo.getY();
-        switch (rotation) {
-            case COUNTERCLOCKWISE_90:
-                return new Vec3i(l - i1 + k, l + i1 - i, j);
-            case CLOCKWISE_90:
-                return new Vec3i(l + i1 - k, i1 - l + i, j);
-            case CLOCKWISE_180:
-                return new Vec3i(l + l - i, i1 + i1 - k, j);
-            default:
-                return flag ? new Vec3i(i, k, j) : vec3i;
-        }
+        return switch (rotation) {
+            case COUNTERCLOCKWISE_90 -> new Vec3i(l - i1 + k, l + i1 - i, j);
+            case CLOCKWISE_90 -> new Vec3i(l + i1 - k, i1 - l + i, j);
+            case CLOCKWISE_180 -> new Vec3i(l + l - i, i1 + i1 - k, j);
+            default -> new Vec3i(i, k, j);
+        };
     }
 
 }

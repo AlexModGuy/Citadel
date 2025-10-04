@@ -40,7 +40,7 @@ public class TabulaModelBlock
 
     public static TabulaModelBlock deserialize(Reader readerIn)
     {
-        return (TabulaModelBlock)JsonUtils.gsonDeserialize(SERIALIZER, readerIn, TabulaModelBlock.class, false);
+        return JsonUtils.gsonDeserialize(SERIALIZER, readerIn, TabulaModelBlock.class, false);
     }
 
     public static TabulaModelBlock deserialize(String jsonString)
@@ -94,7 +94,7 @@ public class TabulaModelBlock
 
     public Collection<ResourceLocation> getOverrideLocations()
     {
-        Set<ResourceLocation> set = Sets.<ResourceLocation>newHashSet();
+        Set<ResourceLocation> set = Sets.newHashSet();
 
         for (ItemOverride itemoverride : this.overrides)
         {
@@ -207,9 +207,8 @@ public class TabulaModelBlock
 
                 throw new TabulaModelBlock.LoopException();
             }
-            catch (NullPointerException var5)
+            catch (NullPointerException ignored)
             {
-                ;
             }
         }
     }
@@ -239,7 +238,7 @@ public class TabulaModelBlock
             if (jsonobject.has("display"))
             {
                 JsonObject jsonobject1 = JsonUtils.getJsonObject(jsonobject, "display");
-                itemcameratransforms = (ItemTransforms)p_deserialize_3_.deserialize(jsonobject1, ItemTransforms.class);
+                itemcameratransforms = p_deserialize_3_.deserialize(jsonobject1, ItemTransforms.class);
             }
 
             List<ItemOverride> list1 = this.getItemOverrides(p_deserialize_3_, jsonobject);
@@ -249,13 +248,13 @@ public class TabulaModelBlock
 
         protected List<ItemOverride> getItemOverrides(JsonDeserializationContext deserializationContext, JsonObject object)
         {
-            List<ItemOverride> list = Lists.<ItemOverride>newArrayList();
+            List<ItemOverride> list = Lists.newArrayList();
 
             if (object.has("overrides"))
             {
                 for (JsonElement jsonelement : JsonUtils.getJsonArray(object, "overrides"))
                 {
-                    list.add((ItemOverride)deserializationContext.deserialize(jsonelement, ItemOverride.class));
+                    list.add(deserializationContext.deserialize(jsonelement, ItemOverride.class));
                 }
             }
 
@@ -264,7 +263,7 @@ public class TabulaModelBlock
 
         private Map<String, String> getTextures(JsonObject object)
         {
-            Map<String, String> map = Maps.<String, String>newHashMap();
+            Map<String, String> map = Maps.newHashMap();
 
             if (object.has("textures"))
             {
@@ -272,7 +271,7 @@ public class TabulaModelBlock
 
                 for (Map.Entry<String, JsonElement> entry : jsonobject.entrySet())
                 {
-                    map.put(entry.getKey(), ((JsonElement)entry.getValue()).getAsString());
+                    map.put(entry.getKey(), entry.getValue().getAsString());
                 }
             }
 
@@ -291,13 +290,13 @@ public class TabulaModelBlock
 
         protected List<BlockElement> getModelElements(JsonDeserializationContext deserializationContext, JsonObject object)
         {
-            List<BlockElement> list = Lists.<BlockElement>newArrayList();
+            List<BlockElement> list = Lists.newArrayList();
 
             if (object.has("elements"))
             {
                 for (JsonElement jsonelement : JsonUtils.getJsonArray(object, "elements"))
                 {
-                    list.add((BlockElement)deserializationContext.deserialize(jsonelement, BlockElement.class));
+                    list.add(deserializationContext.deserialize(jsonelement, BlockElement.class));
                 }
             }
 

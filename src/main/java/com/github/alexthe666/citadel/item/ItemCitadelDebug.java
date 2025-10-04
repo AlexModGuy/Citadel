@@ -18,7 +18,7 @@ public class ItemCitadelDebug extends Item {
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack itemStackIn = playerIn.getItemInHand(handIn);
         playerIn.getCooldowns().addCooldown(this, 15);
-        return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, itemStackIn);
+        return new InteractionResultHolder<>(InteractionResult.PASS, itemStackIn);
     }
 
 }

@@ -174,7 +174,6 @@ public class PathingOptions {
      * Sets swimming ability
      *
      * @param canswim whether swimming is allowed
-     * @return
      */
     public PathingOptions withCanSwim(final boolean canswim)
     {
@@ -185,7 +184,6 @@ public class PathingOptions {
     /**
      * Set door opening capability
      * @param canEnter whether we can enter doors
-     * @return
      */
     public PathingOptions withCanEnterDoors(final boolean canEnter)
     {

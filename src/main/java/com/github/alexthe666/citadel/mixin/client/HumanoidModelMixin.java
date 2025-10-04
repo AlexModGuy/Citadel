@@ -7,8 +7,8 @@ import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.TriState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,24 +23,22 @@ public abstract class HumanoidModelMixin extends Model {
         super(p_103110_);
     }
 
-    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/model/HumanoidModel;poseRightArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
+    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "poseRightArm", cancellable = true)
     private void citadel_poseRightArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), false);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Event.Result.ALLOW) {
+        NeoForge.EVENT_BUS.post(event);
+        if (event.getResult() == TriState.TRUE) {
             ci.cancel();
         }
     }
 
 
-    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/model/HumanoidModel;poseLeftArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
+    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "poseLeftArm", cancellable = true)
     private void citadel_poseLeftArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), true);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Event.Result.ALLOW) {
+        NeoForge.EVENT_BUS.post(event);
+        if (event.getResult() == TriState.TRUE) {
             ci.cancel();
         }
     }
-
-
 }
