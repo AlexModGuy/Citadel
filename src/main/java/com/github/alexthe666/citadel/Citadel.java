@@ -128,11 +128,16 @@ public class Citadel {
     @SubscribeEvent
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar("citadel").versioned("2.7.0").optional();
-        registrar.playToServer(PropertiesMessage.TYPE, PropertiesMessage.CODEC, PropertiesMessage::handle);
-        registrar.playToServer(AnimationMessage.TYPE, AnimationMessage.CODEC, AnimationMessage::handle);
+        // PropertiesMessage is bidirectional - used by both client (GUI) and server (entity utils)
+        registrar.playBidirectional(PropertiesMessage.TYPE, PropertiesMessage.CODEC, PropertiesMessage::handle);
+        // AnimationMessage is sent from server to all clients via sendToAllPlayers
+        registrar.playToClient(AnimationMessage.TYPE, AnimationMessage.CODEC, AnimationMessage::handle);
+        // DanceJukeboxMessage is sent from client to server via sendToServer
         registrar.playToServer(DanceJukeboxMessage.TYPE, DanceJukeboxMessage.CODEC, DanceJukeboxMessage::handle);
-        registrar.playToServer(SyncePathMessage.TYPE, SyncePathMessage.CODEC, SyncePathMessage::handle);
-        registrar.playToServer(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC, SyncPathReachedMessage::handle);
+        // SyncePathMessage is sent from server to specific player via sendToPlayer
+        registrar.playToClient(SyncePathMessage.TYPE, SyncePathMessage.CODEC, SyncePathMessage::handle);
+        // SyncPathReachedMessage is sent from server to specific player via sendToPlayer
+        registrar.playToClient(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC, SyncPathReachedMessage::handle);
     }
 
     // Registered manually to NeoForge.EVENT_BUS in constructor (not a mod bus event)
