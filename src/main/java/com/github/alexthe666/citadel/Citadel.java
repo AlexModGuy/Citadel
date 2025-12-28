@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @Mod("citadel")
-@EventBusSubscriber
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class Citadel {
     public static final Logger LOGGER = LogManager.getLogger("citadel");
     private static final String PROTOCOL_VERSION = Integer.toString(1);
@@ -81,6 +81,8 @@ public class Citadel {
         NeoForge.EVENT_BUS.register(PROXY);
         modContainer.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
         NeoForge.EVENT_BUS.register(new CitadelEvents());
+        // Register NeoForge bus events (non-mod lifecycle events)
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, Citadel::onServerAboutToStart);
     }
 
     @SubscribeEvent
@@ -130,7 +132,7 @@ public class Citadel {
         registrar.playToServer(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC, SyncPathReachedMessage::handle);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    // Registered manually to NeoForge.EVENT_BUS in constructor (not a mod bus event)
     public static void onServerAboutToStart(ServerAboutToStartEvent event) {
         RegistryAccess registryAccess = event.getServer().registryAccess();
         VillageHouseManager.addAllHouses(registryAccess);
