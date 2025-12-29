@@ -238,6 +238,7 @@ idea {
 
 jar {
     //classifier 'slim'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     afterEvaluate {
         configurations.shade.each { dep ->
             from(project.zipTree(dep)) {

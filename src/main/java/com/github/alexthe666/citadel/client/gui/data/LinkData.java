@@ -8,7 +8,7 @@ public class LinkData {
     private int x;
     private int y;
     private int page;
-    private ItemStack stack;
+    private transient ItemStack stack;
 
     public LinkData(String linkedPage, String titleText, int x, int y, int page) {
         this(linkedPage, titleText, x, y, page, ItemStack.EMPTY);
@@ -60,6 +60,6 @@ public class LinkData {
     }
 
     public ItemStack getDisplayItem() {
-        return this.stack.copy();
+        return this.stack != null ? this.stack.copy() : ItemStack.EMPTY;
     }
 }

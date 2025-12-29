@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @Mod("citadel")
-@EventBusSubscriber
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class Citadel {
     public static final Logger LOGGER = LogManager.getLogger("citadel");
     private static final String PROTOCOL_VERSION = Integer.toString(1);
@@ -78,9 +78,14 @@ public class Citadel {
         final DeferredRegister<MapCodec<? extends BiomeModifier>> serializers = DeferredRegister.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, "citadel");
         serializers.register(bus);
         serializers.register("mob_spawn_probability", SpawnProbabilityModifier::makeCodec);
-        NeoForge.EVENT_BUS.register(PROXY);
+        // Only register ClientProxy to event bus - ServerProxy has no @SubscribeEvent methods
+        if (FMLEnvironment.dist.isClient()) {
+            NeoForge.EVENT_BUS.register(PROXY);
+        }
         modContainer.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
         NeoForge.EVENT_BUS.register(new CitadelEvents());
+        // Register NeoForge bus events (non-mod lifecycle events)
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, Citadel::onServerAboutToStart);
     }
 
     @SubscribeEvent
@@ -123,14 +128,19 @@ public class Citadel {
     @SubscribeEvent
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar("citadel").versioned("2.7.0").optional();
-        registrar.playToServer(PropertiesMessage.TYPE, PropertiesMessage.CODEC, PropertiesMessage::handle);
-        registrar.playToServer(AnimationMessage.TYPE, AnimationMessage.CODEC, AnimationMessage::handle);
+        // PropertiesMessage is bidirectional - used by both client (GUI) and server (entity utils)
+        registrar.playBidirectional(PropertiesMessage.TYPE, PropertiesMessage.CODEC, PropertiesMessage::handle);
+        // AnimationMessage is sent from server to all clients via sendToAllPlayers
+        registrar.playToClient(AnimationMessage.TYPE, AnimationMessage.CODEC, AnimationMessage::handle);
+        // DanceJukeboxMessage is sent from client to server via sendToServer
         registrar.playToServer(DanceJukeboxMessage.TYPE, DanceJukeboxMessage.CODEC, DanceJukeboxMessage::handle);
-        registrar.playToServer(SyncePathMessage.TYPE, SyncePathMessage.CODEC, SyncePathMessage::handle);
-        registrar.playToServer(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC, SyncPathReachedMessage::handle);
+        // SyncePathMessage is sent from server to specific player via sendToPlayer
+        registrar.playToClient(SyncePathMessage.TYPE, SyncePathMessage.CODEC, SyncePathMessage::handle);
+        // SyncPathReachedMessage is sent from server to specific player via sendToPlayer
+        registrar.playToClient(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC, SyncPathReachedMessage::handle);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    // Registered manually to NeoForge.EVENT_BUS in constructor (not a mod bus event)
     public static void onServerAboutToStart(ServerAboutToStartEvent event) {
         RegistryAccess registryAccess = event.getServer().registryAccess();
         VillageHouseManager.addAllHouses(registryAccess);
