@@ -432,7 +432,7 @@ public abstract class GuiBasicBook extends Screen {
                     EntityType type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(data.getEntity()));
                     model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
                 } catch (Exception e) {
-                    // Entity creation failed - skip rendering this entity
+                    Citadel.LOGGER.warn("Failed to create entity '{}' for book rendering, skipping.", data.getEntity(), e);
                     continue;
                 }
                 if (model != null) {

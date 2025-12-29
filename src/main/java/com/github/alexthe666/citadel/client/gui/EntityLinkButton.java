@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.client.gui;
 
+import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.client.gui.data.EntityLinkData;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -43,13 +44,15 @@ public class EntityLinkButton extends Button {
         this.drawBtn(false, guiGraphics, 0, 0, lvt_5_1_, lvt_6_1_, 24, 24);
         Entity model = renderedEntites.get(data.getEntity());
         if (model == null) {
-            BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(data.getEntity()))
-                .ifPresent(type -> {
-                    Entity newEntity = type.create(Minecraft.getInstance().level);
-                    if (newEntity != null) {
-                        renderedEntites.put(data.getEntity(), newEntity);
-                    }
-                });
+            var optional = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(data.getEntity()));
+            if (optional.isPresent()) {
+                Entity newEntity = optional.get().create(Minecraft.getInstance().level);
+                if (newEntity != null) {
+                    renderedEntites.put(data.getEntity(), newEntity);
+                }
+            } else {
+                Citadel.LOGGER.warn("Could not find entity type for book link button: {}", data.getEntity());
+            }
             model = renderedEntites.get(data.getEntity());
         }
 
