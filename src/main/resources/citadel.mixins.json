@@ -4,13 +4,8 @@
   "package": "com.github.alexthe666.citadel.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "citadel.refmap.json",
-  "mixins": [
-    "BlockBehaviourAccessor",
-    "LivingEntityMixin"
-  ],
-  "client": [
-    "client.LivingEntityRendererMixin"
-  ],
+  "mixins": ["BlockBehaviourAccessor", "LivingEntityMixin"],
+  "client": ["client.LivingEntityRendererMixin"],
   "injectors": {
     "defaultRequire": 1
   }
