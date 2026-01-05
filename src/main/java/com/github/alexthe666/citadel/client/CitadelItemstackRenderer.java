@@ -138,29 +138,31 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.popPose();
         }
         if (stack.getItem() == Citadel.ICON_ITEM.get()) {
-            //TODO: convert to component system
-            /*if (stack.getTag() != null && stack.getTag().contains("IconLocation")) {
-                String iconLocationStr = stack.getTag().getString("IconLocation");
-                if(LOADED_ICONS.containsKey(iconLocationStr)){
+            // Use DataComponents system for 1.21+
+            ResourceLocation texture = DEFAULT_ICON_TEXTURE;
+            CustomData customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+            CompoundTag tag = customData.copyTag();
+            if (tag.contains("IconLocation")) {
+                String iconLocationStr = tag.getString("IconLocation");
+                if (LOADED_ICONS.containsKey(iconLocationStr)) {
                     texture = LOADED_ICONS.get(iconLocationStr);
-                }else{
+                } else {
                     texture = ResourceLocation.parse(iconLocationStr);
                     LOADED_ICONS.put(iconLocationStr, texture);
                 }
-            }*/
+            }
             poseStack.pushPose();
             poseStack.translate(0, 0, 0.5F);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, DEFAULT_ICON_TEXTURE);
-            Tesselator tessellator = Tesselator.getInstance();
-            BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+            RenderSystem.setShaderTexture(0, texture);
+            BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
             Matrix4f mx = poseStack.last().pose();
-            int br = 255;
-            bufferbuilder.addVertex(mx, (float) 1, (float) 1, (float) 0).setUv(1, 0).setColor(br, br, br, 255).setLight(packedLight);
-            bufferbuilder.addVertex(mx, (float) 0, (float) 1, (float) 0).setUv(0, 0).setColor(br, br, br, 255).setLight(packedLight);
-            bufferbuilder.addVertex(mx, (float) 0, (float) 0, (float) 0).setUv(0, 1).setColor(br, br, br, 255).setLight(packedLight);
-            bufferbuilder.addVertex(mx, (float) 1, (float) 0, (float) 0).setUv(1, 1).setColor(br, br, br, 255).setLight(packedLight);
+            bufferbuilder.addVertex(mx, (float) 1, (float) 1, (float) 0).setUv(1, 0);
+            bufferbuilder.addVertex(mx, (float) 0, (float) 1, (float) 0).setUv(0, 0);
+            bufferbuilder.addVertex(mx, (float) 0, (float) 0, (float) 0).setUv(0, 1);
+            bufferbuilder.addVertex(mx, (float) 1, (float) 0, (float) 0).setUv(1, 1);
+            BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
             poseStack.popPose();
         }
     }

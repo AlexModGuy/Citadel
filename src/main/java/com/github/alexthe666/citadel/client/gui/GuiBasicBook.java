@@ -464,13 +464,13 @@ public abstract class GuiBasicBook extends Screen {
                 float scale = (float) itemRenderData.getScale();
                 ItemStack stack = new ItemStack(item);
                 if (itemRenderData.getItemTag() != null && !itemRenderData.getItemTag().isEmpty()) {
-                    Tag tag = stack.save(Minecraft.getInstance().level.registryAccess());
                     try {
-                        tag = TagParser.parseTag(itemRenderData.getItemTag());
+                        CompoundTag tag = TagParser.parseTag(itemRenderData.getItemTag());
+                        stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
+                            net.minecraft.world.item.component.CustomData.of(tag));
                     } catch (CommandSyntaxException e) {
                         e.printStackTrace();
                     }
-                    // TODO convert to component
                 }
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate(k, l, 0);
