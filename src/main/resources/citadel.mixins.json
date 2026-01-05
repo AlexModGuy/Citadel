@@ -5,7 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "citadel.refmap.json",
   "mixins": ["BlockBehaviourAccessor", "LivingEntityMixin"],
-  "client": ["client.LivingEntityRendererMixin"],
+  "client": [
+    "client.LivingEntityRendererMixin",
+    "client.ItemBlockRenderTypesMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
