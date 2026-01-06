@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.client.gui;
 
+import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.client.gui.data.EntityLinkData;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -41,9 +42,19 @@ public class EntityLinkButton extends Button {
         guiGraphics.pose().translate(this.getX(), this.getY(), 0);
         guiGraphics.pose().scale(f, f, 1);
         this.drawBtn(false, guiGraphics, 0, 0, lvt_5_1_, lvt_6_1_, 24, 24);
-        Entity model = null;
-        EntityType type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(data.getEntity()));
-        model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
+        Entity model = renderedEntites.get(data.getEntity());
+        if (model == null) {
+            var optional = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(data.getEntity()));
+            if (optional.isPresent()) {
+                Entity newEntity = optional.get().create(Minecraft.getInstance().level);
+                if (newEntity != null) {
+                    renderedEntites.put(data.getEntity(), newEntity);
+                }
+            } else {
+                Citadel.LOGGER.warn("Could not find entity type for book link button: {}", data.getEntity());
+            }
+            model = renderedEntites.get(data.getEntity());
+        }
 
         guiGraphics.enableScissor(this.getX() + Math.round(f * 4), this.getY() + Math.round(f * 4), this.getX() + Math.round(f * 20), this.getY() + Math.round(f * 20));
         if (model != null) {

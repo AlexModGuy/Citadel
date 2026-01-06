@@ -255,6 +255,15 @@ public abstract class GuiBasicBook extends Screen {
         refreshSpacing();
     }
 
+    /**
+     * Override to disable the blur effect that was added in Minecraft 1.21
+     * Without this override, the screen content appears blurry
+     */
+    @Override
+    protected void renderBlurredBackground(float partialTick) {
+        // Do nothing - this prevents the blur effect from being applied
+    }
+
     @Override
     public void render(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
         this.mouseX = x;
@@ -419,8 +428,13 @@ public abstract class GuiBasicBook extends Screen {
         for (EntityRenderData data : entityRenders) {
             if (data.getPage() == this.currentPageCounter) {
                 Entity model = null;
-                EntityType type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(data.getEntity()));
-                model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
+                try {
+                    EntityType type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(data.getEntity()));
+                    model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
+                } catch (Exception e) {
+                    Citadel.LOGGER.warn("Failed to create entity '{}' for book rendering, skipping.", data.getEntity(), e);
+                    continue;
+                }
                 if (model != null) {
                     float scale = (float) data.getScale();
                     model.tickCount = Minecraft.getInstance().player.tickCount;
