@@ -463,14 +463,8 @@ public abstract class GuiBasicBook extends Screen {
                 Item item = getItemByRegistryName(itemRenderData.getItem());
                 float scale = (float) itemRenderData.getScale();
                 ItemStack stack = new ItemStack(item);
-                if (itemRenderData.getItemTag() != null && !itemRenderData.getItemTag().isEmpty()) {
-                    try {
-                        CompoundTag tag = TagParser.parseTag(itemRenderData.getItemTag());
-                        stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
-                            net.minecraft.world.item.component.CustomData.of(tag));
-                    } catch (CommandSyntaxException e) {
-                        e.printStackTrace();
-                    }
+                if (itemRenderData.getComponents() != null) {
+                    applyComponentsToStack(stack, itemRenderData.getItem(), itemRenderData.getComponents());
                 }
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate(k, l, 0);
@@ -479,6 +473,76 @@ public abstract class GuiBasicBook extends Screen {
                 guiGraphics.pose().popPose();
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void applyComponentsToStack(ItemStack stack, String itemId, Map<String, Object> components) {
+        if (components == null) return;
+        
+        // Handle citadel:custom_render_display for fancy_item
+        if (components.containsKey("citadel:custom_render_display") && "citadel:fancy_item".equals(itemId)) {
+            Object data = components.get("citadel:custom_render_display");
+            if (data instanceof Map) {
+                Map<String, Object> displayData = (Map<String, Object>) data;
+                
+                ItemStack displayItem = ItemStack.EMPTY;
+                if (displayData.containsKey("item")) {
+                    Object itemObj = displayData.get("item");
+                    if (itemObj instanceof Map) {
+                        String displayItemId = (String) ((Map<String, Object>) itemObj).get("id");
+                        if (displayItemId != null) {
+                            Item displayItemType = getItemByRegistryName(displayItemId);
+                            if (displayItemType != null) {
+                                displayItem = new ItemStack(displayItemType);
+                            }
+                        }
+                    }
+                }
+                
+                boolean shake = getBooleanValue(displayData, "shake", false);
+                boolean bob = getBooleanValue(displayData, "bob", false);
+                boolean spin = getBooleanValue(displayData, "spin", false);
+                boolean zoom = getBooleanValue(displayData, "zoom", false);
+                float scale = getFloatValue(displayData, "scale", 1.0f);
+                
+                com.github.alexthe666.citadel.item.component.CustomRenderDisplay customRenderDisplay = 
+                    new com.github.alexthe666.citadel.item.component.CustomRenderDisplay(
+                        displayItem, shake, bob, spin, zoom, scale);
+                stack.set(Citadel.CUSTOM_RENDER_DISPLAY, customRenderDisplay);
+            }
+        }
+        
+        // Handle citadel:display_effect for effect_item
+        if (components.containsKey("citadel:display_effect") && "citadel:effect_item".equals(itemId)) {
+            Object effectId = components.get("citadel:display_effect");
+            if (effectId instanceof String) {
+                ResourceLocation effectLoc = ResourceLocation.parse((String) effectId);
+                net.minecraft.resources.ResourceKey<net.minecraft.world.effect.MobEffect> effectKey = 
+                    net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.MOB_EFFECT, effectLoc);
+                stack.set(Citadel.DISPLAY_EFFECT, effectKey);
+            }
+        }
+        
+        // Handle citadel:icon_location for icon_item
+        if (components.containsKey("citadel:icon_location") && "citadel:icon_item".equals(itemId)) {
+            Object iconLoc = components.get("citadel:icon_location");
+            if (iconLoc instanceof String) {
+                stack.set(Citadel.ICON_LOCATION, ResourceLocation.parse((String) iconLoc));
+            }
+        }
+    }
+    
+    private boolean getBooleanValue(Map<String, Object> map, String key, boolean defaultValue) {
+        Object value = map.get(key);
+        if (value instanceof Boolean) return (Boolean) value;
+        if (value instanceof Number) return ((Number) value).intValue() != 0;
+        return defaultValue;
+    }
+    
+    private float getFloatValue(Map<String, Object> map, String key, float defaultValue) {
+        Object value = map.get(key);
+        if (value instanceof Number) return ((Number) value).floatValue();
+        return defaultValue;
     }
 
     protected void renderRecipe(GuiGraphics guiGraphics, Recipe recipe, RecipeData recipeData, int k, int l) {

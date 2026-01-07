@@ -1,8 +1,10 @@
 package com.github.alexthe666.citadel.client.gui.data;
 
+import java.util.Map;
+
 public class ItemRenderData {
     private String item;
-    private String item_tag = "";
+    private Map<String, Object> components;
     private int x;
     private int y;
     private double scale;
@@ -22,13 +24,6 @@ public class ItemRenderData {
 
     public void setItem(String item) {
         this.item = item;
-    }
-
-    public String getItemTag() {
-        return item_tag;
-    }
-
-    public void setItemTag(String item) {
     }
 
     public int getPage() {
@@ -57,5 +52,13 @@ public class ItemRenderData {
 
     public void setScale(double scale) {
         this.scale = scale;
+    }
+
+    public Map<String, Object> getComponents() {
+        return components;
+    }
+
+    public void setComponents(Map<String, Object> components) {
+        this.components = components;
     }
 }

@@ -3,68 +3,90 @@
   "text": "link_example.txt",
   "title": "Link Example",
   "title_locale": "book.citadel_book.link_example",
-  "linked_page_buttons": [
-  ],
-  "images": [
-  ],
+  "linked_page_buttons": [],
+  "images": [],
   "item_renders": [
     {
-      "item" : "citadel:effect_item",
+      "item": "citadel:effect_item",
       "x": 5,
       "y": 20,
-      "page" : 0,
+      "page": 0,
       "scale": 2.5
     },
     {
-      "item" : "citadel:effect_item",
-      "item_tag": "{DisplayEffect:\"minecraft:luck\"}",
+      "item": "citadel:effect_item",
       "x": 25,
       "y": 20,
-      "page" : 0,
-      "scale": 2.5
+      "page": 0,
+      "scale": 2.5,
+      "components": {
+        "citadel:display_effect": "minecraft:luck"
+      }
     },
     {
-      "item" : "citadel:fancy_item",
-      "item_tag": "{DisplayItem:\"citadel:citadel_book\", DisplayBob:1, DisplayZoom:1, DisplayScale:0.8, DisplaySpin:0, DisplayShake:0}",
+      "item": "citadel:fancy_item",
       "x": 45,
       "y": 22,
-      "page" : 0,
-      "scale": 2.5
+      "page": 0,
+      "scale": 2.5,
+      "components": {
+        "citadel:custom_render_display": {
+          "item": {
+            "id": "citadel:citadel_book"
+          },
+          "bob": true,
+          "zoom": true,
+          "spin": false,
+          "shake": false,
+          "scale": 0.8
+        }
+      }
     },
     {
-      "item" : "citadel:fancy_item",
-      "item_tag": "{DisplayItem:\"minecraft:feather\", DisplayBob:0, DisplayZoom:1, DisplayScale:0.65, DisplaySpin:1, DisplayShake:0}",
+      "item": "citadel:fancy_item",
       "x": 60,
       "y": 20,
-      "page" : 0,
-      "scale": 2.5
+      "page": 0,
+      "scale": 2.5,
+      "components": {
+        "citadel:custom_render_display": {
+          "item": {
+            "id": "minecraft:feather"
+          },
+          "bob": false,
+          "zoom": true,
+          "spin": true,
+          "shake": false,
+          "scale": 0.65
+        }
+      }
     },
     {
-      "item" : "citadel:icon_item",
+      "item": "citadel:icon_item",
       "x": 10,
       "y": 55,
-      "page" : 1,
+      "page": 1,
       "scale": 2.5
     },
     {
-      "item" : "citadel:icon_item",
-      "item_tag": "{IconLocation:\"minecraft:textures/map/map_background.png\"}",
+      "item": "citadel:icon_item",
       "x": 50,
       "y": 55,
-      "page" : 1,
-      "scale": 2.5
+      "page": 1,
+      "scale": 2.5,
+      "components": {
+        "citadel:icon_location": "minecraft:textures/map/map_background.png"
+      }
     }
   ],
-  "recipes": [
-  ],
-  "tabula_renders": [
-  ],
+  "recipes": [],
+  "tabula_renders": [],
   "entity_renders": [
     {
       "entity": "minecraft:bee",
       "x": 230,
       "y": 120,
-      "page" : 1,
+      "page": 1,
       "scale": 1.7,
       "rot_x": 30,
       "rot_y": 135,
@@ -76,7 +98,7 @@
       "entity_data": "{ArmorItems:[{},{},{},{Count:1b,id:\"minecraft:diamond_helmet\",tag:{Damage:0}}], HandItems:[{Count:1b,id:\"minecraft:shield\"},{}]}",
       "x": 230,
       "y": 70,
-      "page" : 1,
+      "page": 1,
       "scale": 0.9,
       "rot_x": 30,
       "rot_y": 225,
