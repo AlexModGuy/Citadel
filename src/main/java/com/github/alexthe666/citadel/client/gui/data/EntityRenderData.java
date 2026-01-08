@@ -2,19 +2,21 @@ package com.github.alexthe666.citadel.client.gui.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 
+import java.util.Optional;
+
 public record EntityRenderData(
-    ResourceKey<EntityType<?>> entity,
+    EntityType<?> entity,
     int x, int y, double scale, int page,
     double rotX, double rotY, double rotZ,
-    boolean followCursor, String entityData
+    boolean followCursor,
+    Optional<String> entityData
 ) {
     public static final Codec<EntityRenderData> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            ResourceKey.codec(Registries.ENTITY_TYPE)
+            BuiltInRegistries.ENTITY_TYPE.byNameCodec()
                 .fieldOf("entity")
                 .forGetter(EntityRenderData::entity),
             Codec.INT
@@ -42,7 +44,7 @@ public record EntityRenderData(
                 .optionalFieldOf("follow_cursor", false)
                 .forGetter(EntityRenderData::followCursor),
             Codec.STRING
-                .optionalFieldOf("entity_data", "")
+                .optionalFieldOf("entity_data")
                 .forGetter(EntityRenderData::entityData)
         )
             .apply(instance, EntityRenderData::new)

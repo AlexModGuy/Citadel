@@ -2,18 +2,21 @@ package com.github.alexthe666.citadel.client.gui.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public record ItemRenderData(
-    ResourceKey<Item> item, int x, int y, double scale, int page, DataComponentPatch components
+    Holder<Item> item, int x, int y, double scale, int page, DataComponentPatch components
 ) {
     public static final Codec<ItemRenderData> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            ResourceKey.codec(Registries.ITEM)
+            BuiltInRegistries.ITEM
+                .holderByNameCodec()
                 .fieldOf("item")
                 .forGetter(ItemRenderData::item),
 

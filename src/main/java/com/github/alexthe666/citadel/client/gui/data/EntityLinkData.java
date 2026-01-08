@@ -2,6 +2,7 @@ package com.github.alexthe666.citadel.client.gui.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
@@ -10,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 
 public record EntityLinkData(
-    ResourceKey<EntityType<?>> entity,
+    EntityType<?> entity,
     int x, int y, double scale, double entityScale,
     int page, String linkedPage,
     Component hoverText,
@@ -18,7 +19,7 @@ public record EntityLinkData(
 ) {
     public static final Codec<EntityLinkData> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            ResourceKey.codec(Registries.ENTITY_TYPE)
+            BuiltInRegistries.ENTITY_TYPE.byNameCodec()
                 .fieldOf("entity")
                 .forGetter(EntityLinkData::entity),
             Codec.INT

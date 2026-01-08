@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class EntityLinkButton extends Button {
 
-    private static final Map<ResourceKey<EntityType<?>>, Entity> renderedEntities = new HashMap<>();
+    private static final Map<EntityType<?>, Entity> renderedEntities = new HashMap<>();
     private static final Quaternionf ENTITY_ROTATION = (new Quaternionf()).rotationXYZ((float) Math.toRadians(30), (float) Math.toRadians(130), (float) Math.PI);
     private final EntityLinkData data;
     private final GuiBasicBook bookGUI;
@@ -45,14 +45,9 @@ public class EntityLinkButton extends Button {
         this.drawBtn(false, guiGraphics, 0, 0, lvt_5_1_, lvt_6_1_, 24, 24);
         Entity model = renderedEntities.get(data.entity());
         if (model == null) {
-            var optional = BuiltInRegistries.ENTITY_TYPE.getOptional(data.entity());
-            if (optional.isPresent()) {
-                Entity newEntity = optional.get().create(Minecraft.getInstance().level);
-                if (newEntity != null) {
-                    renderedEntities.put(data.entity(), newEntity);
-                }
-            } else {
-                Citadel.LOGGER.warn("Could not find entity type for book link button: {}", data.entity());
+            Entity newEntity = data.entity().create(Minecraft.getInstance().level);
+            if (newEntity != null) {
+                renderedEntities.put(data.entity(), newEntity);
             }
             model = renderedEntities.get(data.entity());
         }

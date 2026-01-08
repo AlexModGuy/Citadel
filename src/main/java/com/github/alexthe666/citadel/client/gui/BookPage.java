@@ -19,13 +19,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public record BookPage(
-    @Nullable String parent, String textFileToReadFrom,
+    Optional<String> parent, String textFileToReadFrom,
 
     List<LinkData> linkedButtons, List<EntityLinkData> linkedEntities,
     List<ItemRenderData> itemRenders, List<RecipeData> recipes,
@@ -37,10 +34,10 @@ public record BookPage(
     public static final Codec<BookPage> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
             Codec.STRING
-                .optionalFieldOf("parent", null)
+                .optionalFieldOf("parent")
                 .forGetter(BookPage::parent),
             Codec.STRING
-                .optionalFieldOf("text", null)
+                .fieldOf("text")
                 .forGetter(BookPage::textFileToReadFrom),
 
             LinkData.CODEC.listOf()

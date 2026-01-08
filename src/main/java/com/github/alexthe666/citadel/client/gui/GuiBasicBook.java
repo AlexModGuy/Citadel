@@ -29,7 +29,6 @@ import net.minecraft.data.structures.SnbtToNbt;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -71,7 +70,7 @@ public abstract class GuiBasicBook extends Screen {
     protected final List<ImageData> images = new ArrayList<>();
     protected final List<Whitespace> yIndexesToSkip = new ArrayList<>();
     private final Map<ResourceLocation, TabulaModel> renderedTabulaModels = new HashMap<>();
-    private final Map<ResourceKey<EntityType<?>>, Entity> renderedEntities = new HashMap<>();
+    private final Map<EntityType<?>, Entity> renderedEntities = new HashMap<>();
     protected ItemStack bookStack;
     protected int xSize = 390;
     protected int ySize = 320;
@@ -248,9 +247,9 @@ public abstract class GuiBasicBook extends Screen {
             if (currentPageCounter > 0) {
                 currentPageCounter--;
             } else {
-                if (this.internalPage != null && this.internalPage.parent() != null && !this.internalPage.parent().isEmpty()) {
+                if (this.internalPage != null && this.internalPage.parent().isPresent()) {
                     prevPageJSON = this.currentPageJSON;
-                    currentPageJSON = getTextFileDirectory().withSuffix(this.internalPage.parent());
+                    currentPageJSON = getTextFileDirectory().withSuffix(this.internalPage.parent().orElseThrow());
                     currentPageCounter = preservedPageIndex;
                     preservedPageIndex = 0;
                 }
@@ -326,10 +325,6 @@ public abstract class GuiBasicBook extends Screen {
             addLinkButtons();
             readInPageText(currentPageText);
         }
-    }
-
-    private Holder<Item> getItemByRegistryName(ResourceKey<Item> registryName) {
-        return BuiltInRegistries.ITEM.getHolderOrThrow(registryName);
     }
 
     private Recipe getRecipeByName(ResourceLocation registryName) {
@@ -423,11 +418,11 @@ public abstract class GuiBasicBook extends Screen {
             if (data.page() == this.currentPageCounter) {
                 Entity model;
                 try {
-                    model = renderedEntities.computeIfAbsent(data.entity(), key -> {
-                        Entity entity = BuiltInRegistries.ENTITY_TYPE.get(key).create(Minecraft.getInstance().level);
-                        if (data.entityData() != null) {
+                    model = renderedEntities.computeIfAbsent(data.entity(), entityType -> {
+                        Entity entity = entityType.create(Minecraft.getInstance().level);
+                        if (data.entityData().isPresent()) {
                             try {
-                                CompoundTag tag = NbtUtils.snbtToStructure(data.entityData());
+                                CompoundTag tag = NbtUtils.snbtToStructure(data.entityData().orElseThrow());
                                 entity.load(tag);
                             } catch (CommandSyntaxException e) {
                                 e.printStackTrace();
@@ -457,7 +452,7 @@ public abstract class GuiBasicBook extends Screen {
         }
         for (ItemRenderData itemRenderData : itemRenders) {
             if (itemRenderData.page() == this.currentPageCounter) {
-                Holder<Item> item = getItemByRegistryName(itemRenderData.item());
+                Holder<Item> item = itemRenderData.item();
                 float scale = (float) itemRenderData.scale();
                 ItemStack stack = new ItemStack(item, 1, itemRenderData.components());
 
