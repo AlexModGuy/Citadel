@@ -17,11 +17,11 @@ public class GuiCitadelBook extends GuiBasicBook {
 
     @Override
     public ResourceLocation getRootPage() {
-        return ResourceLocation.parse("citadel:book/citadel_book/root.json");
+        return ResourceLocation.fromNamespaceAndPath("citadel", "book/citadel_book/root.json");
     }
 
     @Override
-    public String getTextFileDirectory() {
-        return "citadel:book/citadel_book/";
+    public ResourceLocation getTextFileDirectory() {
+        return ResourceLocation.fromNamespaceAndPath("citadel", "book/citadel_book/");
     }
 }

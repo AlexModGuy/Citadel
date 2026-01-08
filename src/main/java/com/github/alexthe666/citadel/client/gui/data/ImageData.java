@@ -1,97 +1,50 @@
 package com.github.alexthe666.citadel.client.gui.data;
 
-public class ImageData {
-    private String texture;
-    private int x;
-    private int y;
-    private int page;
-    private double scale;
-    private int u;
-    private int v;
-    private int width;
-    private int height;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceLocation;
 
-    public ImageData(String texture, int x, int y, int page, double scale, int u, int v, int width, int height) {
-        this.texture = texture;
-        this.x = x;
-        this.y = y;
-        this.page = page;
-        this.scale = scale;
-        this.u = u;
-        this.v = v;
-        this.width = width;
-        this.height = height;
-    }
-
-    public String getTexture() {
-        return texture;
-    }
-
-    public void setTexture(String texture) {
-        this.texture = texture;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public double getScale() {
-        return scale;
-    }
-
-    public void setScale(double scale) {
-        this.scale = scale;
-    }
-
-    public int getU() {
-        return u;
-    }
-
-    public void setU(int u) {
-        this.u = u;
-    }
-
-    public int getV() {
-        return v;
-    }
-
-    public void setV(int v) {
-        this.v = v;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
+public record ImageData(
+    ResourceLocation texture,
+    int x,
+    int y,
+    int page,
+    double scale,
+    int u,
+    int v,
+    int width,
+    int height
+) {
+    public static final Codec<ImageData> CODEC = RecordCodecBuilder.create(instance ->
+        instance.group(
+            ResourceLocation.CODEC
+                .fieldOf("texture")
+                .forGetter(ImageData::texture),
+            Codec.INT
+                .fieldOf("x")
+                .forGetter(ImageData::x),
+            Codec.INT
+                .fieldOf("y")
+                .forGetter(ImageData::y),
+            Codec.INT
+                .optionalFieldOf("page", 0)
+                .forGetter(ImageData::page),
+            Codec.DOUBLE
+                .optionalFieldOf("scale", 1.0)
+                .forGetter(ImageData::scale),
+            Codec.INT
+                .fieldOf("u")
+                .forGetter(ImageData::u),
+            Codec.INT
+                .fieldOf("v")
+                .forGetter(ImageData::v),
+            Codec.INT
+                .fieldOf("width")
+                .forGetter(ImageData::width),
+            Codec.INT
+                .fieldOf("height")
+                .forGetter(ImageData::height)
+        )
+            .apply(instance, ImageData::new)
+    );
 }

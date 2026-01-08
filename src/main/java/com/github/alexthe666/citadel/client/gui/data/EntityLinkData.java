@@ -1,107 +1,54 @@
 package com.github.alexthe666.citadel.client.gui.data;
 
-public class EntityLinkData {
-    private String entity;
-    private int x;
-    private int y;
-    private float offset_x;
-    private float offset_y;
-    private double entity_scale;
-    private double scale;
-    private int page;
-    private String linked_page;
-    private String hover_text;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 
-    public EntityLinkData(String entity, int x, int y, double scale, double entity_scale, int page, String linked_page, String hover_text, float offset_x, float offset_y) {
-        this.entity = entity;
-        this.x = x;
-        this.y = y;
-        this.scale = scale;
-        this.entity_scale = entity_scale;
-        this.page = page;
-        this.linked_page = linked_page;
-        this.hover_text = hover_text;
-        this.offset_x = offset_x;
-        this.offset_y = offset_y;
-    }
-
-    public String getEntity() {
-        return entity;
-    }
-
-    public void setEntity(String model) {
-        this.entity = model;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public double getScale() {
-        return scale;
-    }
-
-    public void setScale(double scale) {
-        this.scale = scale;
-    }
-
-    public double getEntityScale() {
-        return entity_scale;
-    }
-
-    public void setEntityScale(double scale) {
-        this.entity_scale = scale;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public String getLinkedPage() {
-        return linked_page;
-    }
-
-    public void setLinkedPage(String linkedPage) {
-        this.linked_page = linkedPage;
-    }
-
-    public String getHoverText() {
-        return hover_text;
-    }
-
-    public void setHoverText(String titleText) {
-        this.hover_text = titleText;
-    }
-
-    public float getOffset_y() {
-        return offset_y;
-    }
-
-    public void setOffset_y(float offset_y) {
-        this.offset_y = offset_y;
-    }
-
-    public float getOffset_x() {
-        return offset_x;
-    }
-
-    public void setOffset_x(float offset_x) {
-        this.offset_x = offset_x;
-    }
+public record EntityLinkData(
+    ResourceKey<EntityType<?>> entity,
+    int x, int y, double scale, double entityScale,
+    int page, String linkedPage,
+    Component hoverText,
+    float offsetX, float offsetY
+) {
+    public static final Codec<EntityLinkData> CODEC = RecordCodecBuilder.create(instance ->
+        instance.group(
+            ResourceKey.codec(Registries.ENTITY_TYPE)
+                .fieldOf("entity")
+                .forGetter(EntityLinkData::entity),
+            Codec.INT
+                .fieldOf("x")
+                .forGetter(EntityLinkData::x),
+            Codec.INT
+                .fieldOf("y")
+                .forGetter(EntityLinkData::y),
+            Codec.DOUBLE
+                .optionalFieldOf("entity_scale", 1.0)
+                .forGetter(EntityLinkData::entityScale),
+            Codec.DOUBLE
+                .optionalFieldOf("scale", 1.0)
+                .forGetter(EntityLinkData::scale),
+            Codec.INT
+                .optionalFieldOf("page", 0)
+                .forGetter(EntityLinkData::page),
+            Codec.STRING
+                .fieldOf("linked_page")
+                .forGetter(EntityLinkData::linkedPage),
+            ComponentSerialization.CODEC
+                .fieldOf("hover_text")
+                .forGetter(EntityLinkData::hoverText),
+            Codec.FLOAT
+                .optionalFieldOf("offset_x", 0f)
+                .forGetter(EntityLinkData::offsetX),
+            Codec.FLOAT
+                .optionalFieldOf("offset_y", 0f)
+                .forGetter(EntityLinkData::offsetY)
+        )
+            .apply(instance, EntityLinkData::new)
+    );
 }

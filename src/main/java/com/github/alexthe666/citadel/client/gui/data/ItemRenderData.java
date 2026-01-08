@@ -1,61 +1,40 @@
 package com.github.alexthe666.citadel.client.gui.data;
 
-public class ItemRenderData {
-    private String item;
-    private String item_tag = "";
-    private int x;
-    private int y;
-    private double scale;
-    private int page;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
-    public ItemRenderData(String item, int x, int y, double scale, int page) {
-        this.item = item;
-        this.x = x;
-        this.y = y;
-        this.scale = scale;
-        this.page = page;
-    }
+public record ItemRenderData(
+    ResourceKey<Item> item, int x, int y, double scale, int page, DataComponentPatch components
+) {
+    public static final Codec<ItemRenderData> CODEC = RecordCodecBuilder.create(instance ->
+        instance.group(
+            ResourceKey.codec(Registries.ITEM)
+                .fieldOf("item")
+                .forGetter(ItemRenderData::item),
 
-    public String getItem() {
-        return item;
-    }
+            Codec.INT
+                .fieldOf("x")
+                .forGetter(ItemRenderData::x),
+            Codec.INT
+                .fieldOf("y")
+                .forGetter(ItemRenderData::y),
 
-    public void setItem(String item) {
-        this.item = item;
-    }
+            Codec.DOUBLE
+                .optionalFieldOf("scale", 1.0)
+                .forGetter(ItemRenderData::scale),
+            Codec.INT
+                .optionalFieldOf("page", 0)
+                .forGetter(ItemRenderData::page),
 
-    public String getItemTag() {
-        return item_tag;
-    }
-
-    public void setItemTag(String item) {
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public double getScale() {
-        return scale;
-    }
-
-    public void setScale(double scale) {
-        this.scale = scale;
-    }
+            DataComponentPatch.CODEC
+                .optionalFieldOf("item_components", DataComponentPatch.EMPTY)
+                .forGetter(ItemRenderData::components)
+        )
+            .apply(instance, ItemRenderData::new)
+    );
 }
