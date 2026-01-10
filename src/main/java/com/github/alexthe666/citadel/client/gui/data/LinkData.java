@@ -1,65 +1,38 @@
 package com.github.alexthe666.citadel.client.gui.data;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-public class LinkData {
-    private String linked_page;
-    private String text;
-    private int x;
-    private int y;
-    private int page;
-    private transient ItemStack stack;
-
-    public LinkData(String linkedPage, String titleText, int x, int y, int page) {
-        this(linkedPage, titleText, x, y, page, ItemStack.EMPTY);
-    }
-
-    public LinkData(String linkedPage, String titleText, int x, int y, int page, ItemStack stack) {
-        this.linked_page = linkedPage;
-        this.text = titleText;
-        this.x = x;
-        this.y = y;
-        this.page = page;
-        this.stack = stack;
-    }
-
-    public String getLinkedPage() {
-        return linked_page;
-    }
-
-    public void setLinkedPage(String linkedPage) {
-        this.linked_page = linkedPage;
-    }
-
-    public String getTitleText() {
-        return text;
-    }
-
-    public void setTitleText(String titleText) {
-        this.text = titleText;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public ItemStack getDisplayItem() {
-        return this.stack != null ? this.stack.copy() : ItemStack.EMPTY;
-    }
+public record LinkData(
+    String linkedPage, Component titleText,
+    int x, int y, int page,
+    ItemStack displayItem
+) {
+    public static final Codec<LinkData> CODEC = RecordCodecBuilder.create(instance ->
+        instance.group(
+            Codec.STRING
+                .fieldOf("linked_page")
+                .forGetter(LinkData::linkedPage),
+            ComponentSerialization.CODEC
+                .fieldOf("text")
+                .forGetter(LinkData::titleText),
+            Codec.INT
+                .fieldOf("x")
+                .forGetter(LinkData::x),
+            Codec.INT
+                .fieldOf("y")
+                .forGetter(LinkData::y),
+            Codec.INT
+                .fieldOf("page")
+                .forGetter(LinkData::page),
+            ItemStack.OPTIONAL_CODEC
+                .optionalFieldOf("stack", ItemStack.EMPTY)
+                .forGetter(LinkData::displayItem)
+        )
+            .apply(instance, LinkData::new)
+    );
 }

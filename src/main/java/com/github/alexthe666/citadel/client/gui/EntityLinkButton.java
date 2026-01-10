@@ -10,6 +10,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -23,13 +24,13 @@ import java.util.Map;
 
 public class EntityLinkButton extends Button {
 
-    private static final Map<String, Entity> renderedEntites = new HashMap<>();
+    private static final Map<EntityType<?>, Entity> renderedEntities = new HashMap<>();
     private static final Quaternionf ENTITY_ROTATION = (new Quaternionf()).rotationXYZ((float) Math.toRadians(30), (float) Math.toRadians(130), (float) Math.PI);
     private final EntityLinkData data;
     private final GuiBasicBook bookGUI;
 
     public EntityLinkButton(GuiBasicBook bookGUI, EntityLinkData linkData, int k, int l, Button.OnPress o) {
-        super(k + linkData.getX() - 12, l + linkData.getY(), (int) (24 * linkData.getScale()), (int) (24 * linkData.getScale()), CommonComponents.EMPTY, o, DEFAULT_NARRATION);
+        super(k + linkData.x() - 12, l + linkData.y(), (int) (24 * linkData.scale()), (int) (24 * linkData.scale()), CommonComponents.EMPTY, o, DEFAULT_NARRATION);
         this.data = linkData;
         this.bookGUI = bookGUI;
     }
@@ -37,34 +38,29 @@ public class EntityLinkButton extends Button {
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         int lvt_5_1_ = 0;
         int lvt_6_1_ = 30;
-        float f = (float) data.getScale();
+        float f = (float) data.scale();
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(this.getX(), this.getY(), 0);
         guiGraphics.pose().scale(f, f, 1);
         this.drawBtn(false, guiGraphics, 0, 0, lvt_5_1_, lvt_6_1_, 24, 24);
-        Entity model = renderedEntites.get(data.getEntity());
+        Entity model = renderedEntities.get(data.entity());
         if (model == null) {
-            var optional = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(data.getEntity()));
-            if (optional.isPresent()) {
-                Entity newEntity = optional.get().create(Minecraft.getInstance().level);
-                if (newEntity != null) {
-                    renderedEntites.put(data.getEntity(), newEntity);
-                }
-            } else {
-                Citadel.LOGGER.warn("Could not find entity type for book link button: {}", data.getEntity());
+            Entity newEntity = data.entity().create(Minecraft.getInstance().level);
+            if (newEntity != null) {
+                renderedEntities.put(data.entity(), newEntity);
             }
-            model = renderedEntites.get(data.getEntity());
+            model = renderedEntities.get(data.entity());
         }
 
         guiGraphics.enableScissor(this.getX() + Math.round(f * 4), this.getY() + Math.round(f * 4), this.getX() + Math.round(f * 20), this.getY() + Math.round(f * 20));
         if (model != null) {
             model.tickCount = Minecraft.getInstance().player.tickCount;
-            float renderScale = (float) (data.getEntityScale() * f * 10);
-            renderEntityInInventory(guiGraphics, 11 + (int) (data.getOffset_x() * data.getEntityScale()), 22 + (int) (data.getOffset_y() * data.getEntityScale()), renderScale, ENTITY_ROTATION, model);
+            float renderScale = (float) (data.entityScale() * f * 10);
+            renderEntityInInventory(guiGraphics, 11 + (int) (data.offsetX() * data.entityScale()), 22 + (int) (data.offsetY() * data.entityScale()), renderScale, ENTITY_ROTATION, model);
         }
         guiGraphics.disableScissor();
         if (this.isHovered) {
-            bookGUI.setEntityTooltip(this.data.getHoverText());
+            bookGUI.setEntityTooltip(this.data.hoverText());
             lvt_5_1_ = 48;
         } else {
             lvt_5_1_ = 24;
