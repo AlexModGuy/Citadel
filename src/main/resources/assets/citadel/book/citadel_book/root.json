@@ -85,7 +85,9 @@
       "offset_x": 0,
       "offset_y": 0,
       "linked_page": "link_example.json",
-      "hover_text": "book.citadel_book.hover_text_pillager_example"
+      "hover_text": {
+        "translate": "book.citadel_book.hover_text_pillager_example"
+      }
     },
     {
       "entity": "minecraft:blaze",
@@ -97,7 +99,9 @@
       "offset_x": 0,
       "offset_y": 5,
       "linked_page": "link_example.json",
-      "hover_text": "entity.minecraft.blaze"
+      "hover_text": {
+        "translate": "entity.minecraft.blaze"
+      }
     }
   ]
 }

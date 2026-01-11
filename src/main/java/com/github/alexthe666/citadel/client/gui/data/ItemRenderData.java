@@ -5,7 +5,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public record ItemRenderData(
     Holder<Item> item, int x, int y, double scale, int page, DataComponentPatch components
@@ -20,7 +23,6 @@ public record ItemRenderData(
             Codec.INT
                 .fieldOf("x")
                 .forGetter(ItemRenderData::x),
-
             Codec.INT
                 .fieldOf("y")
                 .forGetter(ItemRenderData::y),
@@ -28,7 +30,6 @@ public record ItemRenderData(
             Codec.DOUBLE
                 .optionalFieldOf("scale", 1.0)
                 .forGetter(ItemRenderData::scale),
-
             Codec.INT
                 .optionalFieldOf("page", 0)
                 .forGetter(ItemRenderData::page),

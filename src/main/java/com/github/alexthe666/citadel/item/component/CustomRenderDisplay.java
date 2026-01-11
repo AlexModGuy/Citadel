@@ -17,7 +17,13 @@ public record CustomRenderDisplay(
 
     public static final Codec<CustomRenderDisplay> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            Codec.withAlternative(ItemStack.CODEC, Codec.unit(new ItemStack(Items.BARRIER)))
+            Codec.withAlternative(ItemStack.CODEC,
+                Codec.withAlternative(
+                    ItemStack.ITEM_NON_AIR_CODEC
+                        .xmap(ItemStack::new, ItemStack::getItemHolder),
+                    Codec.unit(new ItemStack(Items.BARRIER)) // Used to result in failure automatically if the item fails to parse.
+                )
+            )
                 .fieldOf("item")
                 .forGetter(CustomRenderDisplay::item),
             Codec.BOOL
