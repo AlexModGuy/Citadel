@@ -62,12 +62,25 @@ public record BookPage(
                 .optionalFieldOf("images", Collections.emptyList())
                 .forGetter(BookPage::images),
 
-            Codec.either(
-                    Codec.STRING.xmap(Component::translatable, c -> c.getString()),
-                    ComponentSerialization.CODEC
-                )
+            // Support both "title_locale" (string -> translatable) and "title" (string or Component)
+            Codec.mapEither(
+                Codec.STRING
+                    .xmap(Component::translatable, component -> {
+                        if (component.getContents() instanceof TranslatableContents translatableContents) {
+                            return translatableContents.getKey();
+                        } else {
+                            return component.getString();
+                        }
+                    })
+                    .fieldOf("title_locale"),
+                Codec.either(
+                        Codec.STRING.xmap(Component::translatable, c -> c.getString()),
+                        ComponentSerialization.CODEC
+                    )
+                    .xmap(Either::unwrap, Either::right)
+                    .fieldOf("title")
+            )
                 .xmap(Either::unwrap, Either::right)
-                .optionalFieldOf("title", Component.empty())
                 .forGetter(BookPage::title)
         )
             .apply(instance, BookPage::new)
