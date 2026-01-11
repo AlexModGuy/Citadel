@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.client.gui.data;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,18 +30,22 @@ public record EntityLinkData(
                 .fieldOf("y")
                 .forGetter(EntityLinkData::y),
             Codec.DOUBLE
-                .optionalFieldOf("entity_scale", 1.0)
-                .forGetter(EntityLinkData::entityScale),
-            Codec.DOUBLE
                 .optionalFieldOf("scale", 1.0)
                 .forGetter(EntityLinkData::scale),
+            Codec.DOUBLE
+                .optionalFieldOf("entity_scale", 1.0)
+                .forGetter(EntityLinkData::entityScale),
             Codec.INT
                 .optionalFieldOf("page", 0)
                 .forGetter(EntityLinkData::page),
             Codec.STRING
                 .fieldOf("linked_page")
                 .forGetter(EntityLinkData::linkedPage),
-            ComponentSerialization.CODEC
+            Codec.either(
+                    Codec.STRING.xmap(Component::translatable, c -> c.getString()),
+                    ComponentSerialization.CODEC
+                )
+                .xmap(Either::unwrap, Either::right)
                 .fieldOf("hover_text")
                 .forGetter(EntityLinkData::hoverText),
             Codec.FLOAT

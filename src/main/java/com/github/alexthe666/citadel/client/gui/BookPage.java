@@ -62,20 +62,12 @@ public record BookPage(
                 .optionalFieldOf("images", Collections.emptyList())
                 .forGetter(BookPage::images),
 
-            Codec.mapEither(
-                Codec.STRING
-                    .flatComapMap(Component::translatable, component -> {
-                        if (component.getContents() instanceof TranslatableContents translatableContents) {
-                            return DataResult.success(translatableContents.getKey());
-                        } else {
-                            return DataResult.error(() -> "Component is not translatable!");
-                        }
-                    })
-                    .fieldOf("title_locale"),
-                ComponentSerialization.CODEC
-                    .fieldOf("title")
-            )
+            Codec.either(
+                    Codec.STRING.xmap(Component::translatable, c -> c.getString()),
+                    ComponentSerialization.CODEC
+                )
                 .xmap(Either::unwrap, Either::right)
+                .optionalFieldOf("title", Component.empty())
                 .forGetter(BookPage::title)
         )
             .apply(instance, BookPage::new)
