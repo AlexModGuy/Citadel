@@ -21,10 +21,10 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -324,10 +324,6 @@ public abstract class GuiBasicBook extends Screen {
         }
     }
 
-    private Item getItemByRegistryName(String registryName) {
-        return BuiltInRegistries.ITEM.get(ResourceLocation.parse(registryName));
-    }
-
     private Recipe getRecipeByName(String registryName) {
         try {
             RecipeManager manager = Minecraft.getInstance().level.getRecipeManager();
@@ -343,8 +339,7 @@ public abstract class GuiBasicBook extends Screen {
     private void addWidgetSpacing() {
         yIndexesToSkip.clear();
         for (ItemRenderData itemRenderData : itemRenders) {
-            Item item = getItemByRegistryName(itemRenderData.getItem());
-            yIndexesToSkip.add(new Whitespace(itemRenderData.getPage(), itemRenderData.getX(), itemRenderData.getY(), (int) (itemRenderData.getScale() * 17), (int) (itemRenderData.getScale() * 15)));
+            yIndexesToSkip.add(new Whitespace(itemRenderData.page(), itemRenderData.x(), itemRenderData.y(), (int) (itemRenderData.scale() * 17), (int) (itemRenderData.scale() * 15)));
 
         }
         for (RecipeData recipeData : recipes) {
@@ -459,90 +454,18 @@ public abstract class GuiBasicBook extends Screen {
             }
         }
         for (ItemRenderData itemRenderData : itemRenders) {
-            if (itemRenderData.getPage() == this.currentPageCounter) {
-                Item item = getItemByRegistryName(itemRenderData.getItem());
-                float scale = (float) itemRenderData.getScale();
-                ItemStack stack = new ItemStack(item);
-                if (itemRenderData.getComponents() != null) {
-                    applyComponentsToStack(stack, itemRenderData.getItem(), itemRenderData.getComponents());
-                }
+            if (itemRenderData.page() == this.currentPageCounter) {
+                Holder<Item> item = itemRenderData.item();
+                float scale = (float) itemRenderData.scale();
+                ItemStack stack = new ItemStack(item, 1, itemRenderData.components());
+
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate(k, l, 0);
                 guiGraphics.pose().scale(scale, scale, scale);
-                guiGraphics.renderItem(stack, itemRenderData.getX(), itemRenderData.getY());
+                guiGraphics.renderItem(stack, itemRenderData.x(), itemRenderData.y());
                 guiGraphics.pose().popPose();
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void applyComponentsToStack(ItemStack stack, String itemId, Map<String, Object> components) {
-        if (components == null) return;
-        
-        // Handle citadel:custom_render_display for fancy_item
-        if (components.containsKey("citadel:custom_render_display") && "citadel:fancy_item".equals(itemId)) {
-            Object data = components.get("citadel:custom_render_display");
-            if (data instanceof Map) {
-                Map<String, Object> displayData = (Map<String, Object>) data;
-                
-                ItemStack displayItem = ItemStack.EMPTY;
-                if (displayData.containsKey("item")) {
-                    Object itemObj = displayData.get("item");
-                    if (itemObj instanceof Map) {
-                        String displayItemId = (String) ((Map<String, Object>) itemObj).get("id");
-                        if (displayItemId != null) {
-                            Item displayItemType = getItemByRegistryName(displayItemId);
-                            if (displayItemType != null) {
-                                displayItem = new ItemStack(displayItemType);
-                            }
-                        }
-                    }
-                }
-                
-                boolean shake = getBooleanValue(displayData, "shake", false);
-                boolean bob = getBooleanValue(displayData, "bob", false);
-                boolean spin = getBooleanValue(displayData, "spin", false);
-                boolean zoom = getBooleanValue(displayData, "zoom", false);
-                float scale = getFloatValue(displayData, "scale", 1.0f);
-                
-                com.github.alexthe666.citadel.item.component.CustomRenderDisplay customRenderDisplay = 
-                    new com.github.alexthe666.citadel.item.component.CustomRenderDisplay(
-                        displayItem, shake, bob, spin, zoom, scale);
-                stack.set(Citadel.CUSTOM_RENDER_DISPLAY, customRenderDisplay);
-            }
-        }
-        
-        // Handle citadel:display_effect for effect_item
-        if (components.containsKey("citadel:display_effect") && "citadel:effect_item".equals(itemId)) {
-            Object effectId = components.get("citadel:display_effect");
-            if (effectId instanceof String) {
-                ResourceLocation effectLoc = ResourceLocation.parse((String) effectId);
-                net.minecraft.resources.ResourceKey<net.minecraft.world.effect.MobEffect> effectKey = 
-                    net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.MOB_EFFECT, effectLoc);
-                stack.set(Citadel.DISPLAY_EFFECT, effectKey);
-            }
-        }
-        
-        // Handle citadel:icon_location for icon_item
-        if (components.containsKey("citadel:icon_location") && "citadel:icon_item".equals(itemId)) {
-            Object iconLoc = components.get("citadel:icon_location");
-            if (iconLoc instanceof String) {
-                stack.set(Citadel.ICON_LOCATION, ResourceLocation.parse((String) iconLoc));
-            }
-        }
-    }
-    
-    private boolean getBooleanValue(Map<String, Object> map, String key, boolean defaultValue) {
-        Object value = map.get(key);
-        if (value instanceof Boolean) return (Boolean) value;
-        if (value instanceof Number) return ((Number) value).intValue() != 0;
-        return defaultValue;
-    }
-    
-    private float getFloatValue(Map<String, Object> map, String key, float defaultValue) {
-        Object value = map.get(key);
-        if (value instanceof Number) return ((Number) value).floatValue();
-        return defaultValue;
     }
 
     protected void renderRecipe(GuiGraphics guiGraphics, Recipe recipe, RecipeData recipeData, int k, int l) {

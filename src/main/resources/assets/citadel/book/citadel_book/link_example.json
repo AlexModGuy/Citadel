@@ -19,7 +19,7 @@
       "y": 20,
       "page": 0,
       "scale": 2.5,
-      "components": {
+      "item_components": {
         "citadel:display_effect": "minecraft:luck"
       }
     },
@@ -29,7 +29,7 @@
       "y": 22,
       "page": 0,
       "scale": 2.5,
-      "components": {
+      "item_components": {
         "citadel:custom_render_display": {
           "item": {
             "id": "citadel:citadel_book"
@@ -48,7 +48,7 @@
       "y": 20,
       "page": 0,
       "scale": 2.5,
-      "components": {
+      "item_components": {
         "citadel:custom_render_display": {
           "item": {
             "id": "minecraft:feather"
@@ -74,7 +74,7 @@
       "y": 55,
       "page": 1,
       "scale": 2.5,
-      "components": {
+      "item_components": {
         "citadel:icon_location": "minecraft:textures/map/map_background.png"
       }
     }
