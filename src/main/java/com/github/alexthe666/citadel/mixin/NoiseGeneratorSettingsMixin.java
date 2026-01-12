@@ -5,27 +5,33 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = NoiseGeneratorSettings.class, priority = 500)
 public class NoiseGeneratorSettingsMixin {
-    @Mutable
-    @Final
+
     @Shadow
+    @Final
     private SurfaceRules.RuleSource surfaceRule;
 
-    private boolean mergedSurfaceRules = false;
+    @Unique
+    private SurfaceRules.RuleSource citadel$mergedSurfaceRule = null;
 
-    @Inject(method = "surfaceRule", at = @At("HEAD"))
-    private void surfaceRule(CallbackInfoReturnable<SurfaceRules.RuleSource> cir) {
-        if (!this.mergedSurfaceRules) {
-            this.surfaceRule = SurfaceRulesManager.mergeOverworldRules(surfaceRule);
-            this.mergedSurfaceRules = true;
-            //not replacing the return result for compatibility with TerraBlender
+    @Unique
+    private boolean citadel$hasMerged = false;
+
+    @Inject(method = "surfaceRule", at = @At("HEAD"), cancellable = true)
+    private void citadel$surfaceRule(CallbackInfoReturnable<SurfaceRules.RuleSource> cir) {
+        if (!this.citadel$hasMerged) {
+            this.citadel$mergedSurfaceRule = SurfaceRulesManager.mergeOverworldRules(this.surfaceRule);
+            this.citadel$hasMerged = true;
+        }
+        if (this.citadel$mergedSurfaceRule != null) {
+            cir.setReturnValue(this.citadel$mergedSurfaceRule);
         }
     }
 }
