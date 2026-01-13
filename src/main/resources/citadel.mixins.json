@@ -6,13 +6,23 @@
   "refmap": "citadel.refmap.json",
   "mixins": [
     "BlockBehaviourAccessor",
+    "ChunkGeneratorMixin",
+    "LevelMixin",
     "LivingEntityMixin",
-    "NoiseGeneratorSettingsMixin"
+    "MinecraftServerMixin",
+    "NoiseGeneratorSettingsMixin",
+    "ServerLevelMixin",
+    "SmithingMenuMixin"
   ],
   "client": [
+    "client.AbstractClientPlayerMixin",
+    "client.ClientLevelMixin",
     "client.HumanoidModelMixin",
+    "client.ItemBlockRenderTypesMixin",
+    "client.LevelRendererMixin",
     "client.LivingEntityRendererMixin",
-    "client.ItemBlockRenderTypesMixin"
+    "client.SoundEngineMixin",
+    "client.SplashRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
