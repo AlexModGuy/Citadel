@@ -167,14 +167,17 @@ public abstract class GuiBasicBook extends Screen {
         quaternion1.conjugate();
         entityrenderdispatcher.overrideCameraOrientation(quaternion1);
         entityrenderdispatcher.setRenderShadow(false);
-        RenderSystem.runAsFancy(() -> entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), bufferSource, 240));
+        RenderSystem.runAsFancy(() -> entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), bufferSource, 15728880));
         entityrenderdispatcher.setRenderShadow(true);
         entity.setYRot(0);
         entity.setXRot(0);
-        if (entity instanceof LivingEntity) {
-            ((LivingEntity) entity).yBodyRot = 0;
-            ((LivingEntity) entity).yHeadRotO = 0;
-            ((LivingEntity) entity).yHeadRot = 0;
+        entity.xRotO = 0;
+        entity.yRotO = 0;
+        if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.yBodyRot = 0;
+            livingEntity.yBodyRotO = 0;
+            livingEntity.yHeadRot = 0;
+            livingEntity.yHeadRotO = 0;
         }
 
         guiGraphics.flush();
