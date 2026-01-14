@@ -62,17 +62,22 @@ public record BookPage(
                 .optionalFieldOf("images", Collections.emptyList())
                 .forGetter(BookPage::images),
 
+            // Support both "title_locale" (string -> translatable) and "title" (string or Component)
             Codec.mapEither(
                 Codec.STRING
-                    .flatComapMap(Component::translatable, component -> {
+                    .xmap(Component::translatable, component -> {
                         if (component.getContents() instanceof TranslatableContents translatableContents) {
-                            return DataResult.success(translatableContents.getKey());
+                            return translatableContents.getKey();
                         } else {
-                            return DataResult.error(() -> "Component is not translatable!");
+                            return component.getString();
                         }
                     })
                     .fieldOf("title_locale"),
-                ComponentSerialization.CODEC
+                Codec.either(
+                        Codec.STRING.xmap(Component::translatable, c -> c.getString()),
+                        ComponentSerialization.CODEC
+                    )
+                    .xmap(Either::unwrap, Either::right)
                     .fieldOf("title")
             )
                 .xmap(Either::unwrap, Either::right)

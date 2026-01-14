@@ -1,46 +1,43 @@
 {
-  "targets": [
-    "swap",
-    "final"
-  ],
+  "targets": ["swap", "final"],
   "passes": [
     {
-      "name": "blur",
+      "name": "citadel:blur",
       "intarget": "final",
       "outtarget": "swap",
       "uniforms": [
         {
           "name": "BlurDir",
-          "values": [ 0.0, 1.0 ]
+          "values": [0.0, 1.0]
         },
         {
           "name": "Radius",
-          "values": [ 2.0 ]
+          "values": [2.0]
         }
       ]
     },
     {
-      "name": "blur",
+      "name": "citadel:blur",
       "intarget": "swap",
       "outtarget": "final",
       "uniforms": [
         {
           "name": "BlurDir",
-          "values": [ 1.0, 0.0 ]
+          "values": [1.0, 0.0]
         },
         {
           "name": "Radius",
-          "values": [ 2.0 ]
+          "values": [2.0]
         }
       ]
     },
     {
-      "name": "bumpy",
+      "name": "citadel:bumpy",
       "intarget": "final",
       "outtarget": "swap"
     },
     {
-      "name": "blit",
+      "name": "citadel:blit",
       "intarget": "swap",
       "outtarget": "final"
     }
