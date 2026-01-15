@@ -151,6 +151,7 @@ public class Citadel {
         registrar.playToClient(SyncePathMessage.TYPE, SyncePathMessage.CODEC, SyncePathMessage::handle);
         // SyncPathReachedMessage is sent from server to specific player via sendToPlayer
         registrar.playToClient(SyncPathReachedMessage.TYPE, SyncPathReachedMessage.CODEC, SyncPathReachedMessage::handle);
+        registrar.playToClient(SyncClientTickRateMessage.TYPE, SyncClientTickRateMessage.CODEC, SyncClientTickRateMessage::handle);
     }
 
     // Registered manually to NeoForge.EVENT_BUS in constructor (not a mod bus event)
