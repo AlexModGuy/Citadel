@@ -63,7 +63,8 @@ public class ServerProxy {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.START && event.getServer().isRunning()) {
-            ServerTickRateTracker tickRateTracker = CitadelServerData.get(event.getServer()).getOrCreateTickRateTracker();
+            CitadelServerData citadelServerData = CitadelServerData.get(event.getServer());
+            ServerTickRateTracker tickRateTracker = citadelServerData.getOrCreateTickRateTracker();
             if (event.getServer() instanceof ModifiableTickRateServer modifiableServer) {
                 long l = tickRateTracker.getServerTickLengthMs();
                 if (l == MinecraftServer.MS_PER_TICK) {
