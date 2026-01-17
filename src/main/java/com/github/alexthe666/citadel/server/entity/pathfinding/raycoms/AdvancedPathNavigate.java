@@ -422,9 +422,90 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
         return this.ourEntity.position();
     }
 
+    /**
+     * Creates a path to the given BlockPos synchronously.
+     * This method is called by vanilla AI goals like MeleeAttackGoal.
+     * It uses the same pathfinding algorithm as the async system but runs synchronously.
+     * 
+     * @param pos      The target position
+     * @param accuracy The accuracy/distance tolerance for reaching the target
+     * @return A Path to the target, or null if no path could be found
+     */
     @Override
     public Path createPath(final @NotNull BlockPos pos, final int accuracy) {
-        return null;
+        return createPathInternal(pos, accuracy);
+    }
+
+    /**
+     * Creates a path to the given Entity synchronously.
+     * This method is called by vanilla AI goals like MeleeAttackGoal.
+     * 
+     * @param entity   The target entity
+     * @param accuracy The accuracy/distance tolerance for reaching the target
+     * @return A Path to the entity, or null if no path could be found
+     */
+    @Override
+    @Nullable
+    public Path createPath(final @NotNull Entity entity, final int accuracy) {
+        return createPathInternal(entity.blockPosition(), accuracy);
+    }
+
+    /**
+     * Internal method that performs synchronous pathfinding.
+     * Uses the Citadel advanced pathfinding algorithm for consistent behavior
+     * with the async pathfinding system.
+     * 
+     * @param targetPos The target position to path to
+     * @param accuracy  The accuracy/distance tolerance
+     * @return A Path to the target, or null if no path could be found
+     */
+    @Nullable
+    private Path createPathInternal(final BlockPos targetPos, final int accuracy) {
+        // Quick validation checks
+        if (targetPos == null) {
+            return null;
+        }
+
+        // Check if entity is in a valid state for pathfinding
+        if (this.ourEntity.getY() < (double) level.getMinBuildHeight()) {
+            return null;
+        }
+
+        if (!this.canUpdatePath()) {
+            return null;
+        }
+
+        // Check if chunks are loaded
+        if (!level.isLoaded(targetPos)) {
+            return null;
+        }
+
+        // Prepare the start position
+        final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+        
+        // Calculate the search range based on follow range and accuracy
+        final int followRange = (int) ourEntity.getAttributeValue(Attributes.FOLLOW_RANGE);
+        final int searchRange = Math.max(followRange, (int) Math.sqrt(start.distSqr(targetPos)) + 16);
+
+        try {
+            // Create a synchronous path job using Citadel's advanced pathfinding
+            final PathJobMoveToLocation pathJob = new PathJobMoveToLocation(
+                level,
+                start,
+                targetPos,
+                searchRange,
+                ourEntity
+            );
+            
+            // Apply the same pathing options as async pathfinding
+            pathJob.setPathingOptions(getPathingOptions());
+            
+            // Execute the pathfinding synchronously by calling the job directly
+            return pathJob.call();
+        } catch (final Exception e) {
+            Citadel.LOGGER.debug("Synchronous pathfinding failed for entity {}: {}", ourEntity, e.getMessage());
+            return null;
+        }
     }
 
     @Override
