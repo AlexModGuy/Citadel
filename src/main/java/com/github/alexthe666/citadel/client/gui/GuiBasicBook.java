@@ -173,6 +173,7 @@ public abstract class GuiBasicBook extends Screen {
         entity.setXRot(0);
         if (entity instanceof LivingEntity) {
             ((LivingEntity) entity).yBodyRot = 0;
+            ((LivingEntity) entity).yBodyRotO = 0;
             ((LivingEntity) entity).yHeadRotO = 0;
             ((LivingEntity) entity).yHeadRot = 0;
         }
