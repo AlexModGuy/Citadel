@@ -20,11 +20,11 @@ void main() {
     for(float r = -Radius; r <= Radius; r += 1.0) {
         vec4 sampleValue = texture(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
 
-		// Accumulate average alpha
+        // Accumulate average alpha
         totalAlpha = totalAlpha + sampleValue.a;
         totalSamples = totalSamples + 1.0;
 
-		// Accumulate smoothed blur
+        // Accumulate smoothed blur
         float strength = 1.0 - abs(r / Radius);
         totalStrength = totalStrength + strength;
         blurred = blurred + sampleValue;
