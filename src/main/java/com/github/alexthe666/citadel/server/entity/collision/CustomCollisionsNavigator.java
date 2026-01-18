@@ -10,6 +10,7 @@ import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public class CustomCollisionsNavigator extends GroundPathNavigation {
 
@@ -17,15 +18,17 @@ public class CustomCollisionsNavigator extends GroundPathNavigation {
         super(mob, world);
     }
 
+    @Override
     protected PathFinder createPathFinder(int i) {
         this.nodeEvaluator = new CustomCollisionsNodeProcessor();
         return new PathFinder(this.nodeEvaluator, i);
     }
 
-    public static boolean isClearForMovementBetweenRespectCustomCollisions(Mob mob, Vec3 pos1, Vec3 pos2, boolean allowSwimming) {
+    @Override
+    protected boolean canMoveDirectly(@NotNull Vec3 pos1, @NotNull Vec3 pos2) {
         Vec3 vec3 = new Vec3(pos2.x, pos2.y + (double)mob.getBbHeight() * 0.5, pos2.z);
         BlockHitResult hitResult = mob.level()
-                .clip(new ClipContext(pos1, vec3, ClipContext.Block.COLLIDER, allowSwimming ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, mob));
+                .clip(new ClipContext(pos1, vec3, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, mob));
         if(hitResult.getType() == HitResult.Type.MISS){
             return true;
         }else{
@@ -34,10 +37,4 @@ public class CustomCollisionsNavigator extends GroundPathNavigation {
             return mob instanceof ICustomCollisions customCollisions && customCollisions.canPassThrough(hitPos, state, state.getCollisionShape(mob.level(), hitPos));
         }
     }
-
-    @Override
-    protected boolean canMoveDirectly(Vec3 pos1, Vec3 pos2) {
-        return isClearForMovementBetweenRespectCustomCollisions(this.mob, pos1, pos2, false);
-    }
-
 }

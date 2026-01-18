@@ -29,12 +29,14 @@ public class PostEffectRegistry {
     }
 
     public static void registerEffect(ResourceLocation resourceLocation) {
+        Citadel.LOGGER.debug("PostEffectRegistry: registering effect {}", resourceLocation);
         registry.add(resourceLocation);
     }
 
     public static void onInitializeOutline() {
         clear();
         Minecraft minecraft = Minecraft.getInstance();
+        Citadel.LOGGER.debug("PostEffectRegistry: initializing {} effects", registry.size());
         for (ResourceLocation resourceLocation : registry) {
             PostChain postChain;
             RenderTarget renderTarget;
@@ -42,6 +44,7 @@ public class PostEffectRegistry {
                 postChain = new PostChain(minecraft.getTextureManager(), minecraft.getResourceManager(), minecraft.getMainRenderTarget(), resourceLocation);
                 postChain.resize(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());
                 renderTarget = postChain.getTempTarget("final");
+                Citadel.LOGGER.debug("PostEffectRegistry: loaded shader {} successfully, renderTarget={}", resourceLocation, renderTarget);
             } catch (IOException ioexception) {
                 Citadel.LOGGER.warn("Failed to load shader: {}", resourceLocation, ioexception);
                 postChain = null;
