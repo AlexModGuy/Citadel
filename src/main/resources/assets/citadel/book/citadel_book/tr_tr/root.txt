@@ -1,0 +1,20 @@
+Citadel, Alexthe666 ve diğer mod yazarlarının
+kod tabanına bir ev sağlamayı amaçlayan bir kütüphane modudur.
+Temel olarak animasyon, oluşturma ve varlık özelliği izleme için paylaşılan koddan oluşur.
+Ayrıca, şu anda bakmakta olduğunuz temel bir rehber kitap sistemi de içerir.
+Kitap sistemi JSON dosyalarından otomatik olarak okunur.
+Metin otomatik olarak paketlenir ve bir .txt dosyasından okunur.
+Nesneler ve bloklar, aşağıdaki gibi tariflerle birlikte oluşturulabilir:
+<NEWLINE>
+Nesneler ve bloklar gibi, varlıklar ve tabula modelleri de oluşturulabilir.
+Bunlar sabit olabilir, herhangi bir yönde döndürülebilir veya oyuncunun imlecini
+takip edebilir.
+<NEWLINE>
+<NEWLINE>
+Tüm varlıklar düzgünce hareketlendirilmelidir. Eğer kitap
+söz konusu varlığı bulamazsa, bunun yerine bir domuz
+oluşturacaktır. Bağlantı düğmeleri, oyuncuların kitaplarda
+düzgün bir şekilde gezinmesini sağlamak için kullanışlıdır.
+Bağlantı düğmesine basıldığında belirtilen sayfa açılır,
+ardından geri düğmesi oyuncunun
+üst sayfaya geri dönmesine izin vermelidir.

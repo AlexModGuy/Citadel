@@ -1,0 +1,9 @@
+<NEWLINE>
+<NEWLINE>
+Şimdi bu ayrı sayfada, bağlantı düğmesine basmak sizi ana sayfaya geri döndürmelidir.
+<NEWLINE>
+1.8.0 ve sonraki sürümlerden itibaren, Şık Nesne ve Efekt Nesnesi artık dönen, zıplayan nesnelerin veya iksir efektlerinin oluşturulmasına izin veriyor.
+Bunlar, iksir efektleri sayfaları için veya yaratıcı mod sekmeler, ilerlemeler ve daha fazlası için bazı ek canlılıklar için oldukça kullanışlıdır.
+Oluşturulan nesne veya efekt NBT verileri tarafından belirtilir.
+<NEWLINE>
+1.13.0 ve sonraki sürümlerden itibaren, herhangi bir kare simge görüntüsünün oluşturulmasına izin vermek için Simge Nesnesi eklenmiştir. SimgeKonumu altındaki nesne etiketinde herhangi bir doku yolu belirtilmezse, aşağıdaki gibi basitçe bir domuz yüzü olarak oluşturulacaktır.
