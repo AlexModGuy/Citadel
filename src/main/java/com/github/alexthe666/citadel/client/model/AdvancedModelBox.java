@@ -275,6 +275,11 @@ public class AdvancedModelBox extends BasicModelPart {
         Matrix4f lvt_9_1_ = p_228306_1_.pose();
         Matrix3f lvt_10_1_ = p_228306_1_.normal();
         ObjectListIterator var11 = this.cubeList.iterator();
+        if (!var11.hasNext()) {
+            return;
+        }
+        Vector3f normal = new Vector3f();
+        Vector4f position = new Vector4f();
 
         while (var11.hasNext()) {
             TabulaModelRenderUtils.ModelBox lvt_12_1_ = (TabulaModelRenderUtils.ModelBox) var11.next();
@@ -283,7 +288,7 @@ public class AdvancedModelBox extends BasicModelPart {
 
             for (int var15 = 0; var15 < var14; ++var15) {
                 TabulaModelRenderUtils.TexturedQuad lvt_16_1_ = var13[var15];
-                Vector3f lvt_17_1_ = new Vector3f(lvt_16_1_.normal);
+                Vector3f lvt_17_1_ = normal.set(lvt_16_1_.normal);
                 lvt_17_1_.mul(lvt_10_1_);
                 float lvt_18_1_ = lvt_17_1_.x();
                 float lvt_19_1_ = lvt_17_1_.y();
@@ -294,7 +299,7 @@ public class AdvancedModelBox extends BasicModelPart {
                     float lvt_23_1_ = lvt_22_1_.position.x() / 16.0F;
                     float lvt_24_1_ = lvt_22_1_.position.y() / 16.0F;
                     float lvt_25_1_ = lvt_22_1_.position.z() / 16.0F;
-                    Vector4f lvt_26_1_ = new Vector4f(lvt_23_1_, lvt_24_1_, lvt_25_1_, 1.0F);
+                    Vector4f lvt_26_1_ = position.set(lvt_23_1_, lvt_24_1_, lvt_25_1_, 1.0F);
                     lvt_26_1_.mul(lvt_9_1_);
                     p_228306_2_.vertex(lvt_26_1_.x(), lvt_26_1_.y(), lvt_26_1_.z(), p_228306_5_, p_228306_6_, p_228306_7_, p_228306_8_, lvt_22_1_.textureU, lvt_22_1_.textureV, p_228306_4_, p_228306_3_, lvt_18_1_, lvt_19_1_, lvt_20_1_);
                 }
